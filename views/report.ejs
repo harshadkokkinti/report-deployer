@@ -169,6 +169,24 @@ var dc = d.dynamic_copy;
     .btn-outline:hover{border-color:var(--text2);color:var(--text)}
     .cta-fine{font-size:12px;color:var(--text3);margin-top:24px}
 
+    /* FOOTER */
+    .site-footer{position:relative;background:#0a0a0a;overflow:hidden}
+    .footer-grad{position:absolute;inset:0;background:radial-gradient(150% 163% at 50% 90.6%,rgba(0,0,0,0) 25.6757%,rgb(16,11,29) 38.2883%,rgb(33,16,75) 44.1441%,rgb(36,60,145) 50.7848%,rgb(58,191,213) 65.8643%);transform:rotate(180deg);pointer-events:none;z-index:0}
+    .footer-inner{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:72px 52px 180px;display:flex;justify-content:space-between;align-items:flex-start;gap:40px}
+    .footer-logo-row{display:flex;align-items:center;gap:4px;margin-bottom:18px;text-decoration:none;line-height:1}
+    .footer-tagline{font-size:14px;color:rgba(255,255,255,0.45);line-height:1.65;margin-bottom:32px;max-width:280px}
+    .footer-social{display:flex;gap:12px}
+    .footer-social a{width:46px;height:46px;border-radius:12px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.6);transition:background .2s,color .2s;text-decoration:none;flex-shrink:0}
+    .footer-social a:hover{background:rgba(255,255,255,0.14);color:#fff}
+    .footer-right{text-align:right;padding-top:4px}
+    .footer-links-title{font-size:12px;font-weight:500;color:rgba(255,255,255,0.35);margin-bottom:18px;font-family:var(--sans)}
+    .footer-links{display:flex;flex-direction:column;gap:14px;align-items:flex-end}
+    .footer-links a{font-size:16px;font-weight:500;color:rgba(255,255,255,0.85);text-decoration:none;transition:color .2s;font-family:var(--sans)}
+    .footer-links a:hover{color:#fff}
+    .footer-bottom{position:relative;z-index:1;background:#0a0a0a;border-top:1px solid rgba(255,255,255,0.07);padding:16px 52px;max-width:100%;display:flex;justify-content:flex-end;gap:24px}
+    .footer-bottom a{font-size:13px;color:rgba(255,255,255,0.35);text-decoration:none;transition:color .2s;font-family:var(--sans)}
+    .footer-bottom a:hover{color:rgba(255,255,255,0.7)}
+
     /* RESPONSIVE */
     @media(max-width:768px){
       .wrap{padding:0 28px}
@@ -235,10 +253,38 @@ var dc = d.dynamic_copy;
 
       /* Bottom unanswered row */
       div[style*="justify-content:space-between"]{flex-direction:column!important;align-items:flex-start!important}
+      .footer-inner{flex-direction:column;padding:52px 18px 160px;gap:36px}
+      .footer-right{text-align:left}
+      .footer-links{align-items:flex-start}
+      .footer-links a{font-size:15px}
+      .footer-bottom{padding:16px 18px}
+    }
+    .site-header{position:sticky;top:0;z-index:100;background:rgba(18,18,22,0.55);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid rgba(255,255,255,0.08);box-shadow:0 1px 0 rgba(255,255,255,0.04),0 4px 24px rgba(0,0,0,0.35)}
+    .site-header-inner{max-width:1000px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .header-logo{display:flex;align-items:center;text-decoration:none;background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.1);border-radius:100px;padding:7px 16px}
+    .header-logo img{height:30px;width:auto;display:block;object-fit:contain}
+    .header-cta{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.1);border-radius:100px;padding:8px 18px;text-decoration:none;color:rgba(255,255,255,0.85);font-size:14px;font-weight:500;font-family:var(--sans);white-space:nowrap;transition:background .2s,color .2s}
+    .header-cta:hover{background:rgba(255,255,255,0.14);color:#fff}
+    .header-cta svg{flex-shrink:0}
+    @media(max-width:480px){
+      .site-header-inner{padding:10px 16px}
+      .header-cta{font-size:13px;padding:7px 14px}
     }
   </style>
 </head>
 <body>
+<!-- HEADER -->
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="https://askolly.io" class="header-logo">
+      <img src="/logo.png" alt="Olly">
+    </a>
+    <a href="https://askolly.io/#download" class="header-cta" target="_blank">
+      Download Olly App
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5 11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+</header>
 
 <!-- HERO -->
 <div id="hero">
@@ -443,7 +489,7 @@ var dc = d.dynamic_copy;
     </div>
     <div style="margin-top:18px;padding:20px 26px;background:var(--bg1);border:1px solid var(--line);border-radius:14px;display:flex;align-items:center;justify-content:space-between;gap:24px;">
       <p style="font-size:13px;color:var(--text2);line-height:1.6;"><strong style="color:var(--text)">These are <%= d.unanswered_reviews.length %> of <%= d.negative_count %>.</strong> Olly can respond to all of them in your brand voice.</p>
-      <a href="https://tryolly.com" style="white-space:nowrap;background:linear-gradient(135deg,#3B7BE8,#8B3FD9);color:#fff;padding:10px 22px;border-radius:100px;font-size:13px;font-weight:600;text-decoration:none;flex-shrink:0;">Get started free</a>
+      <a href="https://askolly.io" style="white-space:nowrap;background:linear-gradient(135deg,#3B7BE8,#8B3FD9);color:#fff;padding:10px 22px;border-radius:100px;font-size:13px;font-weight:600;text-decoration:none;flex-shrink:0;">Get started free</a>
     </div>
   </div>
 </section>
@@ -456,8 +502,8 @@ var dc = d.dynamic_copy;
       <h2><%= dc.cta_headline_line1 %><br><em><%= dc.cta_headline_line2_italic %></em></h2>
       <p><%= dc.cta_subtext %></p>
       <div class="cta-actions">
-        <a href="https://tryolly.com" class="btn-main">Download Olly and get started for FREE</a>
-        <a href="https://tryolly.com/demo" class="btn-outline">Book a demo</a>
+        <a href="https://askolly.io/#download" class="btn-main">Download Olly and get started for FREE</a>
+        <a href="https://askolly.io" class="btn-outline">Book a demo</a>
       </div>
       <div class="cta-fine">No credit card. No setup fees. Connect in under 2 minutes.</div>
     </div>
@@ -476,5 +522,44 @@ var dc = d.dynamic_copy;
   }),{threshold:.3});
   document.querySelectorAll('.cbar-row').forEach(el=>barObs.observe(el));
 </script>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-grad"></div>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <a href="https://askolly.io" class="footer-logo-row">
+        <img src="/logo.png" alt="Olly" height="52" style="display:block;max-width:160px;object-fit:contain">
+      </a>
+      <p class="footer-tagline">Stop the guesswork, and start knowing how your customers truly feel</p>
+      <div class="footer-social">
+        <a href="https://www.instagram.com/ask_olly" target="_blank" aria-label="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.9" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/company/askolly" target="_blank" aria-label="LinkedIn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7H10V9h4v2a6 6 0 0 1 2-3z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="https://youtu.be/pyB43qw4Dms" target="_blank" aria-label="YouTube">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.4 19.54C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon fill="currentColor" stroke="none" points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+        </a>
+        <a href="https://x.com/askolly_" target="_blank" aria-label="X">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="footer-right">
+      <div class="footer-links-title">Resources</div>
+      <div class="footer-links">
+        <a href="https://askolly.io/blogs" target="_blank">Blog</a>
+        <a href="https://askolly.io/affiliate" target="_blank">Affiliate Program</a>
+        <a href="https://askolly.io/customer-complaint-report" target="_blank">Customer Complaint Report</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <a href="https://askolly.io/privacy" target="_blank">Privacy Policy</a>
+    <a href="https://askolly.io/terms" target="_blank">Terms &amp; Conditions</a>
+  </div>
+</footer>
 </body>
 </html>
