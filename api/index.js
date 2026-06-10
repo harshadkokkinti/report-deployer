@@ -4,13 +4,40 @@ const { Octokit } = require('@octokit/rest');
 const { v4: uuidv4 } = require('uuid');
 const cors = require('cors');
 const path = require('path');
+const ejs = require('ejs');
+const fs = require('fs');
 
 const app = express();
 
+const templatePath = path.join(__dirname, '../views/report.ejs');
+let reportTemplate = null;
+try {
+  reportTemplate = fs.readFileSync(templatePath, 'utf-8');
+} catch (e) {
+  console.warn('EJS template not found at', templatePath);
+}
+
 app.use(cors());
-app.use(express.json({ limit: '20mb' }));
-app.use(express.text({ limit: '20mb', type: 'text/html' }));
+// Accept all bodies as raw text so we can sanitize before parsing
+app.use(express.text({ limit: '20mb', type: ['application/json', 'text/html', 'text/*'] }));
 app.use(express.static(path.join(__dirname, '../public')));
+
+function cleanJson(raw) {
+  // Strip markdown code fences: ```json ... ``` or ``` ... ```
+  let s = raw.trim().replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/, '').trim();
+
+  // Handle LLM output wrapper: [{"output": "```json\n{...}\n```"}]
+  if (s.startsWith('[')) {
+    try {
+      const arr = JSON.parse(s);
+      if (arr[0] && typeof arr[0].output === 'string') {
+        s = arr[0].output.trim().replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/, '').trim();
+      }
+    } catch (_) { /* fall through to parse as-is */ }
+  }
+
+  return s;
+}
 
 function getOctokit() {
   const token = process.env.GITHUB_TOKEN;
@@ -29,7 +56,7 @@ function baseUrl(req) {
 }
 
 // Serve deployed pages dynamically (no wait for redeploy)
-app.get('/p/:uuid', async (req, res) => {
+app.get('/complaint-report-:uuid', async (req, res) => {
   const { uuid } = req.params;
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(uuid)) {
     return res.status(400).send('<h1>400 — Invalid ID</h1>');
@@ -49,18 +76,33 @@ app.get('/p/:uuid', async (req, res) => {
   }
 });
 
-// Deploy endpoint — accepts raw HTML (text/html) or JSON { html: "..." }
+// Deploy endpoint
+// - application/json body → clean markdown fences, parse JSON, render EJS template, deploy
+// - text/html body → deploy raw HTML directly
 app.post('/api/deploy', async (req, res) => {
   let html;
-  if (typeof req.body === 'string') {
+
+  if (req.is('application/json')) {
+    if (!reportTemplate) return res.status(500).json({ error: 'EJS template not found on server' });
+    let data;
+    try {
+      data = JSON.parse(cleanJson(String(req.body)));
+    } catch (parseErr) {
+      return res.status(400).json({ error: 'Invalid JSON: ' + parseErr.message });
+    }
+    try {
+      html = ejs.render(reportTemplate, { d: data });
+    } catch (ejsErr) {
+      return res.status(400).json({ error: 'Template render failed: ' + ejsErr.message });
+    }
+  } else if (typeof req.body === 'string' && req.body.trim()) {
     html = req.body;
-  } else if (req.body?.html) {
-    html = req.body.html;
   } else {
     return res.status(400).json({
-      error: 'Send raw HTML as text/html body, or JSON { "html": "..." }',
+      error: 'Send report JSON (application/json) or raw HTML (text/html)',
     });
   }
+
   if (!html.trim()) return res.status(400).json({ error: 'HTML cannot be empty' });
 
   try {
@@ -77,7 +119,7 @@ app.post('/api/deploy', async (req, res) => {
     const base = baseUrl(req);
     res.status(201).json({
       uuid,
-      url: `${base}/p/${uuid}`,
+      url: `${base}/complaint-report-${uuid}`,
       status: 'deployed',
     });
   } catch (err) {
@@ -96,7 +138,7 @@ app.get('/api/pages', async (req, res) => {
       .filter(f => f.type === 'file' && f.name.endsWith('.html'))
       .map(f => {
         const uuid = f.name.replace('.html', '');
-        return { uuid, url: `${base}/p/${uuid}`, sha: f.sha };
+        return { uuid, url: `${base}/complaint-report-${uuid}`, sha: f.sha };
       });
     res.json({ count: pages.length, pages });
   } catch (err) {
