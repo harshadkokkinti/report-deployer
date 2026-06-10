@@ -168,6 +168,74 @@ var dc = d.dynamic_copy;
     .btn-outline{background:transparent;border:1px solid var(--line);color:var(--text2);padding:16px 32px;border-radius:100px;font-size:14px;text-decoration:none;display:inline-block;transition:border-color .2s,color .2s}
     .btn-outline:hover{border-color:var(--text2);color:var(--text)}
     .cta-fine{font-size:12px;color:var(--text3);margin-top:24px}
+
+    /* RESPONSIVE */
+    @media(max-width:768px){
+      .wrap{padding:0 28px}
+      section{padding:64px 0}
+      #hero{padding:80px 28px 64px}
+      .hero-stats{grid-template-columns:1fr 1fr}
+      .hero-stats .hstat:first-child{grid-column:1/-1}
+      .score-grid{grid-template-columns:1fr}
+      .food-grid{grid-template-columns:1fr}
+      .insight-card{grid-template-columns:1fr}
+      .ic-big{display:flex;align-items:center;gap:14px;text-align:left;margin-top:12px}
+      .ic-big-val{font-size:40px}
+      .cta-box{padding:52px 32px}
+    }
+
+    @media(max-width:480px){
+      .wrap{padding:0 18px}
+      section{padding:52px 0}
+      #hero{padding:64px 18px 52px}
+      .hero-sub{max-width:100%}
+      .section-sub{max-width:100%}
+
+      /* Hero stats: stack all */
+      .hero-stats{grid-template-columns:1fr}
+      .hero-stats .hstat:first-child{grid-column:auto}
+      .hstat-rating-val{font-size:42px}
+      .hstat-val{font-size:32px}
+
+      /* Score ring: shrink and stack */
+      .score-grid{grid-template-columns:1fr}
+      .score-main{padding:24px 20px}
+      .score-ring{width:110px;height:110px}
+      .score-ring::after{width:86px;height:86px}
+      .score-num{font-size:38px}
+
+      /* DOW: shrink bars, allow horizontal scroll */
+      .dow-grid{gap:5px;overflow-x:auto;padding-bottom:4px}
+      .dow-bar-wrap{height:90px}
+      .dow-label{font-size:10px}
+      .dow-pct{font-size:13px}
+      .dow-total{font-size:9px}
+
+      /* Complaint bars */
+      .cbar-label{width:100px;font-size:12px}
+      .cbar-count{font-size:16px;width:28px}
+
+      /* Food grid */
+      .food-grid{grid-template-columns:1fr}
+
+      /* Insight cards */
+      .insight-card{grid-template-columns:1fr;padding:22px 18px;gap:16px}
+      .insight-card h3{font-size:20px}
+      .ic-big{display:flex;align-items:center;gap:12px;text-align:left;margin-top:10px}
+      .ic-big-val{font-size:36px;letter-spacing:-1px}
+
+      /* Reviews */
+      .rc-top{flex-wrap:wrap;gap:10px}
+      .review-card{padding:20px 16px}
+
+      /* CTA */
+      .cta-box{padding:40px 20px}
+      .cta-actions{flex-direction:column;align-items:stretch}
+      .btn-main,.btn-outline{text-align:center;padding:15px 20px}
+
+      /* Bottom unanswered row */
+      div[style*="justify-content:space-between"]{flex-direction:column!important;align-items:flex-start!important}
+    }
   </style>
 </head>
 <body>
