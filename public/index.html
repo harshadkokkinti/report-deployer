@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Deployer — Olly</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #08091A; --bg1: #0D0F24; --bg2: #13162E; --bg3: #191C38;
+      --text: #F0EFFF; --text2: #C2C2D8; --text3: #8A8AA6;
+      --blue: #3B7BE8; --blue-light: #6FA3FF;
+      --teal: #0FA88A; --teal-bg: rgba(15,168,138,0.1); --teal-border: rgba(15,168,138,0.25);
+      --red: #C9274A; --red-bg: rgba(201,39,74,0.1); --red-border: rgba(201,39,74,0.25);
+      --line: rgba(240,239,255,0.07);
+      --sans: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace;
+    }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 60px 20px 80px; }
+    .wrap { width: 100%; max-width: 780px; }
+    header { margin-bottom: 48px; }
+    .logo { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--text3); margin-bottom: 14px; }
+    h1 { font-size: 34px; font-weight: 500; line-height: 1.15; margin-bottom: 8px; }
+    h1 span { color: var(--blue-light); }
+    .tagline { font-size: 15px; color: var(--text3); font-weight: 300; }
+    .card { background: var(--bg1); border: 1px solid var(--line); border-radius: 18px; padding: 28px; margin-bottom: 18px; }
+    .card-title { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text3); margin-bottom: 14px; }
+    textarea {
+      width: 100%; height: 260px; background: var(--bg2); border: 1px solid var(--line);
+      border-radius: 12px; color: var(--text); font-family: var(--mono); font-size: 12px;
+      line-height: 1.6; padding: 16px; resize: vertical; outline: none;
+      transition: border-color .2s;
+    }
+    textarea::placeholder { color: var(--text3); }
+    textarea:focus { border-color: var(--blue); }
+    .deploy-btn {
+      width: 100%; margin-top: 14px; padding: 15px; background: var(--blue);
+      color: #fff; border: none; border-radius: 12px; font-size: 14px; font-weight: 600;
+      cursor: pointer; font-family: var(--sans); transition: opacity .2s, transform .15s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .deploy-btn:hover:not(:disabled) { opacity: .88; transform: translateY(-1px); }
+    .deploy-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+    .result-card { border-color: var(--teal-border); background: var(--bg1); display: none; }
+    .result-card.show { display: block; }
+    .url-row { display: flex; gap: 10px; align-items: stretch; }
+    .url-display {
+      flex: 1; padding: 13px 16px; background: var(--bg2); border: 1px solid var(--teal-border);
+      border-radius: 10px; font-family: var(--mono); font-size: 13px; color: var(--teal);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;
+    }
+    .icon-btn {
+      padding: 13px 16px; background: transparent; border: 1px solid var(--line);
+      border-radius: 10px; color: var(--text2); font-size: 13px; cursor: pointer;
+      font-family: var(--sans); white-space: nowrap; transition: border-color .2s, color .2s;
+    }
+    .icon-btn:hover { border-color: var(--text2); color: var(--text); }
+    .open-btn {
+      padding: 13px 18px; background: var(--teal); border: none; border-radius: 10px;
+      color: #fff; font-size: 13px; font-weight: 600; text-decoration: none;
+      display: inline-flex; align-items: center; white-space: nowrap; font-family: var(--sans);
+      transition: opacity .2s;
+    }
+    .open-btn:hover { opacity: .85; }
+    .uuid-note { font-size: 11px; color: var(--text3); margin-top: 10px; font-family: var(--mono); }
+    .error-card { border-color: var(--red-border); background: var(--red-bg); display: none; }
+    .error-card.show { display: block; }
+    .error-msg { font-size: 13px; color: var(--red); line-height: 1.6; }
+    .pages-empty { font-size: 13px; color: var(--text3); text-align: center; padding: 24px 0; }
+    .pages-list { display: flex; flex-direction: column; gap: 8px; }
+    .page-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 14px;
+      padding: 12px 16px; background: var(--bg2); border-radius: 10px;
+      transition: background .15s;
+    }
+    .page-row:hover { background: var(--bg3); }
+    .page-uuid { font-family: var(--mono); font-size: 11px; color: var(--text3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .page-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .page-link { font-size: 12px; color: var(--blue-light); text-decoration: none; }
+    .page-link:hover { text-decoration: underline; }
+    .page-del { font-size: 12px; color: var(--red); background: none; border: none; cursor: pointer; padding: 0; font-family: var(--sans); }
+    .page-del:hover { text-decoration: underline; }
+    .spinner {
+      width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin .65s linear infinite; flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .api-hint { margin-top: 32px; padding: 20px 24px; background: var(--bg1); border: 1px solid var(--line); border-radius: 14px; }
+    .api-hint .card-title { margin-bottom: 12px; }
+    .code-block { background: var(--bg2); border-radius: 8px; padding: 14px 16px; font-family: var(--mono); font-size: 12px; color: var(--text2); line-height: 1.7; overflow-x: auto; }
+    .code-block .kw { color: var(--blue-light); }
+    .code-block .str { color: var(--teal); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">Olly — Report Deployer</div>
+      <h1>Paste HTML.<br><span>Get a URL.</span></h1>
+      <p class="tagline">Each report gets a unique UUID and is instantly accessible.</p>
+    </header>
+
+    <!-- Deploy form -->
+    <div class="card">
+      <div class="card-title">HTML Content</div>
+      <textarea id="html-input" placeholder="Paste your full HTML here…"></textarea>
+      <button class="deploy-btn" id="deploy-btn" onclick="deploy()">
+        Deploy Report
+      </button>
+    </div>
+
+    <!-- Error -->
+    <div class="card error-card" id="error-card">
+      <div class="card-title" style="color:var(--red)">Error</div>
+      <div class="error-msg" id="error-msg"></div>
+    </div>
+
+    <!-- Result -->
+    <div class="card result-card" id="result-card">
+      <div class="card-title" style="color:var(--teal)">Deployed</div>
+      <div class="url-row">
+        <div class="url-display" id="result-url"></div>
+        <button class="icon-btn" id="copy-btn" onclick="copyUrl()">Copy</button>
+        <a class="open-btn" id="open-btn" href="#" target="_blank">Open →</a>
+      </div>
+      <div class="uuid-note" id="uuid-note"></div>
+    </div>
+
+    <!-- Pages list -->
+    <div class="card">
+      <div class="card-title">Deployed Pages</div>
+      <div id="pages-container">
+        <div class="pages-empty">Loading…</div>
+      </div>
+    </div>
+
+    <!-- API reference -->
+    <div class="api-hint">
+      <div class="card-title">API Usage</div>
+      <div class="code-block">
+<span class="kw">curl</span> -X POST <span class="str">https://your-domain/api/deploy</span> \<br>
+&nbsp;&nbsp;-H <span class="str">"Content-Type: text/html"</span> \<br>
+&nbsp;&nbsp;--data-binary <span class="str">@report.html</span><br><br>
+<span class="kw"># or with JSON</span><br>
+<span class="kw">curl</span> -X POST <span class="str">https://your-domain/api/deploy</span> \<br>
+&nbsp;&nbsp;-H <span class="str">"Content-Type: application/json"</span> \<br>
+&nbsp;&nbsp;-d <span class="str">'{"html":"&lt;!DOCTYPE html&gt;..."}'</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let lastUrl = '';
+
+    async function deploy() {
+      const html = document.getElementById('html-input').value.trim();
+      const btn = document.getElementById('deploy-btn');
+      const errorCard = document.getElementById('error-card');
+      const resultCard = document.getElementById('result-card');
+
+      errorCard.classList.remove('show');
+      resultCard.classList.remove('show');
+
+      if (!html) { showError('Paste some HTML content first.'); return; }
+
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner"></div>Deploying…';
+
+      try {
+        const res = await fetch('/api/deploy', {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/html' },
+          body: html,
+        });
+        const data = await res.json();
+        if (!res.ok) { showError(data.error || 'Deployment failed.'); return; }
+
+        lastUrl = data.url;
+        document.getElementById('result-url').textContent = data.url;
+        document.getElementById('open-btn').href = data.url;
+        document.getElementById('uuid-note').textContent = `UUID: ${data.uuid}`;
+        resultCard.classList.add('show');
+        loadPages();
+      } catch {
+        showError('Network error — is the server running?');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Deploy Report';
+      }
+    }
+
+    function showError(msg) {
+      document.getElementById('error-msg').textContent = msg;
+      document.getElementById('error-card').classList.add('show');
+    }
+
+    function copyUrl() {
+      if (!lastUrl) return;
+      navigator.clipboard.writeText(lastUrl).then(() => {
+        const btn = document.getElementById('copy-btn');
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = 'Copy', 2000);
+      });
+    }
+
+    async function deletePage(uuid) {
+      if (!confirm(`Delete ${uuid}?`)) return;
+      try {
+        const res = await fetch(`/api/pages/${uuid}`, { method: 'DELETE' });
+        if (res.ok) loadPages();
+        else { const d = await res.json(); alert(d.error); }
+      } catch { alert('Delete failed'); }
+    }
+
+    async function loadPages() {
+      const container = document.getElementById('pages-container');
+      try {
+        const res = await fetch('/api/pages');
+        const data = await res.json();
+        if (!data.pages || data.pages.length === 0) {
+          container.innerHTML = '<div class="pages-empty">No pages deployed yet.</div>';
+          return;
+        }
+        const items = [...data.pages].reverse().slice(0, 20).map(p => `
+          <div class="page-row">
+            <span class="page-uuid">${p.uuid}</span>
+            <div class="page-actions">
+              <a class="page-link" href="${p.url}" target="_blank">Open →</a>
+              <button class="page-del" onclick="deletePage('${p.uuid}')">Delete</button>
+            </div>
+          </div>
+        `).join('');
+        container.innerHTML = `<div class="pages-list">${items}</div>`;
+      } catch {
+        container.innerHTML = '<div class="pages-empty">Could not load pages.</div>';
+      }
+    }
+
+    loadPages();
+  </script>
+</body>
+</html>
