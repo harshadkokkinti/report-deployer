@@ -20,7 +20,33 @@ try {
 app.use(cors());
 // Accept all bodies as raw text so we can sanitize before parsing
 app.use(express.text({ limit: '20mb', type: ['application/json', 'text/html', 'text/*'] }));
-app.use(express.static(path.join(__dirname, '../public')));
+// Serve static assets (logo, etc.) but NOT index.html at root
+app.use(express.static(path.join(__dirname, '../public'), { index: false }));
+
+function requireAdmin(req, res, next) {
+  const user = process.env.ADMIN_USER;
+  const pass = process.env.ADMIN_PASS;
+  if (!user || !pass) return res.status(500).send('ADMIN_USER and ADMIN_PASS env vars are not set');
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith('Basic ')) {
+    res.set('WWW-Authenticate', 'Basic realm="Olly Admin"');
+    return res.status(401).send('Unauthorized');
+  }
+  const decoded = Buffer.from(auth.slice(6), 'base64').toString();
+  const colon = decoded.indexOf(':');
+  const u = decoded.slice(0, colon);
+  const p = decoded.slice(colon + 1);
+  if (u !== user || p !== pass) {
+    res.set('WWW-Authenticate', 'Basic realm="Olly Admin"');
+    return res.status(401).send('Unauthorized');
+  }
+  next();
+}
+
+app.get('/', (req, res) => res.redirect(301, '/admin'));
+app.get('/admin', requireAdmin, (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/index.html'));
+});
 
 function cleanJson(raw) {
   // Strip markdown code fences: ```json ... ``` or ``` ... ```
