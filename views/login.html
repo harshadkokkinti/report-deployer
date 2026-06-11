@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login — Olly</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #08091A; --bg1: #0D0F24; --bg2: #13162E;
+      --text: #F0EFFF; --text2: #C2C2D8; --text3: #8A8AA6;
+      --blue: #3B7BE8; --line: rgba(240,239,255,0.07);
+      --red: #C9274A; --red-bg: rgba(201,39,74,0.08); --red-border: rgba(201,39,74,0.2);
+      --sans: 'DM Sans', sans-serif;
+    }
+    body {
+      background: var(--bg); color: var(--text); font-family: var(--sans);
+      min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px;
+    }
+    .card {
+      width: 100%; max-width: 400px; background: var(--bg1);
+      border: 1px solid var(--line); border-radius: 20px; padding: 44px 40px;
+    }
+    .logo-row {
+      display: flex; align-items: center; justify-content: center; margin-bottom: 36px;
+    }
+    .logo-row img { height: 34px; width: auto; }
+    h2 { font-size: 22px; font-weight: 600; text-align: center; margin-bottom: 6px; }
+    .sub { font-size: 14px; color: var(--text3); text-align: center; margin-bottom: 30px; }
+    .error-msg {
+      display: none; padding: 10px 14px; background: var(--red-bg);
+      border: 1px solid var(--red-border); border-radius: 10px;
+      font-size: 13px; color: var(--red); margin-bottom: 18px; text-align: center;
+    }
+    .error-msg.show { display: block; }
+    .field { margin-bottom: 16px; }
+    label { display: block; font-size: 11px; font-weight: 600; color: var(--text3); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 8px; }
+    input {
+      width: 100%; padding: 13px 16px; background: var(--bg2);
+      border: 1px solid var(--line); border-radius: 10px;
+      color: var(--text); font-family: var(--sans); font-size: 14px;
+      outline: none; transition: border-color .2s;
+    }
+    input:focus { border-color: var(--blue); }
+    input::placeholder { color: var(--text3); }
+    .btn {
+      width: 100%; padding: 14px; margin-top: 8px;
+      background: linear-gradient(135deg, #3B7BE8, #8B3FD9);
+      color: #fff; border: none; border-radius: 10px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      font-family: var(--sans); transition: opacity .2s, transform .15s;
+    }
+    .btn:hover { opacity: .9; transform: translateY(-1px); }
+    .btn:active { transform: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo-row">
+      <img src="/logo.png" alt="Olly">
+    </div>
+    <h2>Admin Login</h2>
+    <p class="sub">Sign in to manage deployed reports</p>
+
+    <div class="error-msg" id="err">Invalid username or password. Try again.</div>
+
+    <form method="POST" action="/admin/login">
+      <div class="field">
+        <label>Username</label>
+        <input type="text" name="username" placeholder="Enter username" required autocomplete="username" autofocus>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Enter password" required autocomplete="current-password">
+      </div>
+      <button class="btn" type="submit">Sign in →</button>
+    </form>
+  </div>
+  <script>
+    if (new URLSearchParams(location.search).get('error')) {
+      document.getElementById('err').classList.add('show');
+    }
+  </script>
+</body>
+</html>

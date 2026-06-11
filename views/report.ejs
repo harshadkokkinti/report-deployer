@@ -45,6 +45,7 @@ var dc = d.dynamic_copy;
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= d.brand_name %> Reputation Report by Olly</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
   <style>
@@ -315,7 +316,7 @@ var dc = d.dynamic_copy;
       <div class="hstat">
         <div class="hstat-label">Response Rate</div>
         <div class="hstat-val" style="color:#C9274A"><%= d.response_rate_pct %>%</div>
-        <div class="hstat-sub">0 of <%= d.total_reviews_analysed %> answered</div>
+        <div class="hstat-sub"><%= d.answered_of_total %> answered</div>
       </div>
     </div>
   </div>

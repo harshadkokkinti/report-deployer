@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Report Deployer — Olly</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -74,7 +75,9 @@
       transition: background .15s;
     }
     .page-row:hover { background: var(--bg3); }
-    .page-uuid { font-family: var(--mono); font-size: 11px; color: var(--text3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .page-info { overflow: hidden; }
+    .page-brand { font-size: 13px; font-weight: 500; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 2px; }
+    .page-uuid { font-family: var(--mono); font-size: 10px; color: var(--text3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .page-actions { display: flex; gap: 8px; flex-shrink: 0; }
     .page-link { font-size: 12px; color: var(--blue-light); text-decoration: none; }
     .page-link:hover { text-decoration: underline; }
@@ -95,10 +98,13 @@
 </head>
 <body>
   <div class="wrap">
-    <header>
-      <div class="logo">Olly — Report Deployer</div>
-      <h1>Paste HTML.<br><span>Get a URL.</span></h1>
-      <p class="tagline">Each report gets a unique UUID and is instantly accessible.</p>
+    <header style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px">
+      <div>
+        <div class="logo">Olly — Report Deployer</div>
+        <h1>Paste HTML.<br><span>Get a URL.</span></h1>
+        <p class="tagline">Each report gets a unique UUID and is instantly accessible.</p>
+      </div>
+      <a href="/admin/logout" style="flex-shrink:0;margin-top:4px;font-size:12px;color:var(--text3);text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:6px 12px;transition:color .2s,border-color .2s" onmouseover="this.style.color='var(--text)';this.style.borderColor='rgba(240,239,255,0.2)'" onmouseout="this.style.color='var(--text3)';this.style.borderColor='var(--line)'">Logout</a>
     </header>
 
     <!-- Deploy form -->
@@ -204,8 +210,8 @@
       });
     }
 
-    async function deletePage(uuid) {
-      if (!confirm(`Delete ${uuid}?`)) return;
+    async function deletePage(uuid, brandName) {
+      if (!confirm(`Delete report for "${brandName}"?`)) return;
       try {
         const res = await fetch(`/api/pages/${uuid}`, { method: 'DELETE' });
         if (res.ok) loadPages();
@@ -222,15 +228,21 @@
           container.innerHTML = '<div class="pages-empty">No pages deployed yet.</div>';
           return;
         }
-        const items = [...data.pages].reverse().slice(0, 20).map(p => `
+        const items = [...data.pages].reverse().slice(0, 50).map(p => {
+          const brand = p.brand_name || 'Unknown';
+          const safeBrand = brand.replace(/"/g, '&quot;');
+          return `
           <div class="page-row">
-            <span class="page-uuid">${p.uuid}</span>
+            <div class="page-info">
+              <div class="page-brand">${brand}</div>
+              <div class="page-uuid">${p.uuid}</div>
+            </div>
             <div class="page-actions">
               <a class="page-link" href="${p.url}" target="_blank">Open →</a>
-              <button class="page-del" onclick="deletePage('${p.uuid}')">Delete</button>
+              <button class="page-del" onclick="deletePage('${p.uuid}','${safeBrand}')">Delete</button>
             </div>
-          </div>
-        `).join('');
+          </div>`;
+        }).join('');
         container.innerHTML = `<div class="pages-list">${items}</div>`;
       } catch {
         container.innerHTML = '<div class="pages-empty">Could not load pages.</div>';
