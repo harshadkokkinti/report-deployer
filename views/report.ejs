@@ -75,6 +75,14 @@ var dc = d.dynamic_copy;
     #hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:100px 52px 88px;position:relative;overflow:hidden}
     .hero-glow{position:absolute;top:-10%;right:-15%;width:800px;height:800px;background:radial-gradient(ellipse,rgba(139,63,217,0.12) 0%,rgba(59,123,232,0.06) 40%,transparent 70%);pointer-events:none}
     .hero-glow2{position:absolute;bottom:-20%;left:-10%;width:600px;height:600px;background:radial-gradient(ellipse,rgba(15,168,138,0.06) 0%,transparent 65%);pointer-events:none}
+    .brand-meta{max-width:1000px;margin:0 auto;padding:24px 52px 0}
+    .brand-meta-card{background:var(--bg1);border:1px solid var(--blue-border);border-radius:16px;padding:22px 28px}
+    .brand-meta-label{font-size:10px;font-weight:600;color:var(--blue);letter-spacing:1.8px;text-transform:uppercase;margin-bottom:14px}
+    .brand-meta-row{display:flex;align-items:center;gap:18px}
+    .brand-photo{width:72px;height:72px;border-radius:12px;object-fit:cover;flex-shrink:0;background:var(--bg2)}
+    .brand-meta-name{font-size:22px;font-weight:600;color:var(--text);line-height:1.2;margin-bottom:5px}
+    .brand-meta-addr{font-size:13px;color:var(--text3);line-height:1.5;max-width:480px}
+    @media(max-width:768px){.brand-meta{padding:16px 22px 0}.brand-meta-card{padding:18px 20px}.brand-photo{width:56px;height:56px}.brand-meta-name{font-size:18px}}
     .from-badge{display:inline-flex;align-items:center;gap:8px;background:var(--purple-bg);border:1px solid var(--purple-border);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:500;color:var(--purple);letter-spacing:.4px;margin-bottom:36px;width:fit-content}
     .hero-label{font-size:11px;color:var(--text3);letter-spacing:1.8px;text-transform:uppercase;margin-bottom:16px;font-weight:500}
     #hero h1{font-family:var(--serif);font-size:clamp(46px,6vw,82px);font-weight:400;line-height:1.04;letter-spacing:-.5px;color:var(--text);max-width:860px;margin-bottom:28px}
@@ -116,10 +124,10 @@ var dc = d.dynamic_copy;
     .dow-col{display:flex;flex-direction:column;align-items:center;gap:8px}
     .dow-bar-wrap{width:100%;height:150px;background:var(--bg2);border-radius:8px;display:flex;align-items:flex-end;overflow:hidden}
     .dow-bar{width:100%;border-radius:8px 8px 0 0}
-    .dow-bar.low{background:#2E7D5E}.dow-bar.mid{background:#4C6A9C}.dow-bar.high{background:#8B3050}
+    .dow-bar.low{background:#2A6E4A}.dow-bar.mid{background:#8A6A1A}.dow-bar.high{background:#7A2020}
     .dow-label{font-size:11px;color:var(--text3);font-weight:500}
     .dow-pct{font-family:var(--serif);font-size:17px}
-    .dow-pct.low{color:#3A9E77}.dow-pct.mid{color:#6B8DC4}.dow-pct.high{color:#C24070}
+    .dow-pct.low{color:#3DBE72}.dow-pct.mid{color:#D4A030}.dow-pct.high{color:#E05050}
     .dow-total{font-size:10px;color:var(--text3)}
     .complaint-bars{display:flex;flex-direction:column;gap:16px;max-width:680px}
     .cbar-row{display:flex;align-items:center;gap:14px}
@@ -131,7 +139,7 @@ var dc = d.dynamic_copy;
     .food-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
     .food-card{background:var(--bg1);border:1px solid var(--line);border-radius:16px;padding:24px}
     .food-card.high{border-color:var(--red-border)}.food-card.medium{border-color:var(--amber-border)}
-    .food-name{font-family:var(--serif);font-size:23px;font-style:italic;color:var(--text);margin-bottom:4px}
+    .food-name{font-family:var(--serif);font-size:23px;font-style:normal;color:var(--amber);margin-bottom:4px}
     .food-meta{font-size:11px;color:var(--text3);margin-bottom:14px;letter-spacing:.4px;text-transform:uppercase;font-weight:600}
     .food-complaints{display:flex;flex-direction:column;gap:7px}
     .food-complaint{font-size:13px;color:var(--text2);padding:9px 14px;background:var(--bg2);border-radius:8px;line-height:1.55}
@@ -287,13 +295,25 @@ var dc = d.dynamic_copy;
   </div>
 </header>
 
+<!-- BRAND META -->
+<div class="brand-meta">
+  <div class="brand-meta-card">
+    <div class="brand-meta-label">Online Reputation Report for</div>
+    <div class="brand-meta-row">
+      <img class="brand-photo" src="/logo.png" alt="<%= d.brand_name %>">
+      <div>
+        <div class="brand-meta-name"><%= d.brand_name %></div>
+        <div class="brand-meta-addr"><%= d.brand_address %></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- HERO -->
 <div id="hero">
   <div class="hero-glow"></div>
   <div class="hero-glow2"></div>
   <div class="wrap">
-    <div class="from-badge reveal">Prepared by Olly, AI Reputation Intelligence</div>
-    <div class="hero-label reveal d1"><%= d.brand_name %> &middot; <%= d.platform %> &middot; <%= d.total_reviews_analysed %> reviews analysed</div>
     <h1 class="reveal d2">
       <%= dc.hero_headline_line1 %><br>
       <em><%= dc.hero_headline_line2_italic %></em>
@@ -480,7 +500,7 @@ var dc = d.dynamic_copy;
           </div>
           <div class="rc-rating" style="color:<%= reviewRatingColor(r.rating) %>"><%= r.rating %> / 5</div>
         </div>
-        <p class="rc-body"><%= r.review_text %></p>
+        <p class="rc-body">&ldquo;<%= r.review_text %>&rdquo;</p>
         <div class="rc-footer">
           <div class="rc-date"><%= r.days_since_posted %> days ago</div>
           <div class="rc-no-reply" style="color:#C9274A">No response from <%= d.brand_name %></div>
@@ -488,9 +508,13 @@ var dc = d.dynamic_copy;
       </div>
       <% }); %>
     </div>
-    <div style="margin-top:18px;padding:20px 26px;background:var(--bg1);border:1px solid var(--line);border-radius:14px;display:flex;align-items:center;justify-content:space-between;gap:24px;">
-      <p style="font-size:13px;color:var(--text2);line-height:1.6;"><strong style="color:var(--text)">These are <%= d.unanswered_reviews.length %> of <%= d.negative_count %>.</strong> Olly can respond to all of them in your brand voice.</p>
-      <a href="https://askolly.io" style="white-space:nowrap;background:linear-gradient(135deg,#3B7BE8,#8B3FD9);color:#fff;padding:10px 22px;border-radius:100px;font-size:13px;font-weight:600;text-decoration:none;flex-shrink:0;">Get started free</a>
+    <div style="margin-top:28px;padding:32px 36px;background:linear-gradient(135deg,rgba(59,123,232,0.12),rgba(139,63,217,0.12));border:1px solid rgba(139,63,217,0.3);border-radius:18px;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;" class="reveal d4">
+      <div>
+        <div style="font-size:10px;font-weight:600;color:var(--purple);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">You're only seeing <%= d.unanswered_reviews.length %></div>
+        <p style="font-size:16px;color:var(--text);font-weight:500;line-height:1.5;margin-bottom:4px;">There are <%= d.negative_count %> reviews just like these &mdash; unanswered.</p>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6;">Olly can respond to every single one in your brand voice, tonight.</p>
+      </div>
+      <a href="https://askolly.io/#download" style="white-space:nowrap;background:var(--text);color:var(--bg);padding:14px 28px;border-radius:100px;font-size:14px;font-weight:700;text-decoration:none;flex-shrink:0;letter-spacing:.2px;">Try Olly &rarr;</a>
     </div>
   </div>
 </section>
@@ -500,10 +524,10 @@ var dc = d.dynamic_copy;
   <div class="wrap">
     <div class="cta-box reveal">
       <div class="cta-glow"></div>
-      <h2><%= dc.cta_headline_line1 %><br><em><%= dc.cta_headline_line2_italic %></em></h2>
-      <p><%= dc.cta_subtext %></p>
+      <h2>Put Olly to work,<br><em>and boost your online reputation.</em></h2>
+      <p>Olly brings reviews from all platforms, auto-replies, and pinpoints what needs attention. <strong>You run <%= d.brand_name %>. Olly handles the reputation.</strong></p>
       <div class="cta-actions">
-        <a href="https://askolly.io/#download" class="btn-main">Download Olly and get started for FREE</a>
+        <a href="https://askolly.io/#download" class="btn-main">Download Olly and get started for FREE &rarr;</a>
         <a href="https://askolly.io" class="btn-outline">Book a demo</a>
       </div>
       <div class="cta-fine">No credit card. No setup fees. Connect in under 2 minutes.</div>
