@@ -7,6 +7,8 @@ const path = require('path');
 const ejs = require('ejs');
 const fs = require('fs');
 const crypto = require('crypto');
+const https = require('https');
+const http = require('http');
 
 const app = express();
 
@@ -88,6 +90,39 @@ function extractBrandName(html) {
   return m[1].replace(/\s*Reputation Report.*$/i, '').trim() || 'Unknown';
 }
 
+function convertImageUrl(url) {
+  const gd = url.match(/drive\.google\.com\/file\/d\/([^/?#]+)/);
+  if (gd) return `https://drive.google.com/uc?export=download&id=${gd[1]}`;
+  return url;
+}
+
+function slugify(name) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80) || 'brand';
+}
+
+function mimeToExt(mime) {
+  const m = { 'image/jpeg': 'jpg', 'image/jpg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif', 'image/svg+xml': 'svg' };
+  return m[mime.split(';')[0].trim()] || 'jpg';
+}
+
+function downloadImageBuffer(url, redirects = 0) {
+  return new Promise((resolve, reject) => {
+    if (redirects > 6) return reject(new Error('Too many redirects'));
+    const mod = url.startsWith('https') ? https : http;
+    mod.get(url, { headers: { 'User-Agent': 'Mozilla/5.0' } }, (res) => {
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+        return downloadImageBuffer(res.headers.location, redirects + 1).then(resolve, reject);
+      }
+      if (res.statusCode !== 200) return reject(new Error(`HTTP ${res.statusCode} from image URL`));
+      const mime = (res.headers['content-type'] || 'image/jpeg').split(';')[0].trim();
+      const chunks = [];
+      res.on('data', c => chunks.push(c));
+      res.on('end', () => resolve({ buffer: Buffer.concat(chunks), mime }));
+      res.on('error', reject);
+    }).on('error', reject);
+  });
+}
+
 // ── Admin login/logout ────────────────────────────────────────────────────────
 app.get(A + '/login', (req, res) => {
   if (process.env.ADMIN_USER && parseCookies(req).admin_token === sessionToken()) {
@@ -148,6 +183,25 @@ function baseUrl(req) {
 }
 
 // ── Report routes ─────────────────────────────────────────────────────────────
+app.get('/brand-images/:filename', async (req, res) => {
+  const { filename } = req.params;
+  if (!/^[a-z0-9_-]+\.(jpg|jpeg|png|webp|gif|svg)$/i.test(filename)) {
+    return res.status(400).send('Invalid filename');
+  }
+  try {
+    const { octokit, owner, repo } = getOctokit();
+    const { data } = await octokit.repos.getContent({ owner, repo, path: `brand-images/${filename}` });
+    const ext = filename.split('.').pop().toLowerCase();
+    const mimeMap = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'image/gif', svg: 'image/svg+xml' };
+    res.setHeader('Content-Type', mimeMap[ext] || 'image/jpeg');
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    res.send(Buffer.from(data.content, 'base64'));
+  } catch (err) {
+    if (err.status === 404) return res.status(404).send('Not found');
+    res.status(500).send('Error');
+  }
+});
+
 app.get('/complaint-report-:uuid', async (req, res) => {
   const { uuid } = req.params;
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(uuid)) {
@@ -178,9 +232,27 @@ app.post('/api/deploy', async (req, res) => {
     } catch (parseErr) {
       return res.status(400).json({ error: 'Invalid JSON: ' + parseErr.message });
     }
+    brandName = data.brand_name || 'Unknown';
+    let brandImageUrl = null;
+    if (data.image_url) {
+      try {
+        const { octokit: gio, owner: go, repo: gr } = getOctokit();
+        const { buffer, mime } = await downloadImageBuffer(convertImageUrl(data.image_url));
+        const ext = mimeToExt(mime);
+        const imgSlug = slugify(brandName);
+        const imgPath = `brand-images/${imgSlug}.${ext}`;
+        let imgSha = null;
+        try { const { data: ex } = await gio.repos.getContent({ owner: go, repo: gr, path: imgPath }); imgSha = ex.sha; } catch (_) {}
+        const imgOpts = { owner: go, repo: gr, path: imgPath, message: `asset: brand image for ${brandName}`, content: buffer.toString('base64') };
+        if (imgSha) imgOpts.sha = imgSha;
+        await gio.repos.createOrUpdateFileContents(imgOpts);
+        brandImageUrl = `/brand-images/${imgSlug}.${ext}`;
+      } catch (imgErr) {
+        console.warn('Brand image upload failed:', imgErr.message);
+      }
+    }
     try {
-      html = ejs.render(reportTemplate, { d: data });
-      brandName = data.brand_name || 'Unknown';
+      html = ejs.render(reportTemplate, { d: { ...data, brand_image_url: brandImageUrl } });
     } catch (ejsErr) {
       return res.status(400).json({ error: 'Template render failed: ' + ejsErr.message });
     }
