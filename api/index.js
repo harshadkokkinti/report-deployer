@@ -148,8 +148,12 @@ app.get(A + '/logout', (req, res) => {
 
 app.get('/', (req, res) => res.status(404).send('<h1>404</h1>'));
 app.get(A, requireAdmin, (req, res) => {
+  const rawSheet = process.env.GOOGLE_SHEET_URL || '';
+  const sheetEmbed = rawSheet
+    ? rawSheet.replace(/\/(edit|pub|htmlview)[^]*$/, '/htmlview')
+    : '';
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
-  res.send(dashHtml);
+  res.send(dashHtml.replace('__SHEET_EMBED_URL__', () => sheetEmbed));
 });
 
 // ── Utilities ─────────────────────────────────────────────────────────────────

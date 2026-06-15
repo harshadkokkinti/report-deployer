@@ -14,65 +14,57 @@
       --blue: #3B7BE8; --blue-light: #6FA3FF;
       --teal: #0FA88A; --teal-bg: rgba(15,168,138,0.1); --teal-border: rgba(15,168,138,0.25);
       --red: #C9274A; --red-bg: rgba(201,39,74,0.1); --red-border: rgba(201,39,74,0.25);
+      --green-bg: rgba(15,168,138,0.12); --green-border: rgba(15,168,138,0.3);
       --line: rgba(240,239,255,0.07);
       --sans: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace;
     }
     body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 60px 20px 80px; }
-    .wrap { width: 100%; max-width: 780px; }
-    header { margin-bottom: 48px; }
+    .wrap { width: 100%; max-width: 900px; }
+    header { margin-bottom: 40px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
     .logo { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--text3); margin-bottom: 14px; }
     h1 { font-size: 34px; font-weight: 500; line-height: 1.15; margin-bottom: 8px; }
     h1 span { color: var(--blue-light); }
     .tagline { font-size: 15px; color: var(--text3); font-weight: 300; }
-    .card { background: var(--bg1); border: 1px solid var(--line); border-radius: 18px; padding: 28px; margin-bottom: 18px; }
-    .card-title { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text3); margin-bottom: 14px; }
-    textarea {
-      width: 100%; height: 260px; background: var(--bg2); border: 1px solid var(--line);
-      border-radius: 12px; color: var(--text); font-family: var(--mono); font-size: 12px;
-      line-height: 1.6; padding: 16px; resize: vertical; outline: none;
-      transition: border-color .2s;
+    .logout-btn {
+      flex-shrink: 0; margin-top: 4px; font-size: 12px; color: var(--text3); text-decoration: none;
+      border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; transition: color .2s, border-color .2s;
     }
-    textarea::placeholder { color: var(--text3); }
-    textarea:focus { border-color: var(--blue); }
-    .deploy-btn {
-      width: 100%; margin-top: 14px; padding: 15px; background: var(--blue);
-      color: #fff; border: none; border-radius: 12px; font-size: 14px; font-weight: 600;
+    .logout-btn:hover { color: var(--text); border-color: rgba(240,239,255,0.2); }
+    .card { background: var(--bg1); border: 1px solid var(--line); border-radius: 18px; padding: 28px; margin-bottom: 18px; }
+    .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+    .card-title { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text3); }
+    .refresh-btn {
+      font-size: 12px; color: var(--text3); background: transparent; border: 1px solid var(--line);
+      border-radius: 8px; padding: 5px 12px; cursor: pointer; font-family: var(--sans);
+      transition: color .2s, border-color .2s;
+    }
+    .refresh-btn:hover { color: var(--text); border-color: rgba(240,239,255,0.2); }
+    .sheet-wrap {
+      border-radius: 10px; overflow: hidden; border: 1px solid var(--line);
+      background: var(--bg2); min-height: 520px; display: flex; align-items: center; justify-content: center;
+    }
+    .sheet-wrap iframe { width: 100%; height: 560px; border: none; display: block; }
+    .no-sheet { font-size: 13px; color: var(--text3); text-align: center; padding: 60px 20px; }
+    .trigger-wrap { margin-bottom: 18px; }
+    .trigger-btn {
+      width: 100%; padding: 16px; background: linear-gradient(135deg, #3B7BE8, #8B3FD9);
+      color: #fff; border: none; border-radius: 12px; font-size: 15px; font-weight: 600;
       cursor: pointer; font-family: var(--sans); transition: opacity .2s, transform .15s;
       display: flex; align-items: center; justify-content: center; gap: 8px;
     }
-    .deploy-btn:hover:not(:disabled) { opacity: .88; transform: translateY(-1px); }
-    .deploy-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
-    .result-card { border-color: var(--teal-border); background: var(--bg1); display: none; }
-    .result-card.show { display: block; }
-    .url-row { display: flex; gap: 10px; align-items: stretch; }
-    .url-display {
-      flex: 1; padding: 13px 16px; background: var(--bg2); border: 1px solid var(--teal-border);
-      border-radius: 10px; font-family: var(--mono); font-size: 13px; color: var(--teal);
-      overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;
+    .trigger-btn:hover:not(:disabled) { opacity: .88; transform: translateY(-1px); }
+    .trigger-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    .trigger-status {
+      display: none; margin-top: 12px; padding: 12px 16px; border-radius: 10px;
+      font-size: 13px; text-align: center;
     }
-    .icon-btn {
-      padding: 13px 16px; background: transparent; border: 1px solid var(--line);
-      border-radius: 10px; color: var(--text2); font-size: 13px; cursor: pointer;
-      font-family: var(--sans); white-space: nowrap; transition: border-color .2s, color .2s;
-    }
-    .icon-btn:hover { border-color: var(--text2); color: var(--text); }
-    .open-btn {
-      padding: 13px 18px; background: var(--teal); border: none; border-radius: 10px;
-      color: #fff; font-size: 13px; font-weight: 600; text-decoration: none;
-      display: inline-flex; align-items: center; white-space: nowrap; font-family: var(--sans);
-      transition: opacity .2s;
-    }
-    .open-btn:hover { opacity: .85; }
-    .uuid-note { font-size: 11px; color: var(--text3); margin-top: 10px; font-family: var(--mono); }
-    .error-card { border-color: var(--red-border); background: var(--red-bg); display: none; }
-    .error-card.show { display: block; }
-    .error-msg { font-size: 13px; color: var(--red); line-height: 1.6; }
+    .trigger-status.success { display: block; background: var(--green-bg); border: 1px solid var(--green-border); color: var(--teal); }
+    .trigger-status.error { display: block; background: var(--red-bg); border: 1px solid var(--red-border); color: var(--red); }
     .pages-empty { font-size: 13px; color: var(--text3); text-align: center; padding: 24px 0; }
     .pages-list { display: flex; flex-direction: column; gap: 8px; }
     .page-row {
       display: flex; align-items: center; justify-content: space-between; gap: 14px;
-      padding: 12px 16px; background: var(--bg2); border-radius: 10px;
-      transition: background .15s;
+      padding: 12px 16px; background: var(--bg2); border-radius: 10px; transition: background .15s;
     }
     .page-row:hover { background: var(--bg3); }
     .page-info { overflow: hidden; }
@@ -83,131 +75,96 @@
     .page-link:hover { text-decoration: underline; }
     .page-del { font-size: 12px; color: var(--red); background: none; border: none; cursor: pointer; padding: 0; font-family: var(--sans); }
     .page-del:hover { text-decoration: underline; }
-    .spinner {
-      width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3);
-      border-top-color: #fff; border-radius: 50%;
-      animation: spin .65s linear infinite; flex-shrink: 0;
-    }
+    .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin .65s linear infinite; flex-shrink: 0; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .api-hint { margin-top: 32px; padding: 20px 24px; background: var(--bg1); border: 1px solid var(--line); border-radius: 14px; }
-    .api-hint .card-title { margin-bottom: 12px; }
-    .code-block { background: var(--bg2); border-radius: 8px; padding: 14px 16px; font-family: var(--mono); font-size: 12px; color: var(--text2); line-height: 1.7; overflow-x: auto; }
-    .code-block .kw { color: var(--blue-light); }
-    .code-block .str { color: var(--teal); }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <header style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px">
+    <header>
       <div>
         <div class="logo">Olly — Report Deployer</div>
-        <h1>Paste HTML.<br><span>Get a URL.</span></h1>
-        <p class="tagline">Each report gets a unique UUID and is instantly accessible.</p>
+        <h1>Reports <span>Dashboard</span></h1>
+        <p class="tagline">Manage and trigger online reputation reports.</p>
       </div>
-      <a href="/__ADMIN_PATH__/logout" style="flex-shrink:0;margin-top:4px;font-size:12px;color:var(--text3);text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:6px 12px;transition:color .2s,border-color .2s" onmouseover="this.style.color='var(--text)';this.style.borderColor='rgba(240,239,255,0.2)'" onmouseout="this.style.color='var(--text3)';this.style.borderColor='var(--line)'">Logout</a>
+      <a href="/__ADMIN_PATH__/logout" class="logout-btn">Logout</a>
     </header>
 
-    <!-- Deploy form -->
+    <!-- Google Sheet -->
     <div class="card">
-      <div class="card-title">HTML Content</div>
-      <textarea id="html-input" placeholder="Paste your full HTML here…"></textarea>
-      <button class="deploy-btn" id="deploy-btn" onclick="deploy()">
-        Deploy Report
-      </button>
-    </div>
-
-    <!-- Error -->
-    <div class="card error-card" id="error-card">
-      <div class="card-title" style="color:var(--red)">Error</div>
-      <div class="error-msg" id="error-msg"></div>
-    </div>
-
-    <!-- Result -->
-    <div class="card result-card" id="result-card">
-      <div class="card-title" style="color:var(--teal)">Deployed</div>
-      <div class="url-row">
-        <div class="url-display" id="result-url"></div>
-        <button class="icon-btn" id="copy-btn" onclick="copyUrl()">Copy</button>
-        <a class="open-btn" id="open-btn" href="#" target="_blank">Open →</a>
+      <div class="card-header">
+        <div class="card-title">Report Data</div>
+        <button class="refresh-btn" onclick="reloadSheet()">↻ Refresh</button>
       </div>
-      <div class="uuid-note" id="uuid-note"></div>
+      <div class="sheet-wrap" id="sheet-wrap">
+        <iframe id="sheet-frame"></iframe>
+      </div>
     </div>
 
-    <!-- Pages list -->
+    <!-- Trigger -->
+    <div class="trigger-wrap">
+      <button class="trigger-btn" id="trigger-btn" onclick="triggerReport()">
+        Trigger Report
+      </button>
+      <div class="trigger-status" id="trigger-status"></div>
+    </div>
+
+    <!-- Deployed pages -->
     <div class="card">
-      <div class="card-title">Deployed Pages</div>
+      <div class="card-header" style="margin-bottom:14px">
+        <div class="card-title">Deployed Pages</div>
+      </div>
       <div id="pages-container">
         <div class="pages-empty">Loading…</div>
-      </div>
-    </div>
-
-    <!-- API reference -->
-    <div class="api-hint">
-      <div class="card-title">API Usage</div>
-      <div class="code-block">
-<span class="kw">curl</span> -X POST <span class="str">https://your-domain/api/deploy</span> \<br>
-&nbsp;&nbsp;-H <span class="str">"Content-Type: text/html"</span> \<br>
-&nbsp;&nbsp;--data-binary <span class="str">@report.html</span><br><br>
-<span class="kw"># or with JSON</span><br>
-<span class="kw">curl</span> -X POST <span class="str">https://your-domain/api/deploy</span> \<br>
-&nbsp;&nbsp;-H <span class="str">"Content-Type: application/json"</span> \<br>
-&nbsp;&nbsp;-d <span class="str">'{"html":"&lt;!DOCTYPE html&gt;..."}'</span>
       </div>
     </div>
   </div>
 
   <script>
-    let lastUrl = '';
+    const SHEET_URL = '__SHEET_EMBED_URL__';
 
-    async function deploy() {
-      const html = document.getElementById('html-input').value.trim();
-      const btn = document.getElementById('deploy-btn');
-      const errorCard = document.getElementById('error-card');
-      const resultCard = document.getElementById('result-card');
+    function buildSheetSrc() {
+      if (!SHEET_URL) return '';
+      return SHEET_URL + (SHEET_URL.includes('?') ? '&' : '?') + 't=' + Date.now();
+    }
 
-      errorCard.classList.remove('show');
-      resultCard.classList.remove('show');
+    function reloadSheet() {
+      const src = buildSheetSrc();
+      const wrap = document.getElementById('sheet-wrap');
+      if (!src) {
+        wrap.innerHTML = '<div class="no-sheet">No GOOGLE_SHEET_URL configured.<br>Add it to your environment variables.</div>';
+        return;
+      }
+      document.getElementById('sheet-frame').src = src;
+    }
 
-      if (!html) { showError('Paste some HTML content first.'); return; }
-
+    async function triggerReport() {
+      const btn = document.getElementById('trigger-btn');
+      const status = document.getElementById('trigger-status');
+      status.className = 'trigger-status';
       btn.disabled = true;
-      btn.innerHTML = '<div class="spinner"></div>Deploying…';
-
+      btn.innerHTML = '<div class="spinner"></div>Triggering…';
       try {
-        const res = await fetch('/api/deploy', {
+        const res = await fetch('https://askolly.app.n8n.cloud/webhook/onlinereputation-report-trigger', {
           method: 'POST',
-          headers: { 'Content-Type': 'text/html' },
-          body: html,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ start: 'true' }),
         });
-        const data = await res.json();
-        if (!res.ok) { showError(data.error || 'Deployment failed.'); return; }
-
-        lastUrl = data.url;
-        document.getElementById('result-url').textContent = data.url;
-        document.getElementById('open-btn').href = data.url;
-        document.getElementById('uuid-note').textContent = `UUID: ${data.uuid}`;
-        resultCard.classList.add('show');
-        loadPages();
-      } catch {
-        showError('Network error — is the server running?');
+        if (res.ok) {
+          status.textContent = 'Report triggered successfully!';
+          status.className = 'trigger-status success';
+        } else {
+          status.textContent = `Trigger failed: HTTP ${res.status}`;
+          status.className = 'trigger-status error';
+        }
+      } catch (err) {
+        status.textContent = 'Network error — could not reach the trigger endpoint.';
+        status.className = 'trigger-status error';
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Deploy Report';
+        btn.textContent = 'Trigger Report';
+        setTimeout(() => { status.className = 'trigger-status'; }, 6000);
       }
-    }
-
-    function showError(msg) {
-      document.getElementById('error-msg').textContent = msg;
-      document.getElementById('error-card').classList.add('show');
-    }
-
-    function copyUrl() {
-      if (!lastUrl) return;
-      navigator.clipboard.writeText(lastUrl).then(() => {
-        const btn = document.getElementById('copy-btn');
-        btn.textContent = 'Copied!';
-        setTimeout(() => btn.textContent = 'Copy', 2000);
-      });
     }
 
     async function deletePage(uuid, brandName) {
@@ -229,11 +186,11 @@
           return;
         }
         const items = [...data.pages].sort((a, b) => {
-            if (!a.deployed_at && !b.deployed_at) return 0;
-            if (!a.deployed_at) return 1;
-            if (!b.deployed_at) return -1;
-            return new Date(b.deployed_at) - new Date(a.deployed_at);
-          }).slice(0, 50).map(p => {
+          if (!a.deployed_at && !b.deployed_at) return 0;
+          if (!a.deployed_at) return 1;
+          if (!b.deployed_at) return -1;
+          return new Date(b.deployed_at) - new Date(a.deployed_at);
+        }).slice(0, 50).map(p => {
           const brand = p.brand_name || 'Unknown';
           const safeBrand = brand.replace(/"/g, '&quot;');
           return `
@@ -254,6 +211,7 @@
       }
     }
 
+    reloadSheet();
     loadPages();
   </script>
 </body>
