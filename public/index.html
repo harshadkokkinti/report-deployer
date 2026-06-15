@@ -104,7 +104,7 @@
         <h1>Paste HTML.<br><span>Get a URL.</span></h1>
         <p class="tagline">Each report gets a unique UUID and is instantly accessible.</p>
       </div>
-      <a href="/admin/logout" style="flex-shrink:0;margin-top:4px;font-size:12px;color:var(--text3);text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:6px 12px;transition:color .2s,border-color .2s" onmouseover="this.style.color='var(--text)';this.style.borderColor='rgba(240,239,255,0.2)'" onmouseout="this.style.color='var(--text3)';this.style.borderColor='var(--line)'">Logout</a>
+      <a href="/__ADMIN_PATH__/logout" style="flex-shrink:0;margin-top:4px;font-size:12px;color:var(--text3);text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:6px 12px;transition:color .2s,border-color .2s" onmouseover="this.style.color='var(--text)';this.style.borderColor='rgba(240,239,255,0.2)'" onmouseout="this.style.color='var(--text3)';this.style.borderColor='var(--line)'">Logout</a>
     </header>
 
     <!-- Deploy form -->
@@ -228,7 +228,12 @@
           container.innerHTML = '<div class="pages-empty">No pages deployed yet.</div>';
           return;
         }
-        const items = [...data.pages].reverse().slice(0, 50).map(p => {
+        const items = [...data.pages].sort((a, b) => {
+            if (!a.deployed_at && !b.deployed_at) return 0;
+            if (!a.deployed_at) return 1;
+            if (!b.deployed_at) return -1;
+            return new Date(b.deployed_at) - new Date(a.deployed_at);
+          }).slice(0, 50).map(p => {
           const brand = p.brand_name || 'Unknown';
           const safeBrand = brand.replace(/"/g, '&quot;');
           return `

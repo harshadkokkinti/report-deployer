@@ -144,15 +144,17 @@ var dc = d.dynamic_copy;
     .food-complaints{display:flex;flex-direction:column;gap:7px}
     .food-complaint{font-size:13px;color:var(--text2);padding:9px 14px;background:var(--bg2);border-radius:8px;line-height:1.55}
     .insight-cards{display:flex;flex-direction:column;gap:20px}
-    .insight-card{background:var(--bg1);border:1px solid var(--line);border-radius:20px;padding:32px;display:grid;grid-template-columns:1fr 120px;gap:28px;align-items:start}
+    .insight-card{background:var(--bg1);border:1px solid var(--line);border-radius:20px;padding:32px;display:grid;grid-template-columns:1fr 120px;gap:28px;align-items:start;position:relative;overflow:hidden}
     .ic-num{font-size:10px;letter-spacing:1.8px;font-weight:600;text-transform:uppercase;margin-bottom:12px}
     .insight-card h3{font-family:var(--serif);font-size:24px;font-weight:400;color:var(--text);line-height:1.22;margin-bottom:14px;letter-spacing:-.1px}
-    .insight-card p{font-size:14px;color:var(--text2);line-height:1.75}
+    .ic-evidence{margin-top:16px;padding:14px 18px;background:var(--bg2);border-left:3px solid var(--amber);border-radius:0 10px 10px 0}
+    .ic-evidence-label{font-size:10px;color:var(--amber);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+    .ic-evidence-quote{font-size:13px;color:var(--text2);font-style:italic;line-height:1.6}
     .ic-tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:18px}
     .ic-tag{padding:4px 11px;border-radius:100px;font-size:11px;font-weight:500;background:var(--bg2);border:1px solid var(--line);color:var(--text3)}
     .ic-big{text-align:right}
     .ic-big-val{font-family:var(--serif);font-size:54px;line-height:1;letter-spacing:-2px}
-    .ic-big-label{font-size:11px;color:var(--text3);margin-top:6px;line-height:1.4}
+    .ic-big-label{font-size:11px;color:var(--text3);margin-top:6px;line-height:1.4;text-align:right}
     .reviews-grid{display:flex;flex-direction:column;gap:14px}
     .review-card{background:var(--bg1);border:1px solid var(--line);border-radius:16px;padding:26px}
     .rc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
@@ -461,11 +463,14 @@ var dc = d.dynamic_copy;
       <% d.key_findings.filter(function(f){ return f != null; }).forEach(function(f) {
         var sc = severityColor(f.severity);
       %>
-      <div class="insight-card reveal" style="border-color:<%= sc %>20">
+      <div class="insight-card reveal" style="border-color:<%= sc %>30">
         <div>
           <div class="ic-num" style="color:<%= sc %>">Finding <%= f.number %></div>
           <h3><%= f.title %></h3>
-          <p><%= f.body %></p>
+          <div class="ic-evidence">
+            <div class="ic-evidence-label">From the review</div>
+            <div class="ic-evidence-quote">&ldquo;<%= f.body %>&rdquo;</div>
+          </div>
           <div class="ic-tags">
             <% f.tags.forEach(function(tag) { %>
             <span class="ic-tag"><%= tag %></span>

@@ -10,6 +10,10 @@ const crypto = require('crypto');
 
 const app = express();
 
+// Admin path — set ADMIN_PATH in .env to something hard to guess
+const ADMIN_PATH = (process.env.ADMIN_PATH || 'admin').replace(/^\/|\/$/g, '');
+const A = '/' + ADMIN_PATH; // shorthand helper
+
 const templatePath = path.join(__dirname, '../views/report.ejs');
 let reportTemplate = null;
 try {
@@ -17,6 +21,16 @@ try {
 } catch (e) {
   console.warn('EJS template not found at', templatePath);
 }
+
+function loadHtml(filePath) {
+  try {
+    return fs.readFileSync(filePath, 'utf-8').replace(/__ADMIN_PATH__/g, ADMIN_PATH);
+  } catch (e) {
+    return '';
+  }
+}
+const loginHtml = loadHtml(path.join(__dirname, '../views/login.html'));
+const dashHtml  = loadHtml(path.join(__dirname, '../public/index.html'));
 
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
@@ -43,7 +57,7 @@ function requireAdmin(req, res, next) {
     return res.status(500).send('ADMIN_USER and ADMIN_PASS env vars are not set');
   }
   if (parseCookies(req).admin_token === sessionToken()) return next();
-  res.redirect('/admin/login');
+  res.redirect(A + '/login');
 }
 
 // ── Manifest helpers ──────────────────────────────────────────────────────────
@@ -75,30 +89,32 @@ function extractBrandName(html) {
 }
 
 // ── Admin login/logout ────────────────────────────────────────────────────────
-app.get('/admin/login', (req, res) => {
+app.get(A + '/login', (req, res) => {
   if (process.env.ADMIN_USER && parseCookies(req).admin_token === sessionToken()) {
-    return res.redirect('/admin');
+    return res.redirect(A);
   }
-  res.sendFile(path.join(__dirname, '../views/login.html'));
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.send(loginHtml);
 });
 
-app.post('/admin/login', (req, res) => {
+app.post(A + '/login', (req, res) => {
   const { username, password } = req.body || {};
   if (username === process.env.ADMIN_USER && password === process.env.ADMIN_PASS) {
     res.setHeader('Set-Cookie', `admin_token=${sessionToken()}; Path=/; HttpOnly; SameSite=Strict; Max-Age=86400`);
-    return res.redirect('/admin');
+    return res.redirect(A);
   }
-  res.redirect('/admin/login?error=1');
+  res.redirect(A + '/login?error=1');
 });
 
-app.get('/admin/logout', (req, res) => {
+app.get(A + '/logout', (req, res) => {
   res.setHeader('Set-Cookie', 'admin_token=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0');
-  res.redirect('/admin/login');
+  res.redirect(A + '/login');
 });
 
-app.get('/', (req, res) => res.redirect(301, '/admin'));
-app.get('/admin', requireAdmin, (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
+app.get('/', (req, res) => res.status(404).send('<h1>404</h1>'));
+app.get(A, requireAdmin, (req, res) => {
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.send(dashHtml);
 });
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
