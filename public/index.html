@@ -62,6 +62,17 @@
     .trigger-status.error { display: block; background: var(--red-bg); border: 1px solid var(--red-border); color: var(--red); }
     .pages-empty { font-size: 13px; color: var(--text3); text-align: center; padding: 24px 0; }
     .pages-list { display: flex; flex-direction: column; gap: 8px; }
+    .pagination { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; }
+    .pagination-info { font-size: 12px; color: var(--text3); }
+    .pagination-controls { display: flex; align-items: center; gap: 8px; }
+    .page-btn {
+      font-size: 12px; color: var(--text2); background: transparent; border: 1px solid var(--line);
+      border-radius: 8px; padding: 5px 12px; cursor: pointer; font-family: var(--sans);
+      transition: color .2s, border-color .2s;
+    }
+    .page-btn:hover:not(:disabled) { color: var(--text); border-color: rgba(240,239,255,0.2); }
+    .page-btn:disabled { opacity: .35; cursor: not-allowed; }
+    .page-indicator { font-size: 12px; color: var(--text3); min-width: 60px; text-align: center; }
     .page-row {
       display: flex; align-items: center; justify-content: space-between; gap: 14px;
       padding: 12px 16px; background: var(--bg2); border-radius: 10px; transition: background .15s;
@@ -113,9 +124,18 @@
     <div class="card">
       <div class="card-header" style="margin-bottom:14px">
         <div class="card-title">Deployed Pages</div>
+        <span id="pages-count" style="font-size:12px;color:var(--text3)"></span>
       </div>
       <div id="pages-container">
         <div class="pages-empty">Loading…</div>
+      </div>
+      <div class="pagination" id="pagination" style="display:none">
+        <span class="pagination-info" id="pagination-info"></span>
+        <div class="pagination-controls">
+          <button class="page-btn" id="btn-prev" onclick="changePage(-1)">← Prev</button>
+          <span class="page-indicator" id="page-indicator"></span>
+          <button class="page-btn" id="btn-next" onclick="changePage(1)">Next →</button>
+        </div>
       </div>
     </div>
   </div>
@@ -167,37 +187,60 @@
       }
     }
 
+    let currentPage = 1;
+    const PAGE_SIZE = 10;
+
     async function deletePage(uuid, brandName) {
       if (!confirm(`Delete report for "${brandName}"?`)) return;
       try {
         const res = await fetch(`/api/pages/${uuid}`, { method: 'DELETE' });
-        if (res.ok) loadPages();
+        if (res.ok) loadPages(currentPage);
         else { const d = await res.json(); alert(d.error); }
       } catch { alert('Delete failed'); }
     }
 
-    async function loadPages() {
-      const container = document.getElementById('pages-container');
+    function changePage(delta) {
+      currentPage += delta;
+      loadPages(currentPage);
+    }
+
+    async function loadPages(page = 1) {
+      currentPage = page;
+      const container   = document.getElementById('pages-container');
+      const pagination  = document.getElementById('pagination');
+      const info        = document.getElementById('pagination-info');
+      const indicator   = document.getElementById('page-indicator');
+      const btnPrev     = document.getElementById('btn-prev');
+      const btnNext     = document.getElementById('btn-next');
+      const countLabel  = document.getElementById('pages-count');
+
+      container.innerHTML = '<div class="pages-empty">Loading…</div>';
+      pagination.style.display = 'none';
+
       try {
-        const res = await fetch('/api/pages');
+        const res  = await fetch(`/api/pages?page=${page}&limit=${PAGE_SIZE}`);
         const data = await res.json();
+
+        const total      = data.total      || 0;
+        const totalPages = data.totalPages || 1;
+        const safePage   = data.page       || 1;
+
+        countLabel.textContent = total ? `${total} report${total !== 1 ? 's' : ''}` : '';
+
         if (!data.pages || data.pages.length === 0) {
           container.innerHTML = '<div class="pages-empty">No pages deployed yet.</div>';
           return;
         }
-        const items = [...data.pages].sort((a, b) => {
-          if (!a.deployed_at && !b.deployed_at) return 0;
-          if (!a.deployed_at) return 1;
-          if (!b.deployed_at) return -1;
-          return new Date(b.deployed_at) - new Date(a.deployed_at);
-        }).slice(0, 50).map(p => {
-          const brand = p.brand_name || 'Unknown';
-          const safeBrand = brand.replace(/"/g, '&quot;');
+
+        const items = data.pages.map(p => {
+          const brand     = p.brand_name || 'Unknown';
+          const safeBrand = brand.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+          const ts        = p.deployed_at ? new Date(p.deployed_at).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : '—';
           return `
           <div class="page-row">
             <div class="page-info">
               <div class="page-brand">${brand}</div>
-              <div class="page-uuid">${p.uuid}</div>
+              <div class="page-uuid">${ts} &nbsp;·&nbsp; ${p.uuid}</div>
             </div>
             <div class="page-actions">
               <a class="page-link" href="${p.url}" target="_blank">Open →</a>
@@ -206,6 +249,16 @@
           </div>`;
         }).join('');
         container.innerHTML = `<div class="pages-list">${items}</div>`;
+
+        if (totalPages > 1) {
+          const from = (safePage - 1) * PAGE_SIZE + 1;
+          const to   = Math.min(safePage * PAGE_SIZE, total);
+          info.textContent      = `${from}–${to} of ${total}`;
+          indicator.textContent = `${safePage} / ${totalPages}`;
+          btnPrev.disabled      = safePage <= 1;
+          btnNext.disabled      = safePage >= totalPages;
+          pagination.style.display = 'flex';
+        }
       } catch {
         container.innerHTML = '<div class="pages-empty">Could not load pages.</div>';
       }

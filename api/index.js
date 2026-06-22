@@ -298,6 +298,9 @@ app.post('/api/deploy', async (req, res) => {
 });
 
 app.get('/api/pages', async (req, res) => {
+  const page  = Math.max(1, parseInt(req.query.page  || '1',  10));
+  const limit = Math.min(50, Math.max(1, parseInt(req.query.limit || '10', 10)));
+
   try {
     const { octokit, owner, repo } = getOctokit();
     const [dirResult, manifestResult] = await Promise.allSettled([
@@ -306,7 +309,7 @@ app.get('/api/pages', async (req, res) => {
     ]);
 
     if (dirResult.status === 'rejected' && dirResult.reason?.status === 404) {
-      return res.json({ count: 0, pages: [] });
+      return res.json({ total: 0, page, totalPages: 0, pages: [] });
     }
     if (dirResult.status === 'rejected') throw dirResult.reason;
 
@@ -316,24 +319,9 @@ app.get('/api/pages', async (req, res) => {
     const files = (Array.isArray(dirResult.value.data) ? dirResult.value.data : [])
       .filter(f => f.type === 'file' && f.name.endsWith('.html'));
 
-    // For any page not yet in the manifest, fetch its HTML and extract the brand name
-    const missing = files.map(f => f.name.replace('.html', '')).filter(uuid => !manifest[uuid]);
-    if (missing.length > 0) {
-      await Promise.all(missing.map(async (uuid) => {
-        try {
-          const { data } = await octokit.repos.getContent({ owner, repo, path: `pages/${uuid}.html` });
-          const html = Buffer.from(data.content, 'base64').toString('utf-8');
-          manifest[uuid] = { brand_name: extractBrandName(html), deployed_at: null };
-        } catch (_) {
-          manifest[uuid] = { brand_name: 'Unknown', deployed_at: null };
-        }
-      }));
-      // Persist enriched manifest in the background so next load is instant
-      writeManifest(octokit, owner, repo, manifest, manifestSha).catch(console.error);
-    }
-
+    // Build full page list — never block on HTML fetches
     const base = baseUrl(req);
-    const pages = files.map(f => {
+    const allPages = files.map(f => {
       const uuid = f.name.replace('.html', '');
       const meta = manifest[uuid] || {};
       return {
@@ -345,7 +333,34 @@ app.get('/api/pages', async (req, res) => {
       };
     });
 
-    res.json({ count: pages.length, pages });
+    // Sort newest → oldest (nulls at bottom)
+    allPages.sort((a, b) => {
+      if (!a.deployed_at && !b.deployed_at) return 0;
+      if (!a.deployed_at) return 1;
+      if (!b.deployed_at) return -1;
+      return new Date(b.deployed_at) - new Date(a.deployed_at);
+    });
+
+    const total      = allPages.length;
+    const totalPages = Math.ceil(total / limit) || 1;
+    const safePage   = Math.min(page, totalPages);
+    const slice      = allPages.slice((safePage - 1) * limit, safePage * limit);
+
+    res.json({ total, page: safePage, totalPages, pages: slice });
+
+    // Background: backfill brand names for any entry missing from manifest (fire-and-forget)
+    const missing = files.map(f => f.name.replace('.html', '')).filter(u => !manifest[u]);
+    if (missing.length > 0) {
+      Promise.all(missing.map(async (uuid) => {
+        try {
+          const { data } = await octokit.repos.getContent({ owner, repo, path: `pages/${uuid}.html` });
+          const html = Buffer.from(data.content, 'base64').toString('utf-8');
+          manifest[uuid] = { brand_name: extractBrandName(html), deployed_at: null };
+        } catch (_) {
+          manifest[uuid] = { brand_name: 'Unknown', deployed_at: null };
+        }
+      })).then(() => writeManifest(octokit, owner, repo, manifest, manifestSha)).catch(console.error);
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
