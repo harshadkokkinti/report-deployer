@@ -418,5 +418,13 @@
   "8dffeec1-661f-4e94-a052-702ee09bdb8c": {
     "brand_name": "The Great Greek Mediterranean Grill - Draper, UT",
     "deployed_at": "2026-06-22T14:07:06.787Z"
+  },
+  "13cdeb00-f45e-40bc-8065-2309bb84421e": {
+    "brand_name": "Local Kitchens",
+    "deployed_at": null
+  },
+  "51c6fecb-07df-483d-a423-8e1d0e6b4ac0": {
+    "brand_name": "Blue Hill At Stone Barns",
+    "deployed_at": null
   }
 }
