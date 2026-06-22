@@ -74,10 +74,34 @@ function requireAdmin(req, res, next) {
   res.redirect(A + '/login');
 }
 
+// ── Retry wrapper ─────────────────────────────────────────────────────────────
+async function withRetry(fn, retries = 3, baseDelay = 400) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await fn();
+    } catch (err) {
+      const transient = err.message && (
+        err.message.includes('other side closed') ||
+        err.message.includes('ECONNRESET') ||
+        err.message.includes('ETIMEDOUT') ||
+        err.message.includes('ENOTFOUND') ||
+        err.message.includes('socket hang up')
+      );
+      if (transient && i < retries - 1) {
+        await new Promise(r => setTimeout(r, baseDelay * (i + 1)));
+        continue;
+      }
+      throw err;
+    }
+  }
+}
+
 // ── Manifest helpers ──────────────────────────────────────────────────────────
 async function readManifest(octokit, owner, repo) {
   try {
-    const { data } = await octokit.repos.getContent({ owner, repo, path: 'pages/manifest.json' });
+    const { data } = await withRetry(() =>
+      octokit.repos.getContent({ owner, repo, path: 'pages/manifest.json' })
+    );
     return { content: JSON.parse(Buffer.from(data.content, 'base64').toString('utf-8')), sha: data.sha };
   } catch (err) {
     if (err.status === 404) return { content: {}, sha: null };
@@ -320,7 +344,7 @@ app.get('/api/pages', async (req, res) => {
   try {
     const { octokit, owner, repo } = getOctokit();
     const [dirResult, manifestResult] = await Promise.allSettled([
-      octokit.repos.getContent({ owner, repo, path: 'pages' }),
+      withRetry(() => octokit.repos.getContent({ owner, repo, path: 'pages' })),
       readManifest(octokit, owner, repo),
     ]);
 
@@ -377,6 +401,32 @@ app.get('/api/pages', async (req, res) => {
         }
       })).then(() => writeManifest(octokit, owner, repo, manifest, manifestSha)).catch(console.error);
     }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// All brands from manifest — single GitHub call, used for search + CSV export
+app.get('/api/brands', async (req, res) => {
+  try {
+    const { octokit, owner, repo } = getOctokit();
+    const { content: manifest } = await readManifest(octokit, owner, repo);
+    const base = baseUrl(req);
+    const brands = Object.entries(manifest)
+      .map(([uuid, meta]) => ({
+        uuid,
+        brand_name: meta.brand_name || 'Unknown',
+        deployed_at: meta.deployed_at || null,
+        url: `${base}/complaint-report-${uuid}`,
+      }))
+      .sort((a, b) => {
+        if (!a.deployed_at && !b.deployed_at) return 0;
+        if (!a.deployed_at) return 1;
+        if (!b.deployed_at) return -1;
+        return new Date(b.deployed_at) - new Date(a.deployed_at);
+      });
+    res.json({ count: brands.length, brands });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });

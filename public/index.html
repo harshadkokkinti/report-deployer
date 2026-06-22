@@ -62,6 +62,38 @@
     .trigger-status.error { display: block; background: var(--red-bg); border: 1px solid var(--red-border); color: var(--red); }
     .pages-empty { font-size: 13px; color: var(--text3); text-align: center; padding: 24px 0; }
     .pages-list { display: flex; flex-direction: column; gap: 8px; }
+    .search-row { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; }
+    .search-wrap { position: relative; flex: 1; }
+    .search-input {
+      width: 100%; background: var(--bg2); border: 1px solid var(--line); border-radius: 10px;
+      padding: 9px 36px 9px 14px; font-size: 13px; color: var(--text); font-family: var(--sans);
+      outline: none; transition: border-color .2s;
+    }
+    .search-input::placeholder { color: var(--text3); }
+    .search-input:focus { border-color: rgba(59,123,232,0.5); }
+    .search-clear {
+      position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; color: var(--text3); cursor: pointer; font-size: 16px;
+      line-height: 1; padding: 0; display: none;
+    }
+    .suggestions {
+      position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 50;
+      background: var(--bg1); border: 1px solid var(--line); border-radius: 10px;
+      overflow: hidden; display: none;
+    }
+    .suggestion-item {
+      padding: 9px 14px; font-size: 13px; color: var(--text2); cursor: pointer;
+      transition: background .15s;
+    }
+    .suggestion-item:hover, .suggestion-item.active { background: var(--bg3); color: var(--text); }
+    .suggestion-item mark { background: none; color: var(--blue-light); font-weight: 600; }
+    .export-btn {
+      flex-shrink: 0; font-size: 12px; color: var(--text2); background: transparent;
+      border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; cursor: pointer;
+      font-family: var(--sans); white-space: nowrap; transition: color .2s, border-color .2s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .export-btn:hover { color: var(--text); border-color: rgba(240,239,255,0.2); }
     .pagination { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; }
     .pagination-info { font-size: 12px; color: var(--text3); }
     .pagination-controls { display: flex; align-items: center; gap: 8px; }
@@ -126,6 +158,18 @@
         <div class="card-title">Deployed Pages</div>
         <span id="pages-count" style="font-size:12px;color:var(--text3)"></span>
       </div>
+      <div class="search-row">
+        <div class="search-wrap">
+          <input class="search-input" id="search-input" type="text" placeholder="Search by brand name…" autocomplete="off"
+            oninput="onSearchInput(this.value)" onkeydown="onSearchKey(event)">
+          <button class="search-clear" id="search-clear" onclick="clearSearch()">✕</button>
+          <div class="suggestions" id="suggestions"></div>
+        </div>
+        <button class="export-btn" onclick="exportCsv()">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v7M3.5 5.5l3 3 3-3M1.5 10.5h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Export CSV
+        </button>
+      </div>
       <div id="pages-container">
         <div class="pages-empty">Loading…</div>
       </div>
@@ -142,22 +186,24 @@
 
   <script>
     const SHEET_URL = '__SHEET_EMBED_URL__';
+    const PAGE_SIZE  = 10;
+    let currentPage  = 1;
+    let allBrands    = [];
+    let activeSugIdx = -1;
 
+    // ── Sheet ──────────────────────────────────────────────────────────────────
     function buildSheetSrc() {
       if (!SHEET_URL) return '';
       return SHEET_URL + (SHEET_URL.includes('?') ? '&' : '?') + 't=' + Date.now();
     }
-
     function reloadSheet() {
       const src = buildSheetSrc();
       const wrap = document.getElementById('sheet-wrap');
-      if (!src) {
-        wrap.innerHTML = '<div class="no-sheet">No GOOGLE_SHEET_URL configured.<br>Add it to your environment variables.</div>';
-        return;
-      }
+      if (!src) { wrap.innerHTML = '<div class="no-sheet">No GOOGLE_SHEET_URL configured.<br>Add it to your environment variables.</div>'; return; }
       document.getElementById('sheet-frame').src = src;
     }
 
+    // ── Trigger ────────────────────────────────────────────────────────────────
     async function triggerReport() {
       const btn = document.getElementById('trigger-btn');
       const status = document.getElementById('trigger-status');
@@ -166,78 +212,157 @@
       btn.innerHTML = '<div class="spinner"></div>Triggering…';
       try {
         const res = await fetch('https://askolly.app.n8n.cloud/webhook/onlinereputation-report-trigger', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ start: 'true' }),
         });
-        if (res.ok) {
-          status.textContent = 'Report triggered successfully!';
-          status.className = 'trigger-status success';
-        } else {
-          status.textContent = `Trigger failed: HTTP ${res.status}`;
-          status.className = 'trigger-status error';
-        }
-      } catch (err) {
+        status.textContent = res.ok ? 'Report triggered successfully!' : `Trigger failed: HTTP ${res.status}`;
+        status.className   = 'trigger-status ' + (res.ok ? 'success' : 'error');
+      } catch {
         status.textContent = 'Network error — could not reach the trigger endpoint.';
-        status.className = 'trigger-status error';
+        status.className   = 'trigger-status error';
       } finally {
-        btn.disabled = false;
-        btn.textContent = 'Trigger Report';
+        btn.disabled = false; btn.textContent = 'Trigger Report';
         setTimeout(() => { status.className = 'trigger-status'; }, 6000);
       }
     }
 
-    let currentPage = 1;
-    const PAGE_SIZE = 10;
-
+    // ── Delete ─────────────────────────────────────────────────────────────────
     async function deletePage(uuid, brandName) {
       if (!confirm(`Delete report for "${brandName}"?`)) return;
       try {
         const res = await fetch(`/api/pages/${uuid}`, { method: 'DELETE' });
-        if (res.ok) loadPages(currentPage);
-        else { const d = await res.json(); alert(d.error); }
+        if (res.ok) {
+          allBrands = allBrands.filter(b => b.uuid !== uuid);
+          const q = document.getElementById('search-input').value.trim();
+          q ? renderSearchResults(q) : loadPages(currentPage);
+        } else { const d = await res.json(); alert(d.error); }
       } catch { alert('Delete failed'); }
     }
 
-    function changePage(delta) {
-      currentPage += delta;
-      loadPages(currentPage);
+    // ── Brands cache ───────────────────────────────────────────────────────────
+    async function loadBrands() {
+      try {
+        const res = await fetch('/api/brands');
+        const data = await res.json();
+        allBrands = data.brands || [];
+      } catch {}
     }
+
+    // ── Search helpers ─────────────────────────────────────────────────────────
+    function highlight(text, q) {
+      if (!q) return text;
+      const idx = text.toLowerCase().indexOf(q.toLowerCase());
+      if (idx === -1) return text;
+      return text.slice(0, idx) + '<mark>' + text.slice(idx, idx + q.length) + '</mark>' + text.slice(idx + q.length);
+    }
+
+    function onSearchInput(val) {
+      document.getElementById('search-clear').style.display = val ? 'block' : 'none';
+      activeSugIdx = -1;
+      if (!val.trim()) { hideSuggestions(); loadPages(1); return; }
+      const q = val.toLowerCase();
+      const matches = allBrands.filter(b => b.brand_name.toLowerCase().includes(q)).slice(0, 8);
+      const box = document.getElementById('suggestions');
+      if (!matches.length) { hideSuggestions(); renderSearchResults(val); return; }
+      box.innerHTML = matches.map((b, i) =>
+        `<div class="suggestion-item" data-idx="${i}" onmousedown="selectSuggestion('${b.brand_name.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')">
+          ${highlight(b.brand_name, val)}
+        </div>`
+      ).join('');
+      box.style.display = 'block';
+      renderSearchResults(val);
+    }
+
+    function onSearchKey(e) {
+      const items = document.getElementById('suggestions').querySelectorAll('.suggestion-item');
+      if (!items.length) return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); activeSugIdx = Math.min(activeSugIdx + 1, items.length - 1); updateActiveSug(items); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); activeSugIdx = Math.max(activeSugIdx - 1, 0); updateActiveSug(items); }
+      else if (e.key === 'Enter' && activeSugIdx >= 0) { e.preventDefault(); items[activeSugIdx].dispatchEvent(new MouseEvent('mousedown')); }
+      else if (e.key === 'Escape') clearSearch();
+    }
+
+    function updateActiveSug(items) { items.forEach((el, i) => el.classList.toggle('active', i === activeSugIdx)); }
+
+    function selectSuggestion(brandName) {
+      const input = document.getElementById('search-input');
+      input.value = brandName;
+      document.getElementById('search-clear').style.display = 'block';
+      hideSuggestions();
+      renderSearchResults(brandName);
+    }
+
+    function hideSuggestions() {
+      const box = document.getElementById('suggestions');
+      box.style.display = 'none'; box.innerHTML = ''; activeSugIdx = -1;
+    }
+
+    function clearSearch() {
+      document.getElementById('search-input').value = '';
+      document.getElementById('search-clear').style.display = 'none';
+      hideSuggestions(); loadPages(1);
+    }
+
+    document.addEventListener('click', e => { if (!e.target.closest('.search-wrap')) hideSuggestions(); });
+
+    function renderSearchResults(query) {
+      const q = query.toLowerCase();
+      const matches = allBrands.filter(b => b.brand_name.toLowerCase().includes(q));
+      const container = document.getElementById('pages-container');
+      const countLabel = document.getElementById('pages-count');
+      document.getElementById('pagination').style.display = 'none';
+      countLabel.textContent = matches.length ? `${matches.length} match${matches.length !== 1 ? 'es' : ''}` : '';
+      if (!matches.length) { container.innerHTML = '<div class="pages-empty">No matching reports found.</div>'; return; }
+      container.innerHTML = `<div class="pages-list">${matches.map(p => {
+        const brand = p.brand_name || 'Unknown';
+        const safeBrand = brand.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        const ts = p.deployed_at ? new Date(p.deployed_at).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : '—';
+        return `<div class="page-row">
+          <div class="page-info">
+            <div class="page-brand">${highlight(brand, query)}</div>
+            <div class="page-uuid">${ts} &nbsp;·&nbsp; ${p.uuid}</div>
+          </div>
+          <div class="page-actions">
+            <a class="page-link" href="${p.url}" target="_blank">Open →</a>
+            <button class="page-del" onclick="deletePage('${p.uuid}','${safeBrand}')">Delete</button>
+          </div>
+        </div>`;
+      }).join('')}</div>`;
+    }
+
+    // ── Export CSV ─────────────────────────────────────────────────────────────
+    function exportCsv() {
+      if (!allBrands.length) { alert('No reports to export.'); return; }
+      const rows = [['Brand Name', 'Report URL'], ...allBrands.map(b => [`"${b.brand_name.replace(/"/g, '""')}"`, `"${b.url}"`])];
+      const csv  = rows.map(r => r.join(',')).join('\r\n');
+      const a    = Object.assign(document.createElement('a'), {
+        href: URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' })),
+        download: 'olly-reports.csv',
+      });
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    }
+
+    // ── Paginated list ─────────────────────────────────────────────────────────
+    function changePage(delta) { loadPages(currentPage + delta); }
 
     async function loadPages(page = 1) {
       currentPage = page;
-      const container   = document.getElementById('pages-container');
-      const pagination  = document.getElementById('pagination');
-      const info        = document.getElementById('pagination-info');
-      const indicator   = document.getElementById('page-indicator');
-      const btnPrev     = document.getElementById('btn-prev');
-      const btnNext     = document.getElementById('btn-next');
-      const countLabel  = document.getElementById('pages-count');
-
+      const container  = document.getElementById('pages-container');
+      const pagination = document.getElementById('pagination');
+      const countLabel = document.getElementById('pages-count');
       container.innerHTML = '<div class="pages-empty">Loading…</div>';
       pagination.style.display = 'none';
-
       try {
         const res  = await fetch(`/api/pages?page=${page}&limit=${PAGE_SIZE}`);
         const data = await res.json();
-
-        const total      = data.total      || 0;
-        const totalPages = data.totalPages || 1;
-        const safePage   = data.page       || 1;
-
+        const total = data.total || 0, totalPages = data.totalPages || 1, safePage = data.page || 1;
         countLabel.textContent = total ? `${total} report${total !== 1 ? 's' : ''}` : '';
-
-        if (!data.pages || data.pages.length === 0) {
-          container.innerHTML = '<div class="pages-empty">No pages deployed yet.</div>';
-          return;
-        }
-
-        const items = data.pages.map(p => {
-          const brand     = p.brand_name || 'Unknown';
+        if (!data.pages || !data.pages.length) { container.innerHTML = '<div class="pages-empty">No pages deployed yet.</div>'; return; }
+        container.innerHTML = `<div class="pages-list">${data.pages.map(p => {
+          const brand = p.brand_name || 'Unknown';
           const safeBrand = brand.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-          const ts        = p.deployed_at ? new Date(p.deployed_at).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : '—';
-          return `
-          <div class="page-row">
+          const ts = p.deployed_at ? new Date(p.deployed_at).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : '—';
+          return `<div class="page-row">
             <div class="page-info">
               <div class="page-brand">${brand}</div>
               <div class="page-uuid">${ts} &nbsp;·&nbsp; ${p.uuid}</div>
@@ -247,24 +372,20 @@
               <button class="page-del" onclick="deletePage('${p.uuid}','${safeBrand}')">Delete</button>
             </div>
           </div>`;
-        }).join('');
-        container.innerHTML = `<div class="pages-list">${items}</div>`;
-
+        }).join('')}</div>`;
         if (totalPages > 1) {
-          const from = (safePage - 1) * PAGE_SIZE + 1;
-          const to   = Math.min(safePage * PAGE_SIZE, total);
-          info.textContent      = `${from}–${to} of ${total}`;
-          indicator.textContent = `${safePage} / ${totalPages}`;
-          btnPrev.disabled      = safePage <= 1;
-          btnNext.disabled      = safePage >= totalPages;
+          const from = (safePage - 1) * PAGE_SIZE + 1, to = Math.min(safePage * PAGE_SIZE, total);
+          document.getElementById('pagination-info').textContent = `${from}–${to} of ${total}`;
+          document.getElementById('page-indicator').textContent  = `${safePage} / ${totalPages}`;
+          document.getElementById('btn-prev').disabled = safePage <= 1;
+          document.getElementById('btn-next').disabled = safePage >= totalPages;
           pagination.style.display = 'flex';
         }
-      } catch {
-        container.innerHTML = '<div class="pages-empty">Could not load pages.</div>';
-      }
+      } catch { container.innerHTML = '<div class="pages-empty">Could not load pages.</div>'; }
     }
 
     reloadSheet();
+    loadBrands();
     loadPages();
   </script>
 </body>
