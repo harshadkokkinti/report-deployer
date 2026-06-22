@@ -206,6 +206,16 @@ app.get('/brand-images/:filename', async (req, res) => {
   }
 });
 
+const GA_ID = process.env.GA_MEASUREMENT_ID || 'G-QTPDLYM4RW';
+const GA_SNIPPET = `<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '${GA_ID}');
+</script>`;
+
 app.get('/complaint-report-:uuid', async (req, res) => {
   const { uuid } = req.params;
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(uuid)) {
