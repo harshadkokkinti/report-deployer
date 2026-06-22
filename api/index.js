@@ -31,8 +31,20 @@ function loadHtml(filePath) {
     return '';
   }
 }
-const loginHtml = loadHtml(path.join(__dirname, '../views/login.html'));
-const dashHtml  = loadHtml(path.join(__dirname, '../public/index.html'));
+const loginHtml   = loadHtml(path.join(__dirname, '../views/login.html'));
+const dashHtml    = loadHtml(path.join(__dirname, '../public/index.html'));
+const GA_ID = process.env.GA_MEASUREMENT_ID || 'G-QTPDLYM4RW';
+const GA_SNIPPET = `<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '${GA_ID}');
+</script>`;
+
+const notFoundHtml = loadHtml(path.join(__dirname, '../views/404.html'))
+  .replace('__GA_SNIPPET__', GA_SNIPPET);
 
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
@@ -146,7 +158,9 @@ app.get(A + '/logout', (req, res) => {
   res.redirect(A + '/login');
 });
 
-app.get('/', (req, res) => res.status(404).send('<h1>404</h1>'));
+app.get('/', (req, res) => {
+  res.status(404).setHeader('Content-Type', 'text/html; charset=utf-8').send(notFoundHtml);
+});
 app.get(A, requireAdmin, (req, res) => {
   const rawSheet = process.env.GOOGLE_SHEET_URL || '';
   const sheetEmbed = rawSheet
@@ -206,20 +220,10 @@ app.get('/brand-images/:filename', async (req, res) => {
   }
 });
 
-const GA_ID = process.env.GA_MEASUREMENT_ID || 'G-QTPDLYM4RW';
-const GA_SNIPPET = `<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', '${GA_ID}');
-</script>`;
-
 app.get('/complaint-report-:uuid', async (req, res) => {
   const { uuid } = req.params;
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(uuid)) {
-    return res.status(400).send('<h1>400 — Invalid ID</h1>');
+    return res.status(400).setHeader('Content-Type', 'text/html; charset=utf-8').send(notFoundHtml);
   }
   try {
     const { octokit, owner, repo } = getOctokit();
@@ -228,7 +232,9 @@ app.get('/complaint-report-:uuid', async (req, res) => {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(html);
   } catch (err) {
-    if (err.status === 404) return res.status(404).send('<h1>404 — Page not found</h1>');
+    if (err.status === 404) {
+      return res.status(404).setHeader('Content-Type', 'text/html; charset=utf-8').send(notFoundHtml);
+    }
     console.error(err);
     res.status(500).send('<h1>500 — Server error</h1>');
   }
@@ -402,6 +408,11 @@ app.delete('/api/pages/:uuid', async (req, res) => {
     console.error(err);
     res.status(500).json({ error: err.message });
   }
+});
+
+// ── 404 catch-all ─────────────────────────────────────────────────────────────
+app.use((req, res) => {
+  res.status(404).setHeader('Content-Type', 'text/html; charset=utf-8').send(notFoundHtml);
 });
 
 const PORT = process.env.PORT || 3000;

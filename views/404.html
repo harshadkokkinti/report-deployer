@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 — Page Not Found · Olly</title>
+  __GA_SNIPPET__
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root{--bg:#08091A;--bg1:#0D0F24;--line:rgba(240,239,255,0.07);--text:#F0EFFF;--text2:#C2C2D8;--text3:#8A8AA6;--sans:'DM Sans',sans-serif}
+    body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;overflow:hidden;position:relative}
+
+    /* glow */
+    .glow{position:fixed;top:50%;left:50%;transform:translate(-50%,-60%);width:700px;height:500px;background:radial-gradient(ellipse at 50% 50%,rgba(59,123,232,0.12) 0%,rgba(139,63,217,0.08) 40%,transparent 70%);pointer-events:none}
+
+    .content{position:relative;z-index:1;text-align:center;max-width:480px}
+
+    /* big number */
+    .num{font-size:clamp(120px,25vw,200px);font-weight:800;line-height:1;letter-spacing:-8px;background:linear-gradient(135deg,rgba(59,123,232,0.35),rgba(139,63,217,0.35));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;user-select:none;margin-bottom:8px}
+
+    .divider{width:40px;height:2px;background:linear-gradient(90deg,var(--line),rgba(59,123,232,0.5),var(--line));margin:0 auto 28px;border-radius:2px}
+
+    h1{font-size:22px;font-weight:600;margin-bottom:12px}
+    p{font-size:15px;color:var(--text3);line-height:1.65;margin-bottom:40px;font-weight:300}
+
+    .actions{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
+    .btn-primary{background:linear-gradient(135deg,#3B7BE8,#8B3FD9);color:#fff;padding:12px 28px;border-radius:100px;font-size:14px;font-weight:600;text-decoration:none;transition:opacity .2s,transform .15s;display:inline-flex;align-items:center;gap:8px}
+    .btn-primary:hover{opacity:.88;transform:translateY(-2px)}
+    .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--text3);padding:12px 24px;border-radius:100px;font-size:14px;text-decoration:none;transition:border-color .2s,color .2s}
+    .btn-ghost:hover{border-color:rgba(240,239,255,0.2);color:var(--text)}
+
+    /* logo at bottom */
+    .bottom-logo{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:0;text-decoration:none;opacity:.4;transition:opacity .2s}
+    .bottom-logo:hover{opacity:.7}
+    .bottom-logo img{height:20px;width:auto}
+
+    @media(max-width:480px){
+      .num{letter-spacing:-4px}
+      .actions{flex-direction:column;width:100%}
+      .btn-primary,.btn-ghost{width:100%;justify-content:center}
+    }
+  </style>
+</head>
+<body>
+  <div class="glow"></div>
+
+  <div class="content">
+    <div class="num">404</div>
+    <div class="divider"></div>
+    <h1>Page not found</h1>
+    <p>The report link you followed may have expired, been deleted, or never existed. Double-check the URL and try again.</p>
+    <div class="actions">
+      <a href="https://askolly.io" class="btn-primary">
+        Go to Olly
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5 11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="javascript:history.back()" class="btn-ghost">← Go back</a>
+    </div>
+  </div>
+
+  <a href="https://askolly.io" class="bottom-logo">
+    <img src="/logo.png" alt="Olly">
+  </a>
+</body>
+</html>
