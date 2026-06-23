@@ -244,6 +244,15 @@ app.get('/brand-images/:filename', async (req, res) => {
   }
 });
 
+const BRAND_IMAGE_PATCH = `<script>
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('img.brand-photo').forEach(function(img){
+    img.onerror=function(){this.onerror=null;this.src='/Google.png';};
+    if(img.complete&&img.naturalWidth===0)img.src=img.src;
+  });
+});
+</script>`;
+
 app.get('/complaint-report-:uuid', async (req, res) => {
   const { uuid } = req.params;
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(uuid)) {
@@ -252,7 +261,8 @@ app.get('/complaint-report-:uuid', async (req, res) => {
   try {
     const { octokit, owner, repo } = getOctokit();
     const { data } = await octokit.repos.getContent({ owner, repo, path: `pages/${uuid}.html` });
-    const html = Buffer.from(data.content, 'base64').toString('utf-8');
+    let html = Buffer.from(data.content, 'base64').toString('utf-8');
+    html = html.replace(/<\/body>/i, BRAND_IMAGE_PATCH + '\n</body>');
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(html);
   } catch (err) {
