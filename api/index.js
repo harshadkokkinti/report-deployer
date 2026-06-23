@@ -247,6 +247,7 @@ app.get('/brand-images/:filename', async (req, res) => {
 const BRAND_IMAGE_PATCH = `<script>
 document.addEventListener('DOMContentLoaded',function(){
   document.querySelectorAll('img.brand-photo').forEach(function(img){
+    if(!img.src||img.src.endsWith('/logo.png'))img.src='/Google.png';
     img.onerror=function(){this.onerror=null;this.src='/Google.png';};
     if(img.complete&&img.naturalWidth===0)img.src=img.src;
   });
