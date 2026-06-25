@@ -562,5 +562,9 @@
   "67e07b9b-9da7-4126-b142-c47eb66904fd": {
     "brand_name": "Mastro's Steakhouse",
     "deployed_at": "2026-06-25T14:20:02.773Z"
+  },
+  "d63db0f7-42d1-49d4-b2c3-98b30ab42c1f": {
+    "brand_name": "Teddy's Bigger Burgers",
+    "deployed_at": "2026-06-25T14:20:32.238Z"
   }
 }
