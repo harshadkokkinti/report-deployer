@@ -2182,5 +2182,41 @@
   "d71420fd-d8f4-4c19-9a3e-ce20742da0ed": {
     "brand_name": "Wildwuchs Brauwerk",
     "deployed_at": "2026-07-08T19:14:08.081Z"
+  },
+  "0d5c4449-d7b6-44e7-805f-720b6c9236ac": {
+    "brand_name": "Chicken Maisn",
+    "deployed_at": null
+  },
+  "8c6b2c2f-d881-44e7-94e9-9911aa3e3ad8": {
+    "brand_name": "Zaxby&#39;s",
+    "deployed_at": null
+  },
+  "24478000-bca4-4b34-af83-39cef2650af6": {
+    "brand_name": "Dillas Quesadillas",
+    "deployed_at": null
+  },
+  "d6bce608-6f2b-4e83-a1be-7e056aadcff0": {
+    "brand_name": "Hairdressing Mr. Berber",
+    "deployed_at": null
+  },
+  "dbe98291-7a0e-4719-8d84-ea7903779f2e": {
+    "brand_name": "Schenke Niederdorla Dorfkrug",
+    "deployed_at": null
+  },
+  "bbb90092-f63f-4057-9e55-16f8fc3ae37d": {
+    "brand_name": "Dillas Quesadillas",
+    "deployed_at": null
+  },
+  "fdf6eb81-5b5e-435a-ae65-d057290e1654": {
+    "brand_name": "Sushi Masa Metairie",
+    "deployed_at": null
+  },
+  "b7caa84d-c39a-49d8-9667-d32750b4692d": {
+    "brand_name": "Hof&#39;s Restaurant",
+    "deployed_at": null
+  },
+  "ce4bf21e-a3ed-4968-8355-6d0e8ed7a4ca": {
+    "brand_name": "Fat City Fireworks",
+    "deployed_at": null
   }
 }
