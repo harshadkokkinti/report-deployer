@@ -874,5 +874,9 @@
   "aff1dfd9-795c-4f8c-9053-bd505a14103c": {
     "brand_name": "Ciao! Pizza and Pasta",
     "deployed_at": "2026-07-08T10:11:58.886Z"
+  },
+  "2225da1c-d49f-4464-ac61-0ac61cec7f2b": {
+    "brand_name": "Burrito Social",
+    "deployed_at": "2026-07-08T10:12:00.994Z"
   }
 }
