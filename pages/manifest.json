@@ -830,5 +830,9 @@
   "adaece05-4bc0-4a3c-a95e-ee8204ac23eb": {
     "brand_name": "Blue Pan Pizza",
     "deployed_at": "2026-07-08T10:01:28.397Z"
+  },
+  "1b0fb23b-e4f6-416c-9eb0-cbc478031d3e": {
+    "brand_name": "Boathouse on the Bay",
+    "deployed_at": "2026-07-08T10:01:59.192Z"
   }
 }
