@@ -1582,5 +1582,9 @@
   "4b7c3e78-e36b-4e26-8ec3-c0b91f0b1539": {
     "brand_name": "Panera Bread",
     "deployed_at": "2026-07-08T13:55:59.895Z"
+  },
+  "40b10ef0-0e73-4515-ad2c-f650830b4cac": {
+    "brand_name": "Ny212 Gulberg",
+    "deployed_at": "2026-07-08T13:56:02.821Z"
   }
 }
