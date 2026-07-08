@@ -2434,5 +2434,9 @@
   "d3dc9065-0ff4-48f1-a1f1-a2185505a6e7": {
     "brand_name": "Pizza Inn",
     "deployed_at": "2026-07-08T21:15:03.310Z"
+  },
+  "e4477fb8-e2ac-4ac5-b13b-f6d398867a9d": {
+    "brand_name": "Antoine's Restaurant",
+    "deployed_at": "2026-07-08T21:15:06.833Z"
   }
 }
