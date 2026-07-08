@@ -1710,5 +1710,9 @@
   "8e855dc2-86f1-48cb-a30d-b2dc529a331d": {
     "brand_name": "Simms Steakhouse",
     "deployed_at": "2026-07-08T14:22:46.836Z"
+  },
+  "6cccd5d5-b1e9-45d6-afbb-5151c8dea2ab": {
+    "brand_name": "Sea Level Oyster Bar",
+    "deployed_at": "2026-07-08T14:22:57.655Z"
   }
 }
