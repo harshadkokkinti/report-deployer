@@ -1274,5 +1274,9 @@
   "d83bd120-0456-48f7-a1e7-0b9fd60fe26f": {
     "brand_name": "Townhouse",
     "deployed_at": "2026-07-08T12:45:39.510Z"
+  },
+  "8d84cde6-d48c-480f-9fd5-84c1b88fbe3e": {
+    "brand_name": "Fresh Burger",
+    "deployed_at": "2026-07-08T12:45:43.114Z"
   }
 }
