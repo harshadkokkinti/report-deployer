@@ -1350,5 +1350,9 @@
   "41d70bd2-ce0b-4735-b717-a06f35141ea3": {
     "brand_name": "La Calle",
     "deployed_at": "2026-07-08T13:25:37.836Z"
+  },
+  "66fd7583-ee4d-4685-9b9b-cbbbbbbbbd15": {
+    "brand_name": "Le Bab",
+    "deployed_at": "2026-07-08T13:25:40.438Z"
   }
 }
