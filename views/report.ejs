@@ -274,12 +274,17 @@ var dc = d.dynamic_copy;
     .site-header-inner{max-width:1000px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
     .header-logo{display:flex;align-items:center;text-decoration:none;background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.1);border-radius:100px;padding:7px 16px}
     .header-logo img{height:30px;width:auto;display:block;object-fit:contain}
+    .header-actions{display:flex;align-items:center;gap:8px}
     .header-cta{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.1);border-radius:100px;padding:8px 18px;text-decoration:none;color:rgba(255,255,255,0.85);font-size:14px;font-weight:500;font-family:var(--sans);white-space:nowrap;transition:background .2s,color .2s}
     .header-cta:hover{background:rgba(255,255,255,0.14);color:#fff}
     .header-cta svg{flex-shrink:0}
+    button.header-cta{appearance:none;-webkit-appearance:none;border-radius:100px;cursor:pointer}
+    .header-cta.copied{background:rgba(15,168,138,0.18);border-color:rgba(15,168,138,0.35);color:#3DBE72}
     @media(max-width:480px){
       .site-header-inner{padding:10px 16px}
+      .header-actions{gap:6px}
       .header-cta{font-size:13px;padding:7px 14px}
+      .header-cta svg{display:none}
     }
   </style>
 </head>
@@ -290,10 +295,16 @@ var dc = d.dynamic_copy;
     <a href="https://askolly.io" class="header-logo">
       <img src="/logo.png" alt="Olly">
     </a>
-    <a href="https://askolly.io/#download" class="header-cta" target="_blank">
-      Download Olly App
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5 11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </a>
+    <div class="header-actions">
+      <button type="button" class="header-cta" id="share-report-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l1.93-1.93a5 5 0 0 0-7.07-7.07L10.5 5.43"/><path d="M14 11a5 5 0 0 0-7.07 0l-1.93 1.93a5 5 0 0 0 7.07 7.07L13.5 18.57"/></svg>
+        <span class="share-btn-label">Share report</span>
+      </button>
+      <a href="https://calendly.com/nick-askolly/30min" class="header-cta" id="navbar-book-demo-btn" target="_blank" rel="noopener">
+        Book demo
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5 11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
   </div>
 </header>
 
@@ -532,10 +543,8 @@ var dc = d.dynamic_copy;
       <h2>Put Olly to work,<br><em>and boost your online reputation.</em></h2>
       <p>Olly brings reviews from all platforms, auto-replies, and pinpoints what needs attention. <strong>You run <%= d.brand_name %>. Olly handles the reputation.</strong></p>
       <div class="cta-actions">
-        <a href="https://askolly.io/#download" class="btn-main">Download Olly and get started for FREE &rarr;</a>
-        <a href="https://askolly.io" class="btn-outline">Book a demo</a>
+        <a href="https://calendly.com/nick-askolly/30min" class="btn-main" id="footer-book-demo-btn" target="_blank" rel="noopener">Book a demo</a>
       </div>
-      <div class="cta-fine">No credit card. No setup fees. Connect in under 2 minutes.</div>
     </div>
   </div>
 </section>
@@ -551,6 +560,38 @@ var dc = d.dynamic_copy;
     if(x.isIntersecting){const f=x.target.querySelector('.cbar-fill');if(f)setTimeout(()=>{f.style.width=f.dataset.width},100);barObs.unobserve(x.target);}
   }),{threshold:.3});
   document.querySelectorAll('.cbar-row').forEach(el=>barObs.observe(el));
+
+  const shareBtn = document.getElementById('share-report-btn');
+  if (shareBtn) {
+    const shareLabel = shareBtn.querySelector('.share-btn-label');
+    const defaultLabel = shareLabel ? shareLabel.textContent : 'Share report';
+    shareBtn.addEventListener('click', () => {
+      const match = window.location.pathname.match(/complaint-report-([0-9a-fA-F-]+)/);
+      const uid = match ? match[1] : '';
+      const shareUrl = `https://reports.askolly.io/complaint-report-${uid}/?utm_source=email&utm_medium=email&utm_campaign=share`;
+      const showCopied = () => {
+        if (shareLabel) shareLabel.textContent = 'Link copied';
+        shareBtn.classList.add('copied');
+        setTimeout(() => {
+          if (shareLabel) shareLabel.textContent = defaultLabel;
+          shareBtn.classList.remove('copied');
+        }, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(shareUrl).then(showCopied).catch(showCopied);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = shareUrl;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta);
+        showCopied();
+      }
+    });
+  }
 </script>
 
 <!-- FOOTER -->
