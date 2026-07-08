@@ -1074,5 +1074,9 @@
   "aa9a8ad2-5b8a-45b5-92d4-c191691e1085": {
     "brand_name": "Unknown",
     "deployed_at": null
+  },
+  "81eacc41-301b-456d-861c-4d31d1f85adb": {
+    "brand_name": "Via Fabio Filzi, 2c",
+    "deployed_at": "2026-07-08T11:58:24.067Z"
   }
 }
