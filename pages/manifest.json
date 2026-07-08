@@ -1202,5 +1202,9 @@
   "91005c5b-48cb-4c17-af1e-8a38a9296f5a": {
     "brand_name": "Heidi's Brooklyn Deli",
     "deployed_at": "2026-07-08T12:43:21.883Z"
+  },
+  "19748e1e-09f3-418e-8b63-d3d709d40c7f": {
+    "brand_name": "Fred's Market Restaurant",
+    "deployed_at": "2026-07-08T12:43:24.500Z"
   }
 }
