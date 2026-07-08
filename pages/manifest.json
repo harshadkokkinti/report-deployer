@@ -2290,5 +2290,9 @@
   "1d32f68d-e35e-44d4-a02f-c55594dd90cb": {
     "brand_name": "Ada's Cafe",
     "deployed_at": "2026-07-08T20:49:02.351Z"
+  },
+  "bfd8018b-609f-4a5a-b60d-265f2dda18d6": {
+    "brand_name": "Buck's Restaurant",
+    "deployed_at": "2026-07-08T20:49:04.957Z"
   }
 }
