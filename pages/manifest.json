@@ -1606,5 +1606,9 @@
   "96901842-cf7d-4438-9aa9-be25e2c3a7c4": {
     "brand_name": "River City Roll",
     "deployed_at": "2026-07-08T14:06:01.359Z"
+  },
+  "8032eb4b-4c24-4c91-a98e-81b8bb777ccd": {
+    "brand_name": "RedFarm",
+    "deployed_at": "2026-07-08T14:06:05.836Z"
   }
 }
