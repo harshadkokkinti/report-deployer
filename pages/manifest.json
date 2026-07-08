@@ -770,5 +770,13 @@
   "a34a65e8-7c06-4bb5-88f3-e60ae09830b3": {
     "brand_name": "Restaurant Pssst Bandido - Restaurante Mexicano",
     "deployed_at": "2026-07-08T08:22:45.324Z"
+  },
+  "bc0059e7-a9b9-4597-84da-81f8ddb701c7": {
+    "brand_name": "Hickory Tavern",
+    "deployed_at": null
+  },
+  "f9816d7b-0a2c-4ae5-8c74-547de5f7244e": {
+    "brand_name": "Hickory Tavern",
+    "deployed_at": null
   }
 }
