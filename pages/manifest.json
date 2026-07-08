@@ -2530,5 +2530,9 @@
   "aabd0698-a022-4964-8b8c-79256c03c566": {
     "brand_name": "K- BBQ Restaurant",
     "deployed_at": "2026-07-08T21:28:35.503Z"
+  },
+  "06ba9675-9b20-4238-9d35-7654936646cb": {
+    "brand_name": "Example Brand",
+    "deployed_at": "2026-07-08T21:28:36.675Z"
   }
 }
