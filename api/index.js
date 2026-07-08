@@ -69,12 +69,15 @@ const ANALYTICS_HEAD = GTM_HEAD + '\n' + GA_SNIPPET;
 // Button-click tracking. Delegated + matches by id, text and href so it works on
 // both new pages (which carry #share-report-btn / #navbar-book-demo-btn /
 // #footer-book-demo-btn) and older reports that use plain "Book a demo" links.
-const CLICK_TRACKING = `<script>
+function clickTracking(brandName) {
+  const brand = JSON.stringify(brandName || 'Unknown'); // safely embed into the script
+  return `<script>
 (function(){
+  var brand = ${brand};
   function track(eventName, label){
     window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({ event: eventName, button_label: label });
-    if (typeof gtag === 'function') gtag('event', eventName, { button_label: label });
+    window.dataLayer.push({ event: eventName, button_label: label, brand_name: brand });
+    if (typeof gtag === 'function') gtag('event', eventName, { button_label: label, brand_name: brand });
   }
   document.addEventListener('click', function(e){
     var el = e.target.closest && e.target.closest('a, button');
@@ -92,6 +95,7 @@ const CLICK_TRACKING = `<script>
   }, true);
 })();
 </script>`;
+}
 
 // Inject GTM + GA4 into the <head> and <body> of any HTML document
 function injectAnalytics(html) {
@@ -327,8 +331,9 @@ app.get('/complaint-report-:uuid', async (req, res) => {
     const { octokit, owner, repo } = getOctokit();
     const { data } = await octokit.repos.getContent({ owner, repo, path: `pages/${uuid}.html` });
     let html = Buffer.from(data.content, 'base64').toString('utf-8');
+    const brandName = extractBrandName(html);
     html = injectAnalytics(html);
-    html = html.replace(/<\/body>/i, BRAND_IMAGE_PATCH + '\n' + CLICK_TRACKING + '\n</body>');
+    html = html.replace(/<\/body>/i, BRAND_IMAGE_PATCH + '\n' + clickTracking(brandName) + '\n</body>');
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(html);
   } catch (err) {
