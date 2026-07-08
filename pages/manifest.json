@@ -1858,5 +1858,29 @@
   "fceb59e8-48cd-4ac2-adfa-60937eea3be4": {
     "brand_name": "The Venetian Las Vegas",
     "deployed_at": "2026-07-08T14:54:18.269Z"
+  },
+  "08469014-b36d-417e-b215-7c5b1a0b2d61": {
+    "brand_name": "Sunnyside Grill",
+    "deployed_at": null
+  },
+  "4cd47131-18c3-4a19-96e4-37898e281a36": {
+    "brand_name": "Unknown",
+    "deployed_at": null
+  },
+  "546a614f-4db7-413c-974b-48e15d6cbd4c": {
+    "brand_name": "Unknown",
+    "deployed_at": null
+  },
+  "a66fab28-e8f2-40fc-98b7-505c4985cbf8": {
+    "brand_name": "Unknown",
+    "deployed_at": null
+  },
+  "848b2748-e968-4535-9eda-76dbf7c762d8": {
+    "brand_name": "Unknown",
+    "deployed_at": null
+  },
+  "388c497f-1c7c-4955-9827-da0da8c15f80": {
+    "brand_name": "Unknown",
+    "deployed_at": null
   }
 }
