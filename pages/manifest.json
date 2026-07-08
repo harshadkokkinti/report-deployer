@@ -1050,5 +1050,29 @@
   "40aeac8f-a4a9-4121-898e-5e5ef8e41afe": {
     "brand_name": "D'Angelo Grilled Sandwiches",
     "deployed_at": "2026-07-08T10:45:46.744Z"
+  },
+  "09fa4283-6e4e-40ae-aad7-c65665b1c4d9": {
+    "brand_name": "Crave Fishbar",
+    "deployed_at": null
+  },
+  "2cc04433-de3d-4253-9005-f53c87f7df23": {
+    "brand_name": "Crave Fishbar",
+    "deployed_at": null
+  },
+  "d8c2fe0c-f3ea-4413-900e-a95071612012": {
+    "brand_name": "Blackbell Lounge and Restaurant",
+    "deployed_at": null
+  },
+  "1907836c-845c-4188-8420-1cc09d4335b2": {
+    "brand_name": "Chai Pani Asheville",
+    "deployed_at": null
+  },
+  "ff5634a2-d31d-44ef-a845-b9bcda64a4c2": {
+    "brand_name": "Dillas Quesadillas",
+    "deployed_at": null
+  },
+  "aa9a8ad2-5b8a-45b5-92d4-c191691e1085": {
+    "brand_name": "Unknown",
+    "deployed_at": null
   }
 }
