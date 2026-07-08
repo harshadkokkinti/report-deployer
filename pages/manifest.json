@@ -1946,5 +1946,9 @@
   "1e2b6c53-b005-418d-8329-0a1a2933bf04": {
     "brand_name": "Upstream Brewing Company",
     "deployed_at": "2026-07-08T15:13:44.557Z"
+  },
+  "cabb5c47-952c-41f1-9a52-3b9962ea097b": {
+    "brand_name": "Union Square Donuts",
+    "deployed_at": "2026-07-08T15:13:46.303Z"
   }
 }
