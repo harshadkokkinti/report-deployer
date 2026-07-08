@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wooden Paddle Reputation Report by Olly</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#08091A;--bg1:#0D0F24;--bg2:#13162E;--bg3:#191C38;
+      --text:#F0EFFF;--text2:#C2C2D8;--text3:#8A8AA6;
+      --blue:#3B7BE8;--blue-light:#6FA3FF;
+      --blue-bg:rgba(59,123,232,0.1);--blue-border:rgba(59,123,232,0.25);
+      --purple:#8B3FD9;--purple-bg:rgba(139,63,217,0.1);--purple-border:rgba(139,63,217,0.25);
+      --teal:#0FA88A;--teal-bg:rgba(15,168,138,0.1);--teal-border:rgba(15,168,138,0.25);
+      --red:#C9274A;--red-bg:rgba(201,39,74,0.1);--red-border:rgba(201,39,74,0.25);
+      --amber:#D4890A;--amber-bg:rgba(212,137,10,0.1);--amber-border:rgba(212,137,10,0.25);
+      --line:rgba(240,239,255,0.07);
+      --serif:'EB Garamond',Georgia,serif;
+      --sans:'DM Sans',sans-serif;
+    }
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.6;overflow-x:hidden}
+    .wrap{max-width:1000px;margin:0 auto;padding:0 52px}
+    section{padding:88px 0;border-bottom:1px solid var(--line)}
+    section:last-of-type{border-bottom:none}
+    .reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+    .d1{transition-delay:.07s!important}.d2{transition-delay:.14s!important}
+    .d3{transition-delay:.21s!important}.d4{transition-delay:.28s!important}
+    #hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:100px 52px 88px;position:relative;overflow:hidden}
+    .hero-glow{position:absolute;top:-10%;right:-15%;width:800px;height:800px;background:radial-gradient(ellipse,rgba(139,63,217,0.12) 0%,rgba(59,123,232,0.06) 40%,transparent 70%);pointer-events:none}
+    .hero-glow2{position:absolute;bottom:-20%;left:-10%;width:600px;height:600px;background:radial-gradient(ellipse,rgba(15,168,138,0.06) 0%,transparent 65%);pointer-events:none}
+    .brand-meta{max-width:1000px;margin:0 auto;padding:24px 52px 0}
+    .brand-meta-card{background:var(--bg1);border:1px solid var(--blue-border);border-radius:16px;padding:22px 28px}
+    .brand-meta-label{font-size:10px;font-weight:600;color:var(--blue);letter-spacing:1.8px;text-transform:uppercase;margin-bottom:14px}
+    .brand-meta-row{display:flex;align-items:center;gap:18px}
+    .brand-photo{width:72px;height:72px;border-radius:12px;object-fit:cover;flex-shrink:0;background:var(--bg2)}
+    .brand-meta-name{font-size:22px;font-weight:600;color:var(--text);line-height:1.2;margin-bottom:5px}
+    .brand-meta-addr{font-size:13px;color:var(--text3);line-height:1.5;max-width:480px}
+    @media(max-width:768px){.brand-meta{padding:16px 22px 0}.brand-meta-card{padding:18px 20px}.brand-photo{width:56px;height:56px}.brand-meta-name{font-size:18px}}
+    .from-badge{display:inline-flex;align-items:center;gap:8px;background:var(--purple-bg);border:1px solid var(--purple-border);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:500;color:var(--purple);letter-spacing:.4px;margin-bottom:36px;width:fit-content}
+    .hero-label{font-size:11px;color:var(--text3);letter-spacing:1.8px;text-transform:uppercase;margin-bottom:16px;font-weight:500}
+    #hero h1{font-family:var(--serif);font-size:clamp(46px,6vw,82px);font-weight:400;line-height:1.04;letter-spacing:-.5px;color:var(--text);max-width:860px;margin-bottom:28px}
+    #hero h1 em{font-style:italic;color:var(--blue-light)}
+    .hero-sub{font-size:17px;font-weight:300;color:var(--text2);max-width:520px;line-height:1.8;margin-bottom:52px}
+    .hero-sub strong{color:var(--text);font-weight:500}
+    .hero-stats{display:grid;grid-template-columns:1.7fr 1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden;max-width:740px}
+    .hstat{background:var(--bg1);padding:26px 24px}
+    .hstat-label{font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;font-weight:600}
+    .hstat-rating-row{display:flex;align-items:baseline;gap:10px}
+    .hstat-rating-val{font-family:var(--serif);font-size:56px;font-weight:400;line-height:1}
+    .hstat-star{font-size:30px;line-height:1}
+    .hstat-review-count{font-size:12px;color:var(--text3);margin-top:6px}
+    .hstat-val{font-family:var(--serif);font-size:42px;font-weight:400;line-height:1}
+    .hstat-sub{font-size:11px;color:var(--text3);margin-top:6px}
+    .hstat-fraction{font-size:12px;color:var(--text3);margin-top:6px}
+    .eyebrow{font-size:10px;font-weight:600;color:var(--blue);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+    h2{font-family:var(--serif);font-size:clamp(32px,4.2vw,54px);font-weight:400;line-height:1.08;letter-spacing:-.3px;color:var(--text);margin-bottom:14px}
+    h2 em{font-style:italic;color:var(--blue-light)}
+    .section-sub{font-size:16px;color:var(--text2);font-weight:300;max-width:540px;line-height:1.75;margin-bottom:52px}
+    .score-grid{display:grid;grid-template-columns:240px 1fr;gap:24px;align-items:start}
+    .score-main{background:var(--bg1);border:1px solid var(--line);border-radius:20px;padding:32px;text-align:center}
+    .score-ring{width:136px;height:136px;border-radius:50%;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;position:relative}
+    .score-ring::after{content:'';position:absolute;width:106px;height:106px;border-radius:50%;background:var(--bg1)}
+    .score-num{position:relative;z-index:1;font-family:var(--serif);font-size:46px;color:var(--text);line-height:1}
+    .score-label-sm{font-size:11px;color:var(--text3);margin-bottom:6px;letter-spacing:.5px}
+    .score-verdict{font-family:var(--serif);font-size:20px;font-style:italic;margin-bottom:10px}
+    .score-note{font-size:12px;color:var(--text3);line-height:1.65}
+    .score-insights{display:flex;flex-direction:column;gap:0;border:1px solid var(--line);border-radius:18px;overflow:hidden}
+    .si-row{display:grid;grid-template-columns:88px 1fr;border-bottom:1px solid var(--line);background:var(--bg1);transition:background .2s}
+    .si-row:last-child{border-bottom:none}
+    .si-row:hover{background:var(--bg2)}
+    .si-stat{padding:20px 14px 20px 20px;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--line)}
+    .si-stat-val{font-family:var(--serif);font-size:22px;line-height:1;text-align:center}
+    .si-text{padding:20px 22px}
+    .si-headline{font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px;line-height:1.45}
+    .si-desc{font-size:12px;color:var(--text3);line-height:1.55}
+    .dow-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+    .dow-col{display:flex;flex-direction:column;align-items:center;gap:8px}
+    .dow-bar-wrap{width:100%;height:150px;background:var(--bg2);border-radius:8px;display:flex;align-items:flex-end;overflow:hidden}
+    .dow-bar{width:100%;border-radius:8px 8px 0 0}
+    .dow-bar.low{background:#2A6E4A}.dow-bar.mid{background:#8A6A1A}.dow-bar.high{background:#7A2020}
+    .dow-label{font-size:11px;color:var(--text3);font-weight:500}
+    .dow-pct{font-family:var(--serif);font-size:17px}
+    .dow-pct.low{color:#3DBE72}.dow-pct.mid{color:#D4A030}.dow-pct.high{color:#E05050}
+    .dow-total{font-size:10px;color:var(--text3)}
+    .complaint-bars{display:flex;flex-direction:column;gap:16px;max-width:680px}
+    .cbar-row{display:flex;align-items:center;gap:14px}
+    .cbar-label{font-size:13px;color:var(--text);width:160px;flex-shrink:0}
+    .cbar-track{flex:1;height:7px;background:var(--bg3);border-radius:4px;overflow:hidden}
+    .cbar-fill{height:100%;border-radius:4px;background:#4C6A9C;transition:width 1.1s cubic-bezier(.4,0,.2,1)}
+    .cbar-count{font-family:var(--serif);font-size:20px;color:var(--text);width:34px;text-align:right}
+    .cbar-pct{font-size:11px;color:var(--text3);width:40px}
+    .food-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+    .food-card{background:var(--bg1);border:1px solid var(--line);border-radius:16px;padding:24px}
+    .food-card.high{border-color:var(--red-border)}.food-card.medium{border-color:var(--amber-border)}
+    .food-name{font-family:var(--serif);font-size:23px;font-style:normal;color:var(--amber);margin-bottom:4px}
+    .food-meta{font-size:11px;color:var(--text3);margin-bottom:14px;letter-spacing:.4px;text-transform:uppercase;font-weight:600}
+    .food-complaints{display:flex;flex-direction:column;gap:7px}
+    .food-complaint{font-size:13px;color:var(--text2);padding:9px 14px;background:var(--bg2);border-radius:8px;line-height:1.55}
+    .insight-cards{display:flex;flex-direction:column;gap:20px}
+    .insight-card{background:var(--bg1);border:1px solid var(--line);border-radius:20px;padding:32px;display:grid;grid-template-columns:1fr 120px;gap:28px;align-items:start;position:relative;overflow:hidden}
+    .ic-num{font-size:10px;letter-spacing:1.8px;font-weight:600;text-transform:uppercase;margin-bottom:12px}
+    .insight-card h3{font-family:var(--serif);font-size:24px;font-weight:400;color:var(--text);line-height:1.22;margin-bottom:14px;letter-spacing:-.1px}
+    .ic-evidence{margin-top:16px;padding:14px 18px;background:var(--bg2);border-left:3px solid var(--amber);border-radius:0 10px 10px 0}
+    .ic-evidence-label{font-size:10px;color:var(--amber);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+    .ic-evidence-quote{font-size:13px;color:var(--text2);font-style:italic;line-height:1.6}
+    .ic-tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:18px}
+    .ic-tag{padding:4px 11px;border-radius:100px;font-size:11px;font-weight:500;background:var(--bg2);border:1px solid var(--line);color:var(--text3)}
+    .ic-big{text-align:right}
+    .ic-big-val{font-family:var(--serif);font-size:30px;line-height:1;letter-spacing:-2px}
+    .ic-big-label{font-size:11px;color:var(--text3);margin-top:6px;line-height:1.4;text-align:right}
+    .reviews-grid{display:flex;flex-direction:column;gap:14px}
+    .review-card{background:var(--bg1);border:1px solid var(--line);border-radius:16px;padding:26px}
+    .rc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .rc-meta{display:flex;align-items:center;gap:12px}
+    .rc-avatar{width:34px;height:34px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:15px;color:var(--text2);font-style:italic}
+    .rc-name{font-size:13px;font-weight:500;color:var(--text)}
+    .rc-source{font-size:11px;color:var(--text3);margin-top:2px}
+    .rc-rating{font-family:var(--serif);font-size:13px;font-style:italic}
+    .rc-body{font-size:14px;color:var(--text2);line-height:1.75;margin-bottom:16px}
+    .rc-footer{display:flex;align-items:center;justify-content:space-between}
+    .rc-date{font-size:11px;color:var(--text3)}
+    .rc-no-reply{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:500}
+    .rc-no-reply::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:currentColor}
+    #cta{padding:100px 0;border-bottom:none}
+    .cta-box{background:var(--bg1);border:1px solid var(--blue-border);border-radius:24px;padding:72px 52px;position:relative;overflow:hidden;text-align:center}
+    .cta-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:500px;background:radial-gradient(ellipse,rgba(139,63,217,0.08) 0%,rgba(59,123,232,0.05) 40%,transparent 70%);pointer-events:none}
+    #cta h2{margin-bottom:22px}
+    #cta p{font-size:18px;color:var(--text2);font-weight:300;line-height:1.75;max-width:500px;margin:0 auto 44px}
+    .cta-actions{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+    .btn-main{background:var(--text);color:var(--bg);padding:16px 38px;border-radius:100px;font-size:14px;font-weight:600;text-decoration:none;display:inline-block;transition:opacity .2s,transform .2s}
+    .btn-main:hover{opacity:.88;transform:translateY(-2px)}
+    .btn-outline{background:transparent;border:1px solid var(--line);color:var(--text2);padding:16px 32px;border-radius:100px;font-size:14px;text-decoration:none;display:inline-block;transition:border-color .2s,color .2s}
+    .btn-outline:hover{border-color:var(--text2);color:var(--text)}
+    .cta-fine{font-size:12px;color:var(--text3);margin-top:24px}
+
+    /* FOOTER */
+    .site-footer{position:relative;background:#0a0a0a;overflow:hidden}
+    .footer-grad{position:absolute;inset:0;background:radial-gradient(150% 163% at 50% 90.6%,rgba(0,0,0,0) 25.6757%,rgb(16,11,29) 38.2883%,rgb(33,16,75) 44.1441%,rgb(36,60,145) 50.7848%,rgb(58,191,213) 65.8643%);transform:rotate(180deg);pointer-events:none;z-index:0}
+    .footer-inner{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:72px 52px 180px;display:flex;justify-content:space-between;align-items:flex-start;gap:40px}
+    .footer-logo-row{display:flex;align-items:center;gap:4px;margin-bottom:18px;text-decoration:none;line-height:1}
+    .footer-tagline{font-size:14px;color:rgba(255,255,255,0.45);line-height:1.65;margin-bottom:32px;max-width:280px}
+    .footer-social{display:flex;gap:12px}
+    .footer-social a{width:46px;height:46px;border-radius:12px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.6);transition:background .2s,color .2s;text-decoration:none;flex-shrink:0}
+    .footer-social a:hover{background:rgba(255,255,255,0.14);color:#fff}
+    .footer-right{text-align:right;padding-top:4px}
+    .footer-links-title{font-size:12px;font-weight:500;color:rgba(255,255,255,0.35);margin-bottom:18px;font-family:var(--sans)}
+    .footer-links{display:flex;flex-direction:column;gap:14px;align-items:flex-end}
+    .footer-links a{font-size:16px;font-weight:500;color:rgba(255,255,255,0.85);text-decoration:none;transition:color .2s;font-family:var(--sans)}
+    .footer-links a:hover{color:#fff}
+    .footer-bottom{position:relative;z-index:1;background:#0a0a0a;border-top:1px solid rgba(255,255,255,0.07);padding:16px 52px;max-width:100%;display:flex;justify-content:flex-end;gap:24px}
+    .footer-bottom a{font-size:13px;color:rgba(255,255,255,0.35);text-decoration:none;transition:color .2s;font-family:var(--sans)}
+    .footer-bottom a:hover{color:rgba(255,255,255,0.7)}
+
+    /* RESPONSIVE */
+    @media(max-width:768px){
+      .wrap{padding:0 28px}
+      section{padding:64px 0}
+      #hero{padding:80px 28px 64px}
+      .hero-stats{grid-template-columns:1fr 1fr}
+      .hero-stats .hstat:first-child{grid-column:1/-1}
+      .score-grid{grid-template-columns:1fr}
+      .food-grid{grid-template-columns:1fr}
+      .insight-card{grid-template-columns:1fr}
+      .ic-big{display:flex;align-items:center;gap:14px;text-align:left;margin-top:12px}
+      .ic-big-val{font-size:40px}
+      .cta-box{padding:52px 32px}
+    }
+
+    @media(max-width:480px){
+      .wrap{padding:0 18px}
+      section{padding:52px 0}
+      #hero{padding:64px 18px 52px}
+      .hero-sub{max-width:100%}
+      .section-sub{max-width:100%}
+
+      /* Hero stats: stack all */
+      .hero-stats{grid-template-columns:1fr}
+      .hero-stats .hstat:first-child{grid-column:auto}
+      .hstat-rating-val{font-size:42px}
+      .hstat-val{font-size:32px}
+
+      /* Score ring: shrink and stack */
+      .score-grid{grid-template-columns:1fr}
+      .score-main{padding:24px 20px}
+      .score-ring{width:110px;height:110px}
+      .score-ring::after{width:86px;height:86px}
+      .score-num{font-size:38px}
+
+      /* DOW: shrink bars, allow horizontal scroll */
+      .dow-grid{gap:5px;overflow-x:auto;padding-bottom:4px}
+      .dow-bar-wrap{height:90px}
+      .dow-label{font-size:10px}
+      .dow-pct{font-size:13px}
+      .dow-total{font-size:9px}
+
+      /* Complaint bars */
+      .cbar-label{width:100px;font-size:12px}
+      .cbar-count{font-size:16px;width:28px}
+
+      /* Food grid */
+      .food-grid{grid-template-columns:1fr}
+
+      /* Insight cards */
+      .insight-card{grid-template-columns:1fr;padding:22px 18px;gap:16px}
+      .insight-card h3{font-size:20px}
+      .ic-big{display:flex;align-items:center;gap:12px;text-align:left;margin-top:10px}
+      .ic-big-val{font-size:36px;letter-spacing:-1px}
+
+      /* Reviews */
+      .rc-top{flex-wrap:wrap;gap:10px}
+      .review-card{padding:20px 16px}
+
+      /* CTA */
+      .cta-box{padding:40px 20px}
+      .cta-actions{flex-direction:column;align-items:stretch}
+      .btn-main,.btn-outline{text-align:center;padding:15px 20px}
+
+      /* Bottom unanswered row */
+      div[style*="justify-content:space-between"]{flex-direction:column!important;align-items:flex-start!important}
+      .footer-inner{flex-direction:column;padding:52px 18px 160px;gap:36px}
+      .footer-right{text-align:left}
+      .footer-links{align-items:flex-start}
+      .footer-links a{font-size:15px}
+      .footer-bottom{padding:16px 18px}
+    }
+    .site-header{position:sticky;top:0;z-index:100;background:rgba(18,18,22,0.55);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid rgba(255,255,255,0.08);box-shadow:0 1px 0 rgba(255,255,255,0.04),0 4px 24px rgba(0,0,0,0.35)}
+    .site-header-inner{max-width:1000px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .header-logo{display:flex;align-items:center;text-decoration:none;background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.1);border-radius:100px;padding:7px 16px}
+    .header-logo img{height:30px;width:auto;display:block;object-fit:contain}
+    .header-actions{display:flex;align-items:center;gap:8px}
+    .header-cta{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.1);border-radius:100px;padding:8px 18px;text-decoration:none;color:rgba(255,255,255,0.85);font-size:14px;font-weight:500;font-family:var(--sans);white-space:nowrap;transition:background .2s,color .2s}
+    .header-cta:hover{background:rgba(255,255,255,0.14);color:#fff}
+    .header-cta svg{flex-shrink:0}
+    button.header-cta{appearance:none;-webkit-appearance:none;border-radius:100px;cursor:pointer}
+    .header-cta.copied{background:rgba(15,168,138,0.18);border-color:rgba(15,168,138,0.35);color:#3DBE72}
+    @media(max-width:480px){
+      .site-header-inner{padding:10px 16px}
+      .header-actions{gap:6px}
+      .header-cta{font-size:13px;padding:7px 14px}
+      .header-cta svg{display:none}
+    }
+  </style>
+</head>
+<body>
+<!-- HEADER -->
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="https://askolly.io" class="header-logo">
+      <img src="/logo.png" alt="Olly">
+    </a>
+    <div class="header-actions">
+      <button type="button" class="header-cta" id="share-report-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l1.93-1.93a5 5 0 0 0-7.07-7.07L10.5 5.43"/><path d="M14 11a5 5 0 0 0-7.07 0l-1.93 1.93a5 5 0 0 0 7.07 7.07L13.5 18.57"/></svg>
+        <span class="share-btn-label">Share report</span>
+      </button>
+      <a href="https://calendly.com/nick-askolly/30min" class="header-cta" id="navbar-book-demo-btn" target="_blank" rel="noopener">
+        Book demo
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7.5 3.5 11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- BRAND META -->
+<div class="brand-meta">
+  <div class="brand-meta-card">
+    <div class="brand-meta-label">Online Reputation Report for</div>
+    <div class="brand-meta-row">
+      <img class="brand-photo" src="/brand-images/wooden-paddle.jpg" alt="Wooden Paddle" onerror="this.onerror=null;this.src='/Google.png'">
+      <div>
+        <div class="brand-meta-name">Wooden Paddle</div>
+        <div class="brand-meta-addr">212 Stephen St, Lemont, IL 60439, USA</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div id="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="wrap">
+    <h1 class="reveal d2">
+      Strong reviews. But a pattern worth addressing.<br>
+      <em>Here is what the data says.</em>
+    </h1>
+    <p class="hero-sub reveal d3">Olly analysed 300 Google reviews for Wooden Paddle, finding strong loyalty but 11% negative with zero owner replies.</p>
+    <div class="hero-stats reveal d4">
+      <div class="hstat">
+        <div class="hstat-label">Avg Rating</div>
+        <div class="hstat-rating-row">
+          <div class="hstat-rating-val" style="color:#0FA88A">4.6</div>
+          <div class="hstat-star" style="color:#0FA88A">&#9733;</div>
+        </div>
+        <div class="hstat-review-count">Out of 5.0, 1364 total reviews</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-label">Negative Reviews</div>
+        <div class="hstat-val" style="color:#C9274A">34</div>
+        <div class="hstat-fraction">of 300, 1&#9733; 2&#9733; 3&#9733;</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-label">Response Rate</div>
+        <div class="hstat-val" style="color:#C9274A">0%</div>
+        <div class="hstat-sub">0 of 300 answered</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REPUTATION SCORE -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow reveal">Reputation Score</div>
+    <h2 class="reveal d1">Olly Score: 68 — Watch</h2>
+    <p class="section-sub reveal d2">Not just a star average. Built from complaint frequency, response rate, and consistency.</p>
+    <div class="score-grid">
+      <div class="score-main reveal d1">
+        <div class="score-label-sm">Olly Reputation Score</div>
+        <div class="score-ring" style="background:conic-gradient(#D4890A 0% 68%, #191C38 68% 100%)">
+          <div class="score-num">68</div>
+        </div>
+        <div class="score-verdict" style="color:#D4890A">Watch</div>
+        <div class="score-note">Significant reputation gaps require immediate attention across multiple complaint categories.</div>
+      </div>
+      <div class="score-insights reveal d2">
+        
+        <div class="si-row">
+          <div class="si-stat">
+            <div class="si-stat-val" style="color:#C2C2D8">26%</div>
+          </div>
+          <div class="si-text">
+            <div class="si-headline">1 in 4 reviews have no text.</div>
+            <div class="si-desc">79 of 300 reviews are silent ratings without feedback.</div>
+          </div>
+        </div>
+        
+        <div class="si-row">
+          <div class="si-stat">
+            <div class="si-stat-val" style="color:#0FA88A">11%</div>
+          </div>
+          <div class="si-text">
+            <div class="si-headline">Negative rate sits below industry average.</div>
+            <div class="si-desc">11% negative reviews is under the 15% healthy benchmark.</div>
+          </div>
+        </div>
+        
+        <div class="si-row">
+          <div class="si-stat">
+            <div class="si-stat-val" style="color:#0FA88A">20:1</div>
+          </div>
+          <div class="si-text">
+            <div class="si-headline">Loyal fans outnumber detractors 20 to 1.</div>
+            <div class="si-desc">241 five-star reviews dwarf just 12 one-star ratings.</div>
+          </div>
+        </div>
+        
+        <div class="si-row">
+          <div class="si-stat">
+            <div class="si-stat-val" style="color:#C2C2D8">Named</div>
+          </div>
+          <div class="si-text">
+            <div class="si-headline">Complaints name specific dishes repeatedly.</div>
+            <div class="si-desc">Pizza, pasta, and steak are cited by name often.</div>
+          </div>
+        </div>
+        
+        <div class="si-row">
+          <div class="si-stat">
+            <div class="si-stat-val" style="color:#D4890A">3</div>
+          </div>
+          <div class="si-text">
+            <div class="si-headline">Several customers say they will not return.</div>
+            <div class="si-desc">At least 3 reviewers explicitly vowed never to come back.</div>
+          </div>
+        </div>
+        
+        <div class="si-row">
+          <div class="si-stat">
+            <div class="si-stat-val" style="color:#C9274A">0%</div>
+          </div>
+          <div class="si-text">
+            <div class="si-headline">Zero reviews received an owner reply.</div>
+            <div class="si-desc">0 of 300 reviews received any response from Wooden Paddle.</div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WEEKLY PATTERN -->
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow reveal">Weekly Pattern</div>
+    <h2 class="reveal d1">Saturday sees 17% complaint rate, nearly double the 7% on Friday.</h2>
+    <p class="section-sub reveal d2">Saturday generates the most negative feedback at 8 complaints from 48 reviews, while Friday is the calmest day.</p>
+    <div class="dow-grid reveal d3" id="dow-chart">
+      
+      <div class="dow-col">
+        <div class="dow-bar-wrap">
+          <div class="dow-bar high" style="height:0%" data-h="82%"></div>
+        </div>
+        <div class="dow-label">Mon</div>
+        <div class="dow-pct high">14%</div>
+        <div class="dow-total">44 reviews</div>
+      </div>
+      
+      <div class="dow-col">
+        <div class="dow-bar-wrap">
+          <div class="dow-bar mid" style="height:0%" data-h="65%"></div>
+        </div>
+        <div class="dow-label">Tue</div>
+        <div class="dow-pct mid">11%</div>
+        <div class="dow-total">36 reviews</div>
+      </div>
+      
+      <div class="dow-col">
+        <div class="dow-bar-wrap">
+          <div class="dow-bar low" style="height:0%" data-h="53%"></div>
+        </div>
+        <div class="dow-label">Wed</div>
+        <div class="dow-pct low">9%</div>
+        <div class="dow-total">34 reviews</div>
+      </div>
+      
+      <div class="dow-col">
+        <div class="dow-bar-wrap">
+          <div class="dow-bar mid" style="height:0%" data-h="65%"></div>
+        </div>
+        <div class="dow-label">Thu</div>
+        <div class="dow-pct mid">11%</div>
+        <div class="dow-total">36 reviews</div>
+      </div>
+      
+      <div class="dow-col">
+        <div class="dow-bar-wrap">
+          <div class="dow-bar low" style="height:0%" data-h="41%"></div>
+        </div>
+        <div class="dow-label">Fri</div>
+        <div class="dow-pct low">7%</div>
+        <div class="dow-total">44 reviews</div>
+      </div>
+      
+      <div class="dow-col">
+        <div class="dow-bar-wrap">
+          <div class="dow-bar high" style="height:0%" data-h="100%"></div>
+        </div>
+        <div class="dow-label">Sat</div>
+        <div class="dow-pct high">17%</div>
+        <div class="dow-total">48 reviews</div>
+      </div>
+      
+      <div class="dow-col">
+        <div class="dow-bar-wrap">
+          <div class="dow-bar low" style="height:0%" data-h="59%"></div>
+        </div>
+        <div class="dow-label">Sun</div>
+        <div class="dow-pct low">10%</div>
+        <div class="dow-total">58 reviews</div>
+      </div>
+      
+    </div>
+    <div style="margin-top:28px;padding:24px 28px;background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:14px;" class="reveal d4">
+      <div style="font-size:10px;font-weight:600;color:var(--amber);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;">What this likely means</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.75;">Weekend dinner rushes may be stretching the kitchen and floor staff thin. Adding a dedicated Saturday expediter or pre-batching popular pizzas could cut wait-related complaints.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- COMPLAINT BREAKDOWN -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow reveal">Complaint Breakdown</div>
+    <h2 class="reveal d1">Food Quality is behind 36% of all complaints.</h2>
+    <p class="section-sub reveal d2">Customers cite soggy pizza, overcooked steak, and cold dishes most often.</p>
+    <div class="complaint-bars">
+      
+      <div class="cbar-row reveal">
+        <div class="cbar-label">Food Quality</div>
+        <div class="cbar-track">
+          <div class="cbar-fill" style="width:0%" data-width="100%"></div>
+        </div>
+        <div class="cbar-count">16</div>
+        <div class="cbar-pct">36%</div>
+      </div>
+      
+      <div class="cbar-row reveal">
+        <div class="cbar-label">Service</div>
+        <div class="cbar-track">
+          <div class="cbar-fill" style="width:0%" data-width="88%"></div>
+        </div>
+        <div class="cbar-count">14</div>
+        <div class="cbar-pct">31%</div>
+      </div>
+      
+      <div class="cbar-row reveal">
+        <div class="cbar-label">Value for Money</div>
+        <div class="cbar-track">
+          <div class="cbar-fill" style="width:0%" data-width="63%"></div>
+        </div>
+        <div class="cbar-count">10</div>
+        <div class="cbar-pct">22%</div>
+      </div>
+      
+      <div class="cbar-row reveal">
+        <div class="cbar-label">Others</div>
+        <div class="cbar-track">
+          <div class="cbar-fill" style="width:0%" data-width="31%"></div>
+        </div>
+        <div class="cbar-count">5</div>
+        <div class="cbar-pct">11%</div>
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+<!-- MENU INTELLIGENCE -->
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow reveal">Menu Intelligence</div>
+    <h2 class="reveal d1">Pizza, pasta, and skirt steak are called out by name.</h2>
+    <p class="section-sub reveal d2">These items appear most frequently in negative reviews with specific preparation issues.</p>
+    <div class="food-grid">
+      
+      <div class="food-card high reveal">
+        <div class="food-name">pizza</div>
+        <div class="food-meta">10 complaints &middot; high severity</div>
+        <div class="food-complaints">
+          
+          <div class="food-complaint">It was basically soggy dough with oil on it and a sprinkle of toppings.</div>
+          
+          <div class="food-complaint">If you like your pizza to collapse and have all the toppings fall off, you&#39;ll love this place.</div>
+          
+        </div>
+      </div>
+      
+      <div class="food-card medium reveal">
+        <div class="food-name">pasta</div>
+        <div class="food-meta">3 complaints &middot; medium severity</div>
+        <div class="food-complaints">
+          
+          <div class="food-complaint">Maybe I should have just ordered their pizza bc the pasta is NOT good at all.</div>
+          
+          <div class="food-complaint">Do not get pasta here!</div>
+          
+        </div>
+      </div>
+      
+      <div class="food-card medium reveal">
+        <div class="food-name">skirt steak</div>
+        <div class="food-meta">2 complaints &middot; medium severity</div>
+        <div class="food-complaints">
+          
+          <div class="food-complaint">We ordered the skirt steak to be cooked medium but served it was well-done.</div>
+          
+          <div class="food-complaint">the skirt steak doesn&#39;t even come with a vegetable/side?</div>
+          
+        </div>
+      </div>
+      
+      <div class="food-card medium reveal">
+        <div class="food-name">short rib</div>
+        <div class="food-meta">2 complaints &middot; medium severity</div>
+        <div class="food-complaints">
+          
+          <div class="food-complaint">my last 2 recent visits my steak &amp; short rib came out cold/luke warm.</div>
+          
+          <div class="food-complaint">Dinosaur (short rib) was not good</div>
+          
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+
+<!-- KEY FINDINGS -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow reveal">Key Findings</div>
+    <h2 class="reveal d1">4 things hiding <em>in plain sight.</em></h2>
+    <p class="section-sub reveal d2">Four key patterns emerged from the data analysis.</p>
+    <div class="insight-cards">
+      
+      <div class="insight-card reveal" style="border-color:#C9274A30">
+        <div>
+          <div class="ic-num" style="color:#C9274A">Finding 01</div>
+          <h3>Damaging one-star review left completely unanswered.</h3>
+          <div class="ic-evidence">
+            <div class="ic-evidence-label">From the review</div>
+            <div class="ic-evidence-quote">&ldquo;Wow what an absolute rip off. Really the worst pizza I have ever had. And for like $25 a pizza you could at least put some sauce and toppings on it. It was basically soggy dough with oil on it and a sprinkle of toppings. And please don&#39;t try to tell me this is how woodfired pizza is supposed to be. I&#39;ve had it all over the place never had something so bad as this. Maybe we were there on an off day but I would never return. Our bill was well over $100 and we threw all of it out when we got home.. appetizers were WAY overpriced and not good. This is downtown Lemont not some fine dinning establishment and its PIZZA. They say they use premium ingredients and sauces, but on the day we were there that was not the case there was nothing premium about it. It was really bad. In fact the majority of the pizza is crust! Like 2-3 inches of just crust with maybe a 5 inch diameter of minimum toppings.. They must be making a fortune charging $25 for a crappy 5 inch pizza! Read other people&#39;s reviews who say how soggy it is and the toppings just aren&#39;t there because that&#39;s really the case . We really wanted to like it because we&#39;ve heard a lot of good things about it, but it was garbage. Honestly Blaze Pizza is better than this place and that&#39;s not saying much.&rdquo;</div>
+          </div>
+          <div class="ic-tags">
+            
+            <span class="ic-tag">June 24 2026</span>
+            
+            <span class="ic-tag">Melba Lee</span>
+            
+            <span class="ic-tag">unanswered review</span>
+            
+          </div>
+        </div>
+        <div class="ic-big">
+          <div class="ic-big-val" style="color:#C9274A">$100</div>
+          <div class="ic-big-label">wasted meal</div>
+        </div>
+      </div>
+      
+      <div class="insight-card reveal" style="border-color:#D4890A30">
+        <div>
+          <div class="ic-num" style="color:#D4890A">Finding 02</div>
+          <h3>Returning customers report a quality decline.</h3>
+          <div class="ic-evidence">
+            <div class="ic-evidence-label">From the review</div>
+            <div class="ic-evidence-quote">&ldquo;I don&#39;t know what happened... This place used to be amazing in every aspect, but they&#39;ve really started to settle for just mediocre. They&#39;re charging way more for less food (the skirt steak doesn&#39;t even come with a vegetable/side?), they discontinued their best cocktails (the Allspice Girl, an orange themed one, &amp; their Pear drink), they don&#39;t bring out your food and drinks at the same time as the rest of the table, my last 2 recent visits my steak &amp; short rib came out cold/luke warm.&rdquo;</div>
+          </div>
+          <div class="ic-tags">
+            
+            <span class="ic-tag">June 25 2025</span>
+            
+            <span class="ic-tag">JenNichole04</span>
+            
+            <span class="ic-tag">quality decline</span>
+            
+          </div>
+        </div>
+        <div class="ic-big">
+          <div class="ic-big-val" style="color:#D4890A">3</div>
+          <div class="ic-big-label">returning customers</div>
+        </div>
+      </div>
+      
+      <div class="insight-card reveal" style="border-color:#3B7BE830">
+        <div>
+          <div class="ic-num" style="color:#3B7BE8">Finding 03</div>
+          <h3>Saturday sees highest complaint rate of the week.</h3>
+          <div class="ic-evidence">
+            <div class="ic-evidence-label">From the review</div>
+            <div class="ic-evidence-quote">&ldquo;Saturday generates 17% negative reviews versus just 7% on Friday, a 10 percentage point gap. With 48 total reviews on Saturday and 8 negative, the weekend dinner rush appears to be a pressure point for kitchen and service consistency.&rdquo;</div>
+          </div>
+          <div class="ic-tags">
+            
+            <span class="ic-tag">day of week</span>
+            
+            <span class="ic-tag">weekend rush</span>
+            
+            <span class="ic-tag">service gap</span>
+            
+          </div>
+        </div>
+        <div class="ic-big">
+          <div class="ic-big-val" style="color:#3B7BE8">17%</div>
+          <div class="ic-big-label">Saturday complaint rate</div>
+        </div>
+      </div>
+      
+      <div class="insight-card reveal" style="border-color:#8B3FD930">
+        <div>
+          <div class="ic-num" style="color:#8B3FD9">Finding 04</div>
+          <h3>241 loyal fans are an untapped advocacy engine.</h3>
+          <div class="ic-evidence">
+            <div class="ic-evidence-label">From the review</div>
+            <div class="ic-evidence-quote">&ldquo;With 241 five-star reviews and countless mentions of specific servers by name like Olivia, Taylor, and Carrie, Wooden Paddle has a passionate base ready to amplify positive word-of-mouth if engaged.&rdquo;</div>
+          </div>
+          <div class="ic-tags">
+            
+            <span class="ic-tag">loyal customers</span>
+            
+            <span class="ic-tag">positive reviews</span>
+            
+            <span class="ic-tag">advocacy opportunity</span>
+            
+          </div>
+        </div>
+        <div class="ic-big">
+          <div class="ic-big-val" style="color:#8B3FD9">241</div>
+          <div class="ic-big-label">five-star reviews</div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+<!-- UNANSWERED REVIEWS -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow reveal">From Your Reviews</div>
+    <h2 class="reveal d1">What your customers wrote, and heard nothing back.</h2>
+    <div class="reviews-grid">
+      
+      <div class="review-card reveal" style="border-color:rgba(201,39,74,0.35)">
+        <div class="rc-top">
+          <div class="rc-meta">
+            <div class="rc-avatar">M</div>
+            <div>
+              <div class="rc-name">Melba Lee</div>
+              <div class="rc-source">Google Maps &middot; June 24 2026</div>
+            </div>
+          </div>
+          <div class="rc-rating" style="color:#C9274A">1 / 5</div>
+        </div>
+        <p class="rc-body">&ldquo;Wow what an absolute rip off. Really the worst pizza I have ever had. And for like $25 a pizza you could at least put some sauce and toppings on it. It was basically soggy dough with oil on it and a sprinkle of toppings. And please don&#39;t try to tell me this is how woodfired pizza is supposed to be. I&#39;ve had it all over the place never had something so bad as this. Maybe we were there on an off day but I would never return. Our bill was well over $100 and we threw all of it out when we got home.. appetizers were WAY overpriced and not good. This is downtown Lemont not some fine dinning establishment and its PIZZA. They say they use premium ingredients and sauces, but on the day we were there that was not the case there was nothing premium about it. It was really bad. In fact the majority of the pizza is crust! Like 2-3 inches of just crust with maybe a 5 inch diameter of minimum toppings.. They must be making a fortune charging $25 for a crappy 5 inch pizza! Read other people&#39;s reviews who say how soggy it is and the toppings just aren&#39;t there because that&#39;s really the case . We really wanted to like it because we&#39;ve heard a lot of good things about it, but it was garbage. Honestly Blaze Pizza is better than this place and that&#39;s not saying much.&rdquo;</p>
+        <div class="rc-footer">
+          <div class="rc-date">30 days ago</div>
+          <div class="rc-no-reply" style="color:#C9274A">No response from Wooden Paddle</div>
+        </div>
+      </div>
+      
+      <div class="review-card reveal" style="border-color:rgba(201,39,74,0.35)">
+        <div class="rc-top">
+          <div class="rc-meta">
+            <div class="rc-avatar">L</div>
+            <div>
+              <div class="rc-name">Lorne Golman</div>
+              <div class="rc-source">Google Maps &middot; August 3 2025</div>
+            </div>
+          </div>
+          <div class="rc-rating" style="color:#C9274A">1 / 5</div>
+        </div>
+        <p class="rc-body">&ldquo;This was our first time at Wooden Paddle&#39;s original location and our second try overall after visiting the La Grange spot. Unfortunately, it did not deliver. Between the value, quality, and portion sizes, we do not think we will be back.
+
+TLDR: Cramped seating, uneven service, and overpriced food. One dish was forgotten, not worth it ... better options elsewhere.
+
+We went on a Saturday night, and while the place was not very busy, it felt like a lot of small details were being overlooked. We were seated in the far corner of the dining room, which had a cramped layout. I had to ask another guest to move so I could squeeze around a column. There were open four-tops available, but we were placed at a tight two-top instead.
+
+Service started off fine but went downhill as the night went on. We had to flag down our server multiple times for water refills, to ask for a second round of drinks, and eventually to check on a missing dish.
+
+We started with drinks: an Aperol spritz and a glass of white wine. The spritz was solid, but the white wine was served at room temperature. I probably should have spoken up, but it was still a basic oversight.
+
+For food, we ordered the arancini, Caesar salad, Grandma&#39;s Pie, and a pasta dish. The arancini was the highlight, with a crispy exterior, warm interior, and nice goat cheese flavor. The Caesar was disappointing, underdressed, overly cheesy, and served with croutons that tasted store-bought. For the prices, I expected house-made croutons, especially since they already serve bread and make pizza dough.
+
+The Grandma&#39;s Pie had a great crust with nice leopard spotting, but the sauce was far too sweet for my taste. It was also added after the bake, not under the cheese, which did not help. I think it is the same sauce they use for the Spaghetti O&#39;s dish.
+
+The pasta never came until we asked about it. We were told it had accidentally gone to another table and needed to be remade. The server admitted the mistake and comped the dish, which we appreciated. Still, the timing was off. We had finished most of the pizza by the time the pasta arrived, and everything had gone cold from the AC vent blowing directly over our table.
+
+The pasta itself, a pesto and shallot cream pappardelle, had good flavor but some issues. At $27, it came with only five small pieces of chicken. For that price, I expect leftovers, and this did not come close. Pappardelle also was not the best match for a creamy sauce. Linguini or fusilli would have worked better.
+
+The bill, with the pasta comped, came out to just under $100 for two people with two drinks each. The preset tip options were misleading. What was listed as 15 percent was closer to 18 percent, and 20 percent was around 24 percent, calculated after tax. That kind of tactic feels dishonest and leaves a bad impression.
+
+I hope management reads this and takes an honest look in the mirror. We would love to support a local business, but right now there are other places out there that are either more affordable or offer a better product at the same price.&rdquo;</p>
+        <div class="rc-footer">
+          <div class="rc-date">340 days ago</div>
+          <div class="rc-no-reply" style="color:#C9274A">No response from Wooden Paddle</div>
+        </div>
+      </div>
+      
+      <div class="review-card reveal" style="border-color:rgba(201,39,74,0.35)">
+        <div class="rc-top">
+          <div class="rc-meta">
+            <div class="rc-avatar">A</div>
+            <div>
+              <div class="rc-name">Andrew Mayer</div>
+              <div class="rc-source">Google Maps &middot; December 15 2025</div>
+            </div>
+          </div>
+          <div class="rc-rating" style="color:#C9274A">1 / 5</div>
+        </div>
+        <p class="rc-body">&ldquo;tables are bordering each other. Ate with a bunch of strangers. If you like your pizza to collapse and have all the toppings fall off, you&#39;ll love this place. Also, the server brought us 3 cups of ranch, then charged us $2 a cup. Nothing mentioned. Poor poor service and food.&rdquo;</p>
+        <div class="rc-footer">
+          <div class="rc-date">210 days ago</div>
+          <div class="rc-no-reply" style="color:#C9274A">No response from Wooden Paddle</div>
+        </div>
+      </div>
+      
+    </div>
+    <div style="margin-top:28px;padding:32px 36px;background:linear-gradient(135deg,rgba(59,123,232,0.12),rgba(139,63,217,0.12));border:1px solid rgba(139,63,217,0.3);border-radius:18px;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;" class="reveal d4">
+      <div>
+        <div style="font-size:10px;font-weight:600;color:var(--purple);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">You're only seeing 3</div>
+        <p style="font-size:16px;color:var(--text);font-weight:500;line-height:1.5;margin-bottom:4px;">There are 34 reviews just like these &mdash; unanswered.</p>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6;">Olly can respond to every single one in your brand voice, tonight.</p>
+      </div>
+      <a href="https://askolly.io/#download" style="white-space:nowrap;background:var(--text);color:var(--bg);padding:14px 28px;border-radius:100px;font-size:14px;font-weight:700;text-decoration:none;flex-shrink:0;letter-spacing:.2px;">Try Olly &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="wrap">
+    <div class="cta-box reveal">
+      <div class="cta-glow"></div>
+      <h2>Put Olly to work,<br><em>and boost your online reputation.</em></h2>
+      <p>Olly brings reviews from all platforms, auto-replies, and pinpoints what needs attention. <strong>You run Wooden Paddle. Olly handles the reputation.</strong></p>
+      <div class="cta-actions">
+        <a href="https://calendly.com/nick-askolly/30min" class="btn-main" id="footer-book-demo-btn" target="_blank" rel="noopener">Book a demo</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible')}),{threshold:.06,rootMargin:'0px 0px -20px 0px'});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+  const dowObs=new IntersectionObserver(e=>e.forEach(x=>{
+    if(x.isIntersecting){x.target.querySelectorAll('.dow-bar').forEach(b=>setTimeout(()=>{b.style.height=b.dataset.h},80));dowObs.unobserve(x.target);}
+  }),{threshold:.2});
+  const dc2=document.getElementById('dow-chart');if(dc2)dowObs.observe(dc2);
+  const barObs=new IntersectionObserver(e=>e.forEach(x=>{
+    if(x.isIntersecting){const f=x.target.querySelector('.cbar-fill');if(f)setTimeout(()=>{f.style.width=f.dataset.width},100);barObs.unobserve(x.target);}
+  }),{threshold:.3});
+  document.querySelectorAll('.cbar-row').forEach(el=>barObs.observe(el));
+
+  const shareBtn = document.getElementById('share-report-btn');
+  if (shareBtn) {
+    const shareLabel = shareBtn.querySelector('.share-btn-label');
+    const defaultLabel = shareLabel ? shareLabel.textContent : 'Share report';
+    shareBtn.addEventListener('click', () => {
+      const match = window.location.pathname.match(/complaint-report-([0-9a-fA-F-]+)/);
+      const uid = match ? match[1] : '';
+      const shareUrl = `https://reports.askolly.io/complaint-report-${uid}/?utm_source=email&utm_medium=email&utm_campaign=share`;
+      const showCopied = () => {
+        if (shareLabel) shareLabel.textContent = 'Link copied';
+        shareBtn.classList.add('copied');
+        setTimeout(() => {
+          if (shareLabel) shareLabel.textContent = defaultLabel;
+          shareBtn.classList.remove('copied');
+        }, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(shareUrl).then(showCopied).catch(showCopied);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = shareUrl;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta);
+        showCopied();
+      }
+    });
+  }
+</script>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-grad"></div>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <a href="https://askolly.io" class="footer-logo-row">
+        <img src="/logo.png" alt="Olly" height="52" style="display:block;max-width:160px;object-fit:contain">
+      </a>
+      <p class="footer-tagline">Stop the guesswork, and start knowing how your customers truly feel</p>
+      <div class="footer-social">
+        <a href="https://www.instagram.com/ask_olly" target="_blank" aria-label="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.9" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/company/askolly" target="_blank" aria-label="LinkedIn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7H10V9h4v2a6 6 0 0 1 2-3z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="https://youtu.be/pyB43qw4Dms" target="_blank" aria-label="YouTube">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.4 19.54C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon fill="currentColor" stroke="none" points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+        </a>
+        <a href="https://x.com/askolly_" target="_blank" aria-label="X">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="footer-right">
+      <div class="footer-links-title">Resources</div>
+      <div class="footer-links">
+        <a href="https://askolly.io/blogs" target="_blank">Blog</a>
+        <a href="https://askolly.io/affiliate" target="_blank">Affiliate Program</a>
+        <a href="https://askolly.io/customer-complaint-report" target="_blank">Customer Complaint Report</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <a href="https://askolly.io/privacy" target="_blank">Privacy Policy</a>
+    <a href="https://askolly.io/terms" target="_blank">Terms &amp; Conditions</a>
+  </div>
+</footer>
+</body>
+</html>
