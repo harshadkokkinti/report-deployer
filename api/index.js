@@ -33,7 +33,27 @@ function loadHtml(filePath) {
 }
 const loginHtml   = loadHtml(path.join(__dirname, '../views/login.html'));
 const dashHtml    = loadHtml(path.join(__dirname, '../public/index.html'));
-const GA_ID = process.env.GA_MEASUREMENT_ID || 'G-QTPDLYM4RW';
+// ── Analytics: Google Tag Manager + GA4 (gtag.js) ─────────────────────────────
+const GTM_ID = process.env.GTM_ID || 'GTM-PN8BT5NZ';
+// GA4 Measurement ID — replace the placeholder below or set the GA_MEASUREMENT_ID env var
+const GA_ID  = process.env.GA_MEASUREMENT_ID || 'G-QTPDLYM4RW';
+
+// GTM loader — belongs as high in <head> as possible
+const GTM_HEAD = `<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','${GTM_ID}');</script>
+<!-- End Google Tag Manager -->`;
+
+// GTM <noscript> fallback — belongs immediately after <body>
+const GTM_BODY = `<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->`;
+
+// GA4 gtag.js
 const GA_SNIPPET = `<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
 <script>
@@ -43,8 +63,52 @@ const GA_SNIPPET = `<!-- Google tag (gtag.js) -->
   gtag('config', '${GA_ID}');
 </script>`;
 
-const notFoundHtml = loadHtml(path.join(__dirname, '../views/404.html'))
-  .replace('__GA_SNIPPET__', GA_SNIPPET);
+// Everything that belongs in <head>
+const ANALYTICS_HEAD = GTM_HEAD + '\n' + GA_SNIPPET;
+
+// Button-click tracking. Delegated + matches by id, text and href so it works on
+// both new pages (which carry #share-report-btn / #navbar-book-demo-btn /
+// #footer-book-demo-btn) and older reports that use plain "Book a demo" links.
+const CLICK_TRACKING = `<script>
+(function(){
+  function track(eventName, label){
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event: eventName, button_label: label });
+    if (typeof gtag === 'function') gtag('event', eventName, { button_label: label });
+  }
+  document.addEventListener('click', function(e){
+    var el = e.target.closest && e.target.closest('a, button');
+    if (!el) return;
+    var id   = el.id || '';
+    var text = (el.textContent || '').trim().toLowerCase();
+    var href = (el.getAttribute('href') || '').toLowerCase();
+    if (id === 'share-report-btn' || text === 'share report') {
+      track('share_report', 'Share report');
+    } else if (id === 'navbar-book-demo-btn' || id === 'footer-book-demo-btn'
+               || href.indexOf('calendly.com') !== -1
+               || text === 'book a demo' || text === 'book demo') {
+      track('book_demo', text === 'book demo' ? 'Book demo' : 'Book a demo');
+    }
+  }, true);
+})();
+</script>`;
+
+// Inject GTM + GA4 into the <head> and <body> of any HTML document
+function injectAnalytics(html) {
+  if (/<head[^>]*>/i.test(html)) {
+    html = html.replace(/(<head[^>]*>)/i, `$1\n${ANALYTICS_HEAD}`);
+  } else {
+    html = ANALYTICS_HEAD + '\n' + html;
+  }
+  if (/<body[^>]*>/i.test(html)) {
+    html = html.replace(/(<body[^>]*>)/i, `$1\n${GTM_BODY}`);
+  }
+  return html;
+}
+
+const notFoundHtml = injectAnalytics(
+  loadHtml(path.join(__dirname, '../views/404.html')).replace('__GA_SNIPPET__', '')
+);
 
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
@@ -263,7 +327,8 @@ app.get('/complaint-report-:uuid', async (req, res) => {
     const { octokit, owner, repo } = getOctokit();
     const { data } = await octokit.repos.getContent({ owner, repo, path: `pages/${uuid}.html` });
     let html = Buffer.from(data.content, 'base64').toString('utf-8');
-    html = html.replace(/<\/body>/i, BRAND_IMAGE_PATCH + '\n</body>');
+    html = injectAnalytics(html);
+    html = html.replace(/<\/body>/i, BRAND_IMAGE_PATCH + '\n' + CLICK_TRACKING + '\n</body>');
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(html);
   } catch (err) {
