@@ -2586,5 +2586,9 @@
   "2756d6cb-9e2e-4c61-bc57-511291a69097": {
     "brand_name": "PizzaExpress",
     "deployed_at": "2026-07-09T06:35:38.504Z"
+  },
+  "1eceacd1-096f-449a-b24e-eda5eebcbf7e": {
+    "brand_name": "Beanly Coffee",
+    "deployed_at": "2026-07-09T06:36:23.047Z"
   }
 }
