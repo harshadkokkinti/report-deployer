@@ -2610,5 +2610,9 @@
   "a56f2929-8c3c-4056-b05a-0f26c38bf3c7": {
     "brand_name": "SIDECAR",
     "deployed_at": "2026-07-09T06:37:30.510Z"
+  },
+  "f1f71af6-27c2-4b78-a99c-4f3f00e745c7": {
+    "brand_name": "Andrea's Eatery",
+    "deployed_at": "2026-07-09T06:37:33.828Z"
   }
 }
