@@ -2650,5 +2650,21 @@
   "68127664-0493-4cd3-808d-e24deadf9402": {
     "brand_name": "Roseate House",
     "deployed_at": "2026-07-09T11:10:57.922Z"
+  },
+  "0ef4c562-fd53-4d06-a142-75ada863cac0": {
+    "brand_name": "Unknown",
+    "deployed_at": null
+  },
+  "ea785842-b5b1-47e3-9a21-58684ea06ae4": {
+    "brand_name": "Unknown",
+    "deployed_at": null
+  },
+  "b2c017fa-41c3-4ee1-983e-7814c7127f2e": {
+    "brand_name": "Unknown",
+    "deployed_at": null
+  },
+  "0770c7a0-f32c-490d-a31b-3d72b1b5e02a": {
+    "brand_name": "Yume Ramen Hamburg",
+    "deployed_at": null
   }
 }
