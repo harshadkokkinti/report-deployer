@@ -3450,5 +3450,9 @@
   "9f6155fa-c534-4da5-8514-db7a55aa833e": {
     "brand_name": "Econo Motel",
     "deployed_at": "2026-07-29T10:59:22.003Z"
+  },
+  "3d93d203-fa40-4fff-a353-184e0dafed31": {
+    "brand_name": "The Westin San Francisco Airport",
+    "deployed_at": "2026-07-29T11:00:00.694Z"
   }
 }
