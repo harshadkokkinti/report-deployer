@@ -3454,5 +3454,9 @@
   "3d93d203-fa40-4fff-a353-184e0dafed31": {
     "brand_name": "The Westin San Francisco Airport",
     "deployed_at": "2026-07-29T11:00:00.694Z"
+  },
+  "aa6a64ba-fcc2-4895-89b6-c51e8c1e2cf0": {
+    "brand_name": "The Westin New York Grand Central",
+    "deployed_at": "2026-07-29T11:18:47.052Z"
   }
 }
