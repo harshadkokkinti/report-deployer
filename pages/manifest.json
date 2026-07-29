@@ -2722,5 +2722,9 @@
   "7e246ffa-a9d2-4fc3-835e-709ceed5d626": {
     "brand_name": "Flamingo Las Vegas",
     "deployed_at": "2026-07-29T04:36:29.610Z"
+  },
+  "ec2f13cb-52f9-4190-9a69-592684a5526e": {
+    "brand_name": "Wave Resort",
+    "deployed_at": "2026-07-29T04:36:43.546Z"
   }
 }
