@@ -3358,5 +3358,9 @@
   "d1c8c783-daa9-4649-b0b4-9646bd0d9f0e": {
     "brand_name": "Hilton Atlanta Airport",
     "deployed_at": "2026-07-29T10:44:30.582Z"
+  },
+  "0cbd6f03-0eb2-4a64-baf1-d0825eb4de7d": {
+    "brand_name": "Hilton Richardson Dallas",
+    "deployed_at": "2026-07-29T10:44:50.559Z"
   }
 }
