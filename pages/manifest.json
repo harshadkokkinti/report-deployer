@@ -3506,5 +3506,9 @@
   "f6ddb742-7b63-4251-a447-65c024f511ed": {
     "brand_name": "Hotel del Coronado",
     "deployed_at": "2026-07-29T11:21:55.342Z"
+  },
+  "e7be0c93-78fd-4ab4-9495-d34dc7569b8d": {
+    "brand_name": "Seneca Park Zoo",
+    "deployed_at": "2026-07-29T11:21:58.424Z"
   }
 }
