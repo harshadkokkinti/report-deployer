@@ -2994,5 +2994,9 @@
   "e2a46669-748a-4c3f-857d-12ed6620efff": {
     "brand_name": "Resorts World New York City",
     "deployed_at": "2026-07-29T06:12:15.735Z"
+  },
+  "f8653fd1-6c21-4335-9d51-752b0ef3a749": {
+    "brand_name": "Los Angeles Marriott Burbank Airport",
+    "deployed_at": "2026-07-29T08:18:56.730Z"
   }
 }
