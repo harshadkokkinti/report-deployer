@@ -4626,5 +4626,9 @@
   "d243410a-e3fd-473a-a645-0d219cd63a22": {
     "brand_name": "Canadian Tire",
     "deployed_at": "2026-07-30T10:21:27.035Z"
+  },
+  "066d1a77-d28a-4d5b-b89d-0c90631c3c0f": {
+    "brand_name": "Edgeworks Climbing Seattle",
+    "deployed_at": "2026-07-30T10:23:44.201Z"
   }
 }
