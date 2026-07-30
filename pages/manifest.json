@@ -4458,5 +4458,9 @@
   "43e4d15c-5ce8-4b52-b5c6-ba2c978155fa": {
     "brand_name": "Unknown",
     "deployed_at": null
+  },
+  "5136cb5b-1d9c-46db-b170-5c8fe7bca255": {
+    "brand_name": "Planet Fitness",
+    "deployed_at": "2026-07-30T09:12:47.583Z"
   }
 }
