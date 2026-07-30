@@ -4450,5 +4450,13 @@
   "ebf2717a-6acc-49ac-b2ba-d51d524f15e5": {
     "brand_name": "La Quinta Inn & Suites by Wyndham Dallas Grand Prairie North",
     "deployed_at": "2026-07-29T20:14:12.337Z"
+  },
+  "40dfe789-bc8e-4a87-806b-2ef48e99d64e": {
+    "brand_name": "Home2 Suites by Hilton Orlando / International Drive South",
+    "deployed_at": null
+  },
+  "43e4d15c-5ce8-4b52-b5c6-ba2c978155fa": {
+    "brand_name": "Unknown",
+    "deployed_at": null
   }
 }
