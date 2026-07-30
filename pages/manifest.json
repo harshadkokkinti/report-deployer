@@ -4686,5 +4686,17 @@
   "574bf292-539c-4eb5-95d8-cb6fe22a2708": {
     "brand_name": "Gold's Gym Calgary Northgate",
     "deployed_at": "2026-07-30T10:52:22.074Z"
+  },
+  "6dee5f4b-9746-411d-bbc1-8ea79ff78f4e": {
+    "brand_name": "VASA Fitness",
+    "deployed_at": null
+  },
+  "960ce4a1-e937-484c-a7a3-dbc8be9d72a5": {
+    "brand_name": "Physiq Fitness",
+    "deployed_at": null
+  },
+  "b0ff8465-fe99-46ac-8ad5-de508328f5eb": {
+    "brand_name": "24 Hour Fitness",
+    "deployed_at": null
   }
 }
