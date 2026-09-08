@@ -5422,5 +5422,21 @@
   "4e1658cb-6b7e-43d2-888e-35a33439b93b": {
     "brand_name": "The Marmara Taksim",
     "deployed_at": "2026-09-07T14:24:59.260Z"
+  },
+  "01fd3458-710a-4d96-843a-823add582262": {
+    "brand_name": "Zayed Cricket Stadium",
+    "deployed_at": null
+  },
+  "b581e567-fca8-492b-aae7-6b1cf53afa94": {
+    "brand_name": "Anjum Hotel Makkah",
+    "deployed_at": null
+  },
+  "a08b0742-993b-4a2e-975e-62fa51d44e65": {
+    "brand_name": "Waterfront Cebu City Hotel &amp; Casino",
+    "deployed_at": null
+  },
+  "2cf2e288-cf57-421b-ac31-1b0f2ec1aee7": {
+    "brand_name": "Fairmont Jaipur",
+    "deployed_at": null
   }
 }
