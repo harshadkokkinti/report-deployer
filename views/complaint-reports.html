@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Olly · Complaint Report</title>
+<link rel="icon" href="/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --wash-1:#E9F1FC; --wash-2:#C9DCF5; --wash-3:#B4CDEF;
+  --ink:#08101F; --ink-2:#0F1A2E; --ink-3:#18253C;
+  --blue:#1F7AFF; --blue-dim:#1660D0;
+  --violet:#6C5CE7; --cyan:#2FB8E0;
+  --text:#0A1526; --text-soft:#4A5C77; --text-faint:#7A8AA3;
+  --on-dark:#EAF1FB; --on-dark-soft:#93A6C2;
+  --line:rgba(10,21,38,.12); --line-dark:rgba(255,255,255,.10);
+  --ok:#17A673; --warn:#E0A020; --bad:#E0455E;
+  --r-lg:20px; --r-md:14px; --r-sm:10px;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+:root:not([data-theme="light"]){}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){}}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--sans); color:var(--text);
+  background:
+    radial-gradient(1100px 700px at 12% -8%, #FFFFFF 0%, rgba(255,255,255,0) 60%),
+    radial-gradient(900px 600px at 95% 5%, #DCE9FB 0%, rgba(220,233,251,0) 62%),
+    linear-gradient(170deg, var(--wash-1) 0%, var(--wash-2) 58%, var(--wash-3) 100%);
+  background-attachment:fixed;
+  min-height:100vh; -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit}
+a{color:var(--blue)}
+.mono{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint)}
+.hide{display:none !important}
+
+/* ---------- logo ---------- */
+.logo{display:inline-flex;align-items:center;gap:3px;user-select:none}
+.logo img{display:block}
+.logo svg{display:block}
+.logo .word{font-weight:700;letter-spacing:-.045em;line-height:1;position:relative;top:.5px;color:var(--text)}
+
+/* ---------- header ---------- */
+.topbar{
+  position:sticky;top:0;z-index:40;
+  display:flex;align-items:center;gap:16px;
+  padding:14px clamp(16px,4vw,40px);
+  background:rgba(233,241,252,.82); backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.topbar .spacer{flex:1}
+.who{display:flex;align-items:center;gap:10px}
+.avatar{
+  width:30px;height:30px;border-radius:50%;
+  background:linear-gradient(140deg,var(--violet),var(--cyan));
+  color:#fff;font-size:12px;font-weight:700;
+  display:grid;place-items:center;flex:none;
+}
+.who-name{font-size:13.5px;font-weight:600;line-height:1.15}
+.who-role{font-size:11px;color:var(--text-faint);line-height:1.15}
+.tabs{display:flex;gap:4px;background:rgba(255,255,255,.55);padding:4px;border-radius:999px;border:1px solid var(--line)}
+.tab{
+  border:0;background:transparent;border-radius:999px;cursor:pointer;
+  padding:7px 15px;font-size:13px;font-weight:600;color:var(--text-soft);
+}
+.tab[aria-selected="true"]{background:var(--ink);color:#fff}
+.tab:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+
+/* ---------- layout ---------- */
+.wrap{max-width:1060px;margin:0 auto;padding:clamp(24px,5vw,56px) clamp(16px,4vw,40px) 80px}
+h1{font-size:clamp(34px,5.2vw,54px);line-height:1.02;letter-spacing:-.035em;font-weight:700;margin:0 0 14px}
+h2{font-size:20px;letter-spacing:-.02em;margin:0 0 6px;font-weight:700}
+.lede{max-width:56ch;color:var(--text-soft);font-size:15.5px;line-height:1.6;margin:0}
+
+/* ---------- panel (dark working surface) ---------- */
+.panel{
+  background:linear-gradient(180deg,var(--ink-2) 0%, var(--ink) 100%);
+  color:var(--on-dark); border-radius:var(--r-lg);
+  border:1px solid rgba(255,255,255,.07);
+  box-shadow:0 26px 60px -28px rgba(8,16,31,.55);
+  overflow:hidden;
+}
+.panel-pad{padding:clamp(20px,3.5vw,30px)}
+.card{
+  background:rgba(255,255,255,.72);border:1px solid var(--line);
+  border-radius:var(--r-md);padding:18px 20px;
+}
+
+/* ---------- steps ---------- */
+.steps{display:flex;align-items:center;gap:0;margin:26px 0 20px;flex-wrap:wrap}
+.step{display:flex;align-items:center;gap:9px;padding-right:14px}
+.step .num{
+  width:24px;height:24px;border-radius:50%;flex:none;
+  display:grid;place-items:center;font-size:12px;font-weight:700;
+  border:1.5px solid var(--line);color:var(--text-faint);background:rgba(255,255,255,.5);
+}
+.step .lab{font-size:13px;font-weight:600;color:var(--text-faint);white-space:nowrap}
+.step[data-state="done"]{cursor:pointer}
+.step[data-state="done"]:hover .lab{color:var(--text)}
+.step[data-state="active"] .num{background:var(--ink);border-color:var(--ink);color:#fff}
+.step[data-state="active"] .lab{color:var(--text)}
+.step[data-state="done"] .num{background:var(--ok);border-color:var(--ok);color:#fff}
+.step[data-state="done"] .lab{color:var(--text-soft)}
+.step-rule{width:26px;height:1.5px;background:var(--line);margin-right:14px}
+
+/* ---------- fields ---------- */
+label.fl{display:block;font-size:12.5px;font-weight:600;color:var(--on-dark-soft);margin:0 0 7px}
+.inp{
+  width:100%;padding:13px 15px;font-size:15px;color:var(--on-dark);
+  background:rgba(255,255,255,.06);border:1px solid var(--line-dark);
+  border-radius:var(--r-sm);font-family:inherit;
+}
+.inp::placeholder{color:#5D7292}
+.inp:focus{border-color:var(--blue);background:rgba(31,122,255,.08);outline:none}
+.inp.light{background:#fff;color:var(--text);border-color:var(--line)}
+.inp.light::placeholder{color:var(--text-faint)}
+/* Native <select> popups render their own listbox chrome (usually white),
+   ignoring most of .inp's dark styling — without this, options inherit the
+   light `color` above and become invisible white-on-white when the list opens. */
+select.inp{color-scheme:light}
+select.inp option{color:var(--text);background:#fff}
+.field{position:relative;margin-bottom:18px}
+.hint{font-size:12.5px;color:var(--on-dark-soft);margin:7px 0 0;line-height:1.5}
+
+/* ---------- inline readout ---------- */
+.readout{
+  display:flex;align-items:center;gap:10px;margin-top:10px;
+  padding:11px 14px;border-radius:var(--r-sm);font-size:13.5px;line-height:1.45;
+  border:1px solid var(--line-dark);background:rgba(255,255,255,.05);color:var(--on-dark);
+}
+.readout.good{background:rgba(23,166,115,.13);border-color:rgba(23,166,115,.4)}
+.readout.wait{background:rgba(224,160,32,.13);border-color:rgba(224,160,32,.38);color:#F3D79A}
+.readout.bad{background:rgba(224,69,94,.13);border-color:rgba(224,69,94,.4);color:#FFB4BF}
+.readout img{width:44px;height:34px;object-fit:cover;border-radius:6px;flex:none}
+.readout .co{font-family:var(--mono);font-size:11.5px;color:var(--on-dark-soft);margin-left:auto;white-space:nowrap}
+
+/* ---------- buttons ---------- */
+.btn{
+  border:0;cursor:pointer;border-radius:999px;padding:13px 24px;
+  font-size:14.5px;font-weight:700;letter-spacing:-.01em;
+  transition:transform .12s ease, opacity .12s ease;
+}
+.btn:active{transform:translateY(1px)}
+.btn[disabled]{opacity:.42;cursor:not-allowed}
+.btn-p{background:var(--blue);color:#fff}
+.btn-p:hover:not([disabled]){background:var(--blue-dim)}
+.btn-g{background:rgba(255,255,255,.09);color:var(--on-dark);border:1px solid var(--line-dark)}
+.btn-g:hover:not([disabled]){background:rgba(255,255,255,.15)}
+.btn-l{background:var(--ink);color:#fff}
+.btn-sm{padding:9px 16px;font-size:13px}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* ---------- confirm ---------- */
+.confirm{display:grid;grid-template-columns:168px 1fr;gap:20px;align-items:start}
+.confirm img{width:168px;height:126px;object-fit:cover;border-radius:var(--r-md);background:rgba(255,255,255,.06);display:block}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14px;margin-top:12px}
+.kv dt{color:var(--on-dark-soft);font-size:12.5px;padding-top:2px}
+.kv dd{margin:0;line-height:1.45;word-break:break-word}
+@media(max-width:620px){.confirm{grid-template-columns:1fr}.confirm img{width:100%;height:180px}}
+
+/* ---------- generating ---------- */
+.orb-wrap{display:grid;place-items:center;padding:14px 0 22px}
+.orb{width:62px;height:62px;animation:spin 3.4s cubic-bezier(.6,.05,.4,.95) infinite}
+.orb img{width:100%;height:auto;display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){.orb{animation:none}}
+.bar{height:5px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;margin:18px 0 10px}
+.bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--violet),var(--cyan));width:4%;transition:width 1.2s linear}
+.stagelist{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:11px}
+.stagelist li{display:flex;gap:11px;font-size:14px;color:var(--on-dark-soft);align-items:center}
+.stagelist li[data-on="1"]{color:var(--on-dark)}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2);flex:none}
+.stagelist li[data-on="1"] .dot{background:var(--cyan)}
+.timer{font-family:var(--mono);font-size:13px;color:var(--on-dark-soft)}
+
+/* ---------- done ---------- */
+.done-tick{width:56px;height:56px;border-radius:50%;background:var(--ok);display:grid;place-items:center;margin:0 auto 18px}
+
+/* ---------- tables ---------- */
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:11.5px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--text-faint);font-weight:500;padding:0 12px 10px 0;border-bottom:1px solid var(--line)}
+td{padding:14px 12px 14px 0;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:99px;font-family:var(--mono);letter-spacing:.04em;text-transform:uppercase}
+.chip.running{background:#FFF3D6;color:#8A6200}
+.chip.ready{background:#DAF5E9;color:#0B6B47}
+.chip.failed{background:#FBE0E4;color:#96162B}
+.empty{padding:44px 20px;text-align:center;color:var(--text-soft);font-size:14.5px}
+
+/* ---------- sign in ---------- */
+.signin{min-height:100vh;display:grid;place-items:center;padding:28px}
+.signin-card{width:100%;max-width:400px}
+.err{font-size:13px;color:#FFB4BF;margin:0 0 14px}
+.gridline{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.gridline{grid-template-columns:1fr}}
+.notice{
+  display:flex;gap:10px;font-size:12.5px;line-height:1.55;color:var(--text-soft);
+  background:rgba(255,255,255,.55);border:1px solid var(--line);border-radius:var(--r-sm);
+  padding:12px 14px;margin-top:22px;
+}
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translateX(-50%);
+  background:var(--ink);color:#fff;font-size:13.5px;font-weight:600;
+  padding:12px 20px;border-radius:99px;z-index:90;box-shadow:0 14px 34px -10px rgba(0,0,0,.5);
+}
+</style>
+</head>
+<body>
+
+<!-- ================= SIGN IN ================= -->
+<div class="signin" id="screen-signin">
+  <div class="signin-card">
+    <div style="text-align:center;margin-bottom:26px" id="signin-logo"></div>
+    <div class="panel panel-pad">
+      <h2 style="color:var(--on-dark);margin-bottom:4px">Sign in</h2>
+      <p style="font-size:13.5px;color:var(--on-dark-soft);margin:0 0 20px">Internal tool for the Olly team.</p>
+      <p class="err hide" id="signin-err"></p>
+      <div class="field"><label class="fl" for="si-email">Email</label>
+        <input class="inp" id="si-email" type="email" autocomplete="username" placeholder="you@askolly.io"></div>
+      <div class="field"><label class="fl" for="si-pass">Password</label>
+        <input class="inp" id="si-pass" type="password" autocomplete="current-password" placeholder="••••••••"></div>
+      <button class="btn btn-p" id="si-go" style="width:100%">Sign in</button>
+    </div>
+    <div class="notice hide" id="seed-note"></div>
+  </div>
+</div>
+
+<!-- ================= APP ================= -->
+<div id="screen-app" class="hide">
+  <header class="topbar">
+    <span id="app-logo"></span>
+    <div class="spacer"></div>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" data-view="new" aria-selected="true">New report</button>
+      <button class="tab" role="tab" data-view="history" aria-selected="false">Reports</button>
+      <button class="tab hide" role="tab" data-view="admin" aria-selected="false" id="tab-admin">Team</button>
+    </div>
+    <div class="spacer"></div>
+    <div class="who">
+      <div class="avatar" id="me-initial">A</div>
+      <div>
+        <div class="who-name" id="me-name">—</div>
+        <div class="who-role" id="me-role">—</div>
+      </div>
+      <button class="btn btn-sm btn-g" id="signout" style="color:var(--text);background:rgba(255,255,255,.6);border-color:var(--line)">Sign out</button>
+    </div>
+  </header>
+
+  <!-- ---------- NEW REPORT ---------- -->
+  <main class="wrap" id="view-new">
+    <h1>Pull a complaint report<br>for any outlet.</h1>
+    <p class="lede">Enter the outlet's name, address, and a photo link, and Olly reads every review it can find for that listing and writes the report back to you.</p>
+
+    <div class="steps" id="steps">
+      <div class="step" data-step="1" data-state="active"><span class="num">1</span><span class="lab">Outlet details</span></div>
+      <div class="step-rule"></div>
+      <div class="step" data-step="2"><span class="num">2</span><span class="lab">Confirm</span></div>
+      <div class="step-rule"></div>
+      <div class="step" data-step="3"><span class="num">3</span><span class="lab">Report</span></div>
+    </div>
+
+    <!-- step 1: outlet details -->
+    <section class="panel panel-pad" id="stage-details">
+      <h2 style="color:var(--on-dark)">Which outlet?</h2>
+      <p style="font-size:13.5px;color:var(--on-dark-soft);margin:0 0 22px;max-width:50ch">Type the outlet's name and address as they'd appear on Google, and a link to its photo. It goes at the top of the report.</p>
+      <div class="field">
+        <label class="fl" for="p-title">Place title</label>
+        <input class="inp" id="p-title" type="text" autocomplete="off" placeholder="First Coffee | Jasola">
+      </div>
+      <div class="field">
+        <label class="fl" for="p-address">Place address</label>
+        <input class="inp" id="p-address" type="text" autocomplete="off" placeholder="Shop 16, Ground Floor, Jasola Apollo Metro Station, New Delhi">
+      </div>
+      <div class="field">
+        <label class="fl" for="p-image">Image link</label>
+        <input class="inp" id="p-image" type="url" autocomplete="off" placeholder="https://…">
+        <div class="readout hide" id="img-read"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-p" id="details-next" disabled>Continue</button>
+      </div>
+    </section>
+
+    <!-- stage: confirm -->
+    <section class="panel panel-pad hide" id="stage-confirm">
+      <h2 style="color:var(--on-dark)">Is this the right outlet?</h2>
+      <p style="font-size:13.5px;color:var(--on-dark-soft);margin:0 0 22px">Olly will pull reviews for this listing only.</p>
+      <div class="confirm">
+        <img id="c-img" alt="Outlet listing photo">
+        <div>
+          <div style="font-size:21px;font-weight:700;letter-spacing:-.02em" id="c-name">—</div>
+          <dl class="kv">
+            <dt>Address</dt><dd id="c-addr">—</dd>
+            <dt>Image</dt><dd style="font-size:12.5px;color:var(--on-dark-soft)" id="c-url">—</dd>
+          </dl>
+        </div>
+      </div>
+      <div class="btn-row" style="margin-top:26px">
+        <button class="btn btn-p" id="go-generate">Generate report</button>
+        <button class="btn btn-g" id="back-form">Change something</button>
+      </div>
+    </section>
+
+    <!-- stage: generating -->
+    <section class="panel panel-pad hide" id="stage-loading" aria-live="polite">
+      <div class="orb-wrap"><div class="orb" id="orb"></div></div>
+      <div style="text-align:center">
+        <h2 style="color:var(--on-dark)">Generating your report</h2>
+        <p style="font-size:14.5px;color:var(--on-dark-soft);max-width:44ch;margin:8px auto 0;line-height:1.6">
+          Olly is reading the reviews for <b id="l-name" style="color:var(--on-dark)">this outlet</b>. This usually takes 2 to 15 minutes. You can keep this tab open or come back to Reports later — it keeps running either way.
+        </p>
+      </div>
+      <div class="bar"><i id="l-bar"></i></div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="timer" id="l-time">00:00 elapsed</span>
+        <span class="timer">typical 2–15 min</span>
+      </div>
+      <ul class="stagelist" id="l-stages">
+        <li data-on="1"><span class="dot"></span>Request sent to Olly</li>
+        <li><span class="dot"></span>Collecting reviews for the listing</li>
+        <li><span class="dot"></span>Extracting complaints and praises</li>
+        <li><span class="dot"></span>Ranking issues and writing the report</li>
+      </ul>
+      <div class="btn-row" style="margin-top:24px">
+        <button class="btn btn-g btn-sm" id="l-bg">Run in the background</button>
+      </div>
+    </section>
+
+    <!-- stage: done -->
+    <section class="panel panel-pad hide" id="stage-done">
+      <div style="text-align:center;max-width:46ch;margin:0 auto">
+        <div class="done-tick"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.2 5.2L20 7"/></svg></div>
+        <h2 style="color:var(--on-dark)">Your report is ready</h2>
+        <p style="font-size:14.5px;color:var(--on-dark-soft);margin:8px 0 24px;line-height:1.6"><b id="d-name" style="color:var(--on-dark)"></b> · finished in <span id="d-took"></span></p>
+        <div class="btn-row" style="justify-content:center">
+          <a class="btn btn-p" id="d-open" href="#" target="_blank" rel="noopener" style="text-decoration:none">Open report</a>
+          <button class="btn btn-g" id="d-copy">Copy link</button>
+          <button class="btn btn-g" id="d-new">Run another</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- stage: failed -->
+    <section class="panel panel-pad hide" id="stage-failed">
+      <h2 style="color:var(--on-dark)">The report didn't finish</h2>
+      <p style="font-size:14.5px;color:var(--on-dark-soft);max-width:52ch;line-height:1.6" id="f-msg"></p>
+      <div class="btn-row" style="margin-top:20px">
+        <button class="btn btn-p" id="f-retry">Try again</button>
+        <button class="btn btn-g" id="f-edit">Change the outlet</button>
+      </div>
+    </section>
+
+    <div class="notice hide" id="mode-note"></div>
+  </main>
+
+  <!-- ---------- HISTORY ---------- -->
+  <main class="wrap hide" id="view-history">
+    <h1>Reports</h1>
+    <p class="lede">Every report this team has run, newest first.</p>
+    <div class="card" style="margin-top:28px;padding:20px 22px" id="hist-box"></div>
+  </main>
+
+  <!-- ---------- ADMIN ---------- -->
+  <main class="wrap hide" id="view-admin">
+    <h1>Team</h1>
+    <p class="lede">Add the people who should be able to run reports. They sign in with the email and password you set here.</p>
+
+    <div class="panel panel-pad" style="margin-top:28px">
+      <h2 style="color:var(--on-dark)">Add a team member</h2>
+      <p style="font-size:13.5px;color:var(--on-dark-soft);margin:0 0 20px">Share the password with them directly; they can't reset it themselves.</p>
+      <p class="err hide" id="ad-err"></p>
+      <div class="gridline">
+        <div class="field"><label class="fl" for="ad-name">Name</label><input class="inp" id="ad-name" placeholder="Sanchari S."></div>
+        <div class="field"><label class="fl" for="ad-email">Email</label><input class="inp" id="ad-email" type="email" placeholder="sanchari@askolly.io"></div>
+        <div class="field"><label class="fl" for="ad-pass">Password</label><input class="inp" id="ad-pass" placeholder="At least 6 characters"></div>
+        <div class="field"><label class="fl" for="ad-role">Access</label>
+          <select class="inp" id="ad-role">
+            <option value="member">Member — can run reports</option>
+            <option value="admin">Admin — can also manage the team</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-p" id="ad-add">Add member</button>
+    </div>
+
+    <div class="card" style="margin-top:22px;padding:20px 22px" id="users-box"></div>
+  </main>
+</div>
+
+<script>
+/* ============================================================
+   CONFIG — client-side timing only. The n8n webhook URL lives
+   server-side in api/complaintReports.js and never reaches here.
+   ============================================================ */
+const CONFIG = {
+  API_BASE: "/complaint-reports/api",
+  POLL_EVERY_MS: 10000,
+  GIVE_UP_AFTER_MS: 20 * 60 * 1000
+};
+
+/* ============================================================
+   Logo — /public/logo.png is the real Olly wordmark (931×522),
+   but the "lly" half is baked in as white pixels for dark
+   backgrounds, so we crop to just the circular mark on the left
+   via object-fit and pair it with the live "lly" text below,
+   which already recolors correctly per theme.
+   ============================================================ */
+function ollyMark(size){
+  return `<img src="/logo.png" alt="" width="${size}" height="${size}"
+    style="display:block;object-fit:cover;object-position:0% 50%">`;
+}
+function logoHTML(size){
+  const s = size || 30;
+  return `<span class="logo" style="font-size:${Math.round(s*1.12)}px">${ollyMark(s)}<span class="word">lly</span></span>`;
+}
+document.getElementById("app-logo").innerHTML = logoHTML(26);
+document.getElementById("signin-logo").innerHTML = logoHTML(40);
+document.getElementById("orb").innerHTML = ollyMark(62);
+
+/* ============================================================
+   API — every call is same-origin under /complaint-reports/api,
+   so the HttpOnly session cookie rides along automatically.
+   ============================================================ */
+async function api(path, opts){
+  opts = opts || {};
+  const res = await fetch(CONFIG.API_BASE + path, {
+    method: opts.method || "GET",
+    headers: opts.body ? { "Content-Type": "application/json" } : undefined,
+    body: opts.body ? JSON.stringify(opts.body) : undefined
+  });
+  let data = null;
+  try{ data = await res.json(); }catch(e){}
+  if(!res.ok){
+    const err = new Error((data && data.error) || ("Request failed with " + res.status));
+    err.status = res.status;
+    throw err;
+  }
+  return data;
+}
+
+const $ = id => document.getElementById(id);
+function esc(str){ return String(str||"").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+/* ============================================================
+   Sign in
+   ============================================================ */
+let ME = null;
+
+function showApp(){
+  $("screen-signin").classList.add("hide");
+  $("screen-app").classList.remove("hide");
+  $("me-name").textContent = ME.name;
+  $("me-role").textContent = ME.role === "admin" ? "Admin" : "Member";
+  $("me-initial").textContent = (ME.name[0]||"?").toUpperCase();
+  $("tab-admin").classList.toggle("hide", ME.role !== "admin");
+  renderHistory();
+  if(ME.role === "admin") renderUsers();
+}
+
+(async function resumeSession(){
+  try{ ME = await api("/me"); showApp(); }
+  catch(e){ /* not signed in — the sign-in screen is already showing */ }
+})();
+
+$("si-go").onclick = async () => {
+  const email = $("si-email").value.trim(), pass = $("si-pass").value;
+  const err = $("signin-err");
+  err.classList.add("hide");
+  try{
+    ME = await api("/login", { method: "POST", body: { email, password: pass } });
+    showApp();
+  }catch(e){
+    err.textContent = e.message || "That email and password don't match an account.";
+    err.classList.remove("hide");
+  }
+};
+$("si-pass").addEventListener("keydown", e => { if(e.key === "Enter") $("si-go").click(); });
+$("signout").onclick = async () => {
+  try{ await api("/logout", { method: "POST" }); }catch(e){}
+  location.reload();
+};
+
+/* ============================================================
+   Tabs
+   ============================================================ */
+document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
+  document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-selected", String(x === t)));
+  ["new","history","admin"].forEach(v => $("view-" + v).classList.toggle("hide", v !== t.dataset.view));
+  if(t.dataset.view === "history") renderHistory();
+  if(t.dataset.view === "admin") renderUsers();
+});
+
+/* ============================================================
+   Outlet details — plain text fields now, no Google link parsing.
+   ============================================================ */
+const titleInput = $("p-title"), addrInput = $("p-address"), imgInput = $("p-image"), imgRead = $("img-read");
+
+function gate(){
+  const validImg = /^https?:\/\//i.test(imgInput.value.trim());
+  $("details-next").disabled = !(titleInput.value.trim() && addrInput.value.trim() && validImg);
+}
+titleInput.addEventListener("input", gate);
+addrInput.addEventListener("input", gate);
+imgInput.addEventListener("input", () => {
+  const v = imgInput.value.trim();
+  if(!v){ imgRead.classList.add("hide"); gate(); return; }
+  if(!/^https?:\/\//i.test(v)){
+    imgRead.className = "readout bad";
+    imgRead.textContent = "That link needs to start with http:// or https://";
+  } else {
+    imgRead.className = "readout good";
+    imgRead.innerHTML = '<img src="' + esc(v) + '" alt="" onerror="this.parentNode.className=\'readout wait\';this.remove()"><span>Photo loaded</span>';
+  }
+  imgRead.classList.remove("hide");
+  gate();
+});
+
+/* ============================================================
+   Steps + stages
+   ============================================================ */
+function setStep(n){
+  document.querySelectorAll(".step").forEach(s => {
+    const i = +s.dataset.step;
+    s.dataset.state = i < n ? "done" : i === n ? "active" : "";
+  });
+}
+function stage(name){
+  ["details","confirm","loading","done","failed"].forEach(s => $("stage-" + s).classList.toggle("hide", s !== name));
+  setStep({details:1, confirm:2, loading:3, done:3, failed:3}[name]);
+  const f = $("stage-" + name).querySelector("input");
+  if(f) setTimeout(() => f.focus(), 40);
+}
+document.querySelectorAll(".step").forEach(el => el.onclick = () => {
+  if(el.dataset.state !== "done") return;
+  if(+el.dataset.step === 1) stage("details");
+});
+[titleInput, addrInput, imgInput].forEach(el => el.addEventListener("keydown", e => {
+  if(e.key === "Enter" && !$("details-next").disabled) $("details-next").click();
+}));
+
+$("details-next").onclick = () => {
+  const title = titleInput.value.trim(), address = addrInput.value.trim(), url = imgInput.value.trim();
+  $("c-name").textContent = title;
+  $("c-addr").textContent = address;
+  $("c-url").textContent  = url;
+  const im = $("c-img");
+  im.style.display = "block"; im.src = url;
+  im.onerror = () => { im.style.display = "none"; };
+  stage("confirm");
+};
+$("back-form").onclick = () => stage("details");
+$("f-edit").onclick = () => stage("details");
+$("d-new").onclick = () => { titleInput.value=""; addrInput.value=""; imgInput.value=""; imgRead.classList.add("hide"); gate(); stage("details"); };
+
+/* ============================================================
+   Running a report — create it via our API (which owns the n8n
+   webhook URL server-side), then poll our own status endpoint.
+   ============================================================ */
+let job = null, tick = null, pollTimer = null;
+function fmt(ms){ const s = Math.floor(ms/1000); return String(Math.floor(s/60)).padStart(2,"0") + ":" + String(s%60).padStart(2,"0"); }
+
+$("go-generate").onclick = () => startJob();
+$("f-retry").onclick = () => startJob();
+$("l-bg").onclick = () => { document.querySelector('.tab[data-view="history"]').click(); };
+
+async function startJob(){
+  const title = titleInput.value.trim(), address = addrInput.value.trim(), image_url = imgInput.value.trim();
+  job = { id: null, title, address, image_url, started: Date.now() };
+
+  $("l-name").textContent = title || "this outlet";
+  stage("loading");
+  runTimer();
+
+  try{
+    const { job_id } = await api("/reports", { method: "POST", body: { title, address, image_url } });
+    job.id = job_id;
+    renderHistory();
+    startPolling(job);
+  }catch(err){
+    fail(job, err.message || "Couldn't start the report.");
+  }
+}
+function startPolling(rec){
+  clearInterval(pollTimer);
+  pollTimer = setInterval(async () => {
+    if(Date.now() - rec.started > CONFIG.GIVE_UP_AFTER_MS)
+      return fail(rec, "This report has been running over 20 minutes. Check with an admin, then try again.");
+    try{
+      const r = await api("/reports/" + rec.id);
+      if(r.status === "ready" && r.report_url) finish(rec, r.report_url, r.took);
+      else if(r.status === "failed") fail(rec, r.error || "The workflow stopped before it finished.");
+    }catch(e){ /* transient network hiccup — keep waiting */ }
+  }, CONFIG.POLL_EVERY_MS);
+}
+function runTimer(){
+  const stages = [...$("l-stages").children];
+  clearInterval(tick);
+  tick = setInterval(() => {
+    const el = Date.now() - job.started;
+    $("l-time").textContent = fmt(el) + " elapsed";
+    const pct = Math.min(94, 4 + (el / (CONFIG.GIVE_UP_AFTER_MS * .6)) * 100);
+    $("l-bar").style.width = pct + "%";
+    const on = el < 12000 ? 1 : el < 70000 ? 2 : el < 200000 ? 3 : 4;
+    stages.forEach((li,i) => li.dataset.on = i < on ? "1" : "0");
+  }, 1000);
+}
+function stop(){ clearInterval(tick); clearInterval(pollTimer); }
+function finish(rec, url, tookMs){
+  stop();
+  const took = tookMs != null ? tookMs : (Date.now() - rec.started);
+  if(job && job.id === rec.id){
+    $("l-bar").style.width = "100%";
+    $("d-name").textContent = rec.title || "Your outlet";
+    $("d-took").textContent = fmt(took);
+    $("d-open").href = url;
+    stage("done");
+  }
+  renderHistory();
+}
+function fail(rec, msg){
+  stop();
+  if(job && (!rec.id || job.id === rec.id)){ $("f-msg").textContent = msg; stage("failed"); }
+  renderHistory();
+}
+$("d-copy").onclick = async () => {
+  try{ await navigator.clipboard.writeText($("d-open").href); toast("Link copied"); }
+  catch(e){ toast("Couldn't copy — select the link instead"); }
+};
+function toast(m){
+  const t = document.createElement("div"); t.className = "toast"; t.textContent = m;
+  document.body.appendChild(t); setTimeout(() => t.remove(), 2200);
+}
+
+/* ============================================================
+   History + Team — both are shared, server-backed views now.
+   ============================================================ */
+async function renderHistory(){
+  const box = $("hist-box");
+  let reports;
+  try{ ({ reports } = await api("/reports")); }
+  catch(e){ box.innerHTML = `<div class="empty">Couldn't load reports right now.</div>`; return; }
+
+  if(!reports.length){
+    box.innerHTML = `<div class="empty">No reports yet. Start one from <b>New report</b>.</div>`; return;
+  }
+  box.innerHTML = `<table><thead><tr><th>Outlet</th><th>Requested by</th><th>Started</th><th>Status</th><th></th></tr></thead><tbody>` +
+    reports.map(r => `<tr>
+      <td><div style="font-weight:700">${esc(r.place.title || "Untitled outlet")}</div><div style="font-size:12.5px;color:var(--text-faint)">${esc(r.place.address || "")}</div></td>
+      <td style="color:var(--text-soft)">${esc(r.by)}</td>
+      <td style="color:var(--text-soft);font-size:13px">${new Date(r.started).toLocaleString()}</td>
+      <td><span class="chip ${r.status}">${r.status === "running" ? "Running" : r.status === "ready" ? "Ready" : "Failed"}</span></td>
+      <td style="text-align:right">${r.report_url ? `<a class="btn btn-sm btn-l" style="text-decoration:none" href="${esc(r.report_url)}" target="_blank" rel="noopener">Open</a>` : ""}</td>
+    </tr>`).join("") + `</tbody></table>`;
+}
+async function renderUsers(){
+  const box = $("users-box");
+  let users;
+  try{ ({ users } = await api("/team")); }
+  catch(e){ box.innerHTML = `<div class="empty">Couldn't load the team.</div>`; return; }
+
+  box.innerHTML = `<table><thead><tr><th>Name</th><th>Email</th><th>Access</th><th></th></tr></thead><tbody>` +
+    users.map(u => `<tr>
+      <td style="font-weight:700">${esc(u.name)}</td>
+      <td style="color:var(--text-soft)">${esc(u.email)}</td>
+      <td style="color:var(--text-soft)">${u.role === "admin" ? "Admin" : "Member"}</td>
+      <td style="text-align:right;white-space:nowrap">
+        <button class="btn btn-sm btn-g" style="color:var(--text);background:rgba(10,21,38,.06);border-color:var(--line)" data-reset="${u.id}" data-name="${esc(u.name)}">Reset password</button>
+        ${u.id === ME?.id ? `<span class="mono" style="margin-left:8px">you</span>` : `<button class="btn btn-sm btn-g" style="margin-left:8px;color:var(--text);background:rgba(10,21,38,.06);border-color:var(--line)" data-rm="${u.id}">Remove</button>`}
+      </td>
+    </tr>`).join("") + `</tbody></table>`;
+
+  box.querySelectorAll("[data-rm]").forEach(b => b.onclick = async () => {
+    try{ await api("/team/" + b.dataset.rm, { method: "DELETE" }); renderUsers(); toast("Member removed"); }
+    catch(e){ toast(e.message || "Couldn't remove that member"); }
+  });
+
+  // Passwords are hashed and can't be read back — an admin sets a new one
+  // instead, and we show it once so it can be copied over to that person.
+  box.querySelectorAll("[data-reset]").forEach(b => b.onclick = async () => {
+    const name = b.dataset.name;
+    const pass = prompt(`New password for ${name} (at least 6 characters):`);
+    if(pass === null) return;
+    if(pass.length < 6){ toast("Passwords need at least 6 characters"); return; }
+    try{
+      await api("/team/" + b.dataset.reset + "/password", { method: "PUT", body: { password: pass } });
+      alert(`Password updated for ${name}:\n\n${pass}\n\nShare this with them directly — it won't be shown again.`);
+    }catch(e){ toast(e.message || "Couldn't update that password"); }
+  });
+}
+$("ad-add").onclick = async () => {
+  const name = $("ad-name").value.trim(), email = $("ad-email").value.trim().toLowerCase(),
+        pass = $("ad-pass").value, role = $("ad-role").value, err = $("ad-err");
+  err.classList.add("hide");
+  try{
+    await api("/team", { method: "POST", body: { name, email, password: pass, role } });
+    renderUsers();
+    $("ad-name").value = $("ad-email").value = $("ad-pass").value = "";
+    toast("Member added");
+  }catch(e){
+    err.textContent = e.message || "Could not add that team member.";
+    err.classList.remove("hide");
+  }
+};
+</script>
+</body>
+</html>

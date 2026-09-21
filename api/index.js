@@ -9,6 +9,7 @@ const fs = require('fs');
 const crypto = require('crypto');
 const https = require('https');
 const http = require('http');
+const { buildComplaintReportsRouter } = require('./complaintReports');
 
 const app = express();
 
@@ -249,6 +250,9 @@ app.get(A + '/logout', (req, res) => {
   res.setHeader('Set-Cookie', 'admin_token=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0');
   res.redirect(A + '/login');
 });
+
+// ── Complaint Reports dashboard (team login, run reports, shared history) ────
+app.use('/complaint-reports', buildComplaintReportsRouter());
 
 app.get('/', (req, res) => {
   res.status(404).setHeader('Content-Type', 'text/html; charset=utf-8').send(notFoundHtml);
@@ -553,7 +557,8 @@ if (require.main === module) {
     console.log(`  GET  /admin        — dashboard (login required)`);
     console.log(`  POST /api/deploy   — deploy report`);
     console.log(`  GET  /api/pages    — list all`);
-    console.log(`  DELETE /api/pages/:uuid — remove\n`);
+    console.log(`  DELETE /api/pages/:uuid — remove`);
+    console.log(`  GET  /complaint-reports — complaint report dashboard\n`);
   });
 }
 
