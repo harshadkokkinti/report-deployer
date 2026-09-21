@@ -274,14 +274,13 @@ function buildComplaintReportsRouter() {
   });
 
   // ── reports ──────────────────────────────────────────────────────────────
+  // Admins see the whole team's history; members see only reports they requested.
   router.get('/api/reports', requireAuth, async (req, res) => {
     try {
       const sb = getSupabase();
-      const { data, error } = await sb
-        .from('complaint_report_reports')
-        .select('*')
-        .order('started_at', { ascending: false })
-        .limit(200);
+      let query = sb.from('complaint_report_reports').select('*').order('started_at', { ascending: false }).limit(200);
+      if (req.crUser.role !== 'admin') query = query.eq('requested_by_id', req.crUser.sub);
+      const { data, error } = await query;
       if (error) throw error;
       res.json({ reports: data.map(publicReport) });
     } catch (err) {
@@ -300,6 +299,9 @@ function buildComplaintReportsRouter() {
         .maybeSingle();
       if (error) throw error;
       if (!data) return res.status(404).json({ error: 'Report not found' });
+      if (req.crUser.role !== 'admin' && data.requested_by_id !== req.crUser.sub) {
+        return res.status(404).json({ error: 'Report not found' });
+      }
       res.json(publicReport(data));
     } catch (err) {
       console.error('complaint-reports status error:', err);
@@ -316,8 +318,8 @@ function buildComplaintReportsRouter() {
 
     if (!title) return res.status(400).json({ error: 'A place title is required.' });
     if (!address) return res.status(400).json({ error: 'A place address is required.' });
-    if (!/^https?:\/\//i.test(image_url)) {
-      return res.status(400).json({ error: 'A valid image link is required.' });
+    if (image_url && !/^https?:\/\//i.test(image_url)) {
+      return res.status(400).json({ error: 'That image link needs to start with http:// or https://' });
     }
 
     const jobId = 'job_' + crypto.randomBytes(6).toString('hex');
@@ -372,7 +374,7 @@ function buildComplaintReportsRouter() {
           // so no mapping/Set node is needed on the n8n side.
           'Maps title': title,
           'Maps address': address,
-          'image-url': image_url,
+          'image_url': image_url,
           requested_at: new Date().toISOString(),
         }),
       });

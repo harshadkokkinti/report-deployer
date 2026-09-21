@@ -278,7 +278,7 @@ tr:last-child td{border-bottom:0}
         <input class="inp" id="p-address" type="text" autocomplete="off" placeholder="Shop 16, Ground Floor, Jasola Apollo Metro Station, New Delhi">
       </div>
       <div class="field">
-        <label class="fl" for="p-image">Image link</label>
+        <label class="fl" for="p-image">Image link <span style="font-weight:400;color:var(--on-dark-soft)">(optional)</span></label>
         <input class="inp" id="p-image" type="url" autocomplete="off" placeholder="https://…">
         <div class="readout hide" id="img-read"></div>
       </div>
@@ -502,7 +502,8 @@ document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
 const titleInput = $("p-title"), addrInput = $("p-address"), imgInput = $("p-image"), imgRead = $("img-read");
 
 function gate(){
-  const validImg = /^https?:\/\//i.test(imgInput.value.trim());
+  const img = imgInput.value.trim();
+  const validImg = !img || /^https?:\/\//i.test(img); // optional — only validated if provided
   $("details-next").disabled = !(titleInput.value.trim() && addrInput.value.trim() && validImg);
 }
 titleInput.addEventListener("input", gate);
@@ -548,10 +549,14 @@ $("details-next").onclick = () => {
   const title = titleInput.value.trim(), address = addrInput.value.trim(), url = imgInput.value.trim();
   $("c-name").textContent = title;
   $("c-addr").textContent = address;
-  $("c-url").textContent  = url;
-  const im = $("c-img");
-  im.style.display = "block"; im.src = url;
-  im.onerror = () => { im.style.display = "none"; };
+  $("c-url").textContent  = url || "No image added";
+  const im = $("c-img"), confirmBox = im.closest(".confirm");
+  if(url){
+    im.style.display = "block"; im.src = url; confirmBox.style.gridTemplateColumns = "";
+    im.onerror = () => { im.style.display = "none"; confirmBox.style.gridTemplateColumns = "1fr"; };
+  } else {
+    im.style.display = "none"; confirmBox.style.gridTemplateColumns = "1fr";
+  }
   stage("confirm");
 };
 $("back-form").onclick = () => stage("details");
@@ -655,8 +660,17 @@ async function renderHistory(){
       <td style="color:var(--text-soft)">${esc(r.by)}</td>
       <td style="color:var(--text-soft);font-size:13px">${new Date(r.started).toLocaleString()}</td>
       <td><span class="chip ${r.status}">${r.status === "running" ? "Running" : r.status === "ready" ? "Ready" : "Failed"}</span></td>
-      <td style="text-align:right">${r.report_url ? `<a class="btn btn-sm btn-l" style="text-decoration:none" href="${esc(r.report_url)}" target="_blank" rel="noopener">Open</a>` : ""}</td>
+      <td style="text-align:right;white-space:nowrap">${r.report_url ? `
+        <a class="btn btn-sm btn-l" style="text-decoration:none" href="${esc(r.report_url)}" target="_blank" rel="noopener">Open</a>
+        <button class="btn btn-sm btn-g" style="padding:9px 11px;margin-left:6px;color:var(--text);background:rgba(10,21,38,.06);border-color:var(--line)" data-copy="${esc(r.report_url)}" title="Copy link" aria-label="Copy report link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        </button>` : ""}</td>
     </tr>`).join("") + `</tbody></table>`;
+
+  box.querySelectorAll("[data-copy]").forEach(b => b.onclick = async () => {
+    try{ await navigator.clipboard.writeText(b.dataset.copy); toast("Link copied"); }
+    catch(e){ toast("Couldn't copy — select the link instead"); }
+  });
 }
 async function renderUsers(){
   const box = $("users-box");
