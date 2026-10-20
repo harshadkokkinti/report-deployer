@@ -280,7 +280,58 @@ function cleanJson(raw) {
   return s;
 }
 
+// ── Local mode (LOCAL_MODE=1): same Octokit surface, backed by ./.local-data ──
+const LOCAL_ROOT = path.join(__dirname, '..', '.local-data');
+
+function localError(status, message) {
+  return Object.assign(new Error(message), { status });
+}
+
+function localPath(p) {
+  const full = path.resolve(LOCAL_ROOT, p);
+  if (full !== LOCAL_ROOT && !full.startsWith(LOCAL_ROOT + path.sep)) throw localError(400, 'Invalid path');
+  return full;
+}
+
+function localSha(buf) {
+  return crypto.createHash('sha1').update(buf).digest('hex');
+}
+
+function createLocalOctokit() {
+  return {
+    repos: {
+      async getContent({ path: p }) {
+        const full = localPath(p);
+        if (!fs.existsSync(full)) throw localError(404, 'Not Found');
+        if (fs.statSync(full).isDirectory()) {
+          const data = fs.readdirSync(full, { withFileTypes: true })
+            .filter(d => d.isFile())
+            .map(d => ({ type: 'file', name: d.name, sha: localSha(fs.readFileSync(path.join(full, d.name))) }));
+          return { data };
+        }
+        const buf = fs.readFileSync(full);
+        return { data: { type: 'file', content: buf.toString('base64'), sha: localSha(buf) } };
+      },
+      async createOrUpdateFileContents({ path: p, content }) {
+        const full = localPath(p);
+        fs.mkdirSync(path.dirname(full), { recursive: true });
+        fs.writeFileSync(full, Buffer.from(content, 'base64'));
+        return { data: {} };
+      },
+      async deleteFile({ path: p }) {
+        const full = localPath(p);
+        if (!fs.existsSync(full)) throw localError(404, 'Not Found');
+        fs.unlinkSync(full);
+        return { data: {} };
+      },
+    },
+  };
+}
+
 function getOctokit() {
+  if (/^(1|true)$/i.test(process.env.LOCAL_MODE || '')) {
+    return { octokit: createLocalOctokit(), owner: 'local', repo: 'local' };
+  }
   const token = process.env.GITHUB_TOKEN;
   const owner = process.env.GITHUB_OWNER;
   const repo = process.env.GITHUB_REPO;
