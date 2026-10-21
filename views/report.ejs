@@ -12,11 +12,18 @@ function statColor(t){ return t === 'bad' ? C.pink : t === 'warn' ? C.orange : t
 function severityColor(s){ return s === 'red' ? C.pink : s === 'amber' ? C.orange : s === 'purple' ? C.purple : C.blue; }
 function menuSeverity(s){ return s === 'high' ? 'pk' : s === 'medium' ? 'or' : 'mu'; }
 function reviewRatingColor(r){ return r <= 2 ? C.pink : r === 3 ? C.orange : C.green; }
-function scoreNote(score){
-  if (score >= 90) return 'Exceptional customer satisfaction with minimal negative feedback and strong engagement.';
-  if (score >= 80) return 'Strong reputation with consistent positive feedback and clear areas to optimize.';
-  if (score >= 70) return 'Solid foundation with actionable gaps. Focus on recurring complaint themes.';
-  return 'Significant reputation gaps require immediate attention across multiple complaint categories.';
+// Score zones on the gauge. Keep these in line with how n8n picks olly_verdict.
+var ZONES = [
+  { name:'Critical', from:0,  to:50,  color:C.pink },
+  { name:'Watch',    from:50, to:75,  color:C.orange },
+  { name:'Healthy',  from:75, to:100, color:C.green }
+];
+function gPoint(v, r){ var a = Math.PI * (1 - v / 100); return [ +(120 + r * Math.cos(a)).toFixed(2), +(124 - r * Math.sin(a)).toFixed(2) ]; }
+function gArc(v1, v2, r){ var p1 = gPoint(v1, r), p2 = gPoint(v2, r); return 'M' + p1[0] + ' ' + p1[1] + ' A' + r + ' ' + r + ' 0 0 1 ' + p2[0] + ' ' + p2[1]; }
+function verdictLine(v){
+  if (v === 'Critical') return 'Needs attention across several complaint areas.';
+  if (v === 'Watch') return 'A solid base, with a few gaps worth fixing.';
+  return 'A strong reputation. Keep it that way.';
 }
 
 var dc        = d.dynamic_copy || {};
@@ -29,10 +36,11 @@ var allCount  = d.all_reviews_count;
 var rate      = Math.max(0, Math.min(100, num(d.response_rate_pct)));
 var answered  = Math.round(rate / 100 * total);
 
-// Reply dots: one dot per review (up to 400; above that each dot stands for a few reviews)
-var dotsN     = Math.min(total, 400);
-var dotsOn    = Math.round(rate / 100 * dotsN);
-var perDot    = total > dotsN && dotsN > 0 ? Math.round(total / dotsN) : 1;
+// Reply dots: one dot per review (above 400 reviews, each dot stands for a few)
+var unanswered_n = Math.max(0, total - answered);
+var perDot    = total > 400 ? Math.ceil(total / 400) : 1;
+var dotsYes   = Math.round(answered / perDot);
+var dotsNo    = Math.round(unanswered_n / perDot);
 
 // Weekly pattern
 var dow       = Array.isArray(d.dow_breakdown) ? d.dow_breakdown : [];
@@ -55,26 +63,20 @@ var insights   = Array.isArray(d.score_insights) ? d.score_insights : [];
 var findings   = (Array.isArray(d.key_findings) ? d.key_findings : []).filter(function(f){ return f != null; });
 var unanswered = Array.isArray(d.unanswered_reviews) ? d.unanswered_reviews : [];
 
-// Score bands (the same thresholds as the score note)
-var bands = [
-  { label:'Needs attention', range:'0 to 69', from:0,  to:70,  bg:'#3A2028' },
-  { label:'Solid',           range:'70 to 79', from:70, to:80,  bg:'#4A3618' },
-  { label:'Strong',          range:'80 to 89', from:80, to:90,  bg:'#1E3A33' },
-  { label:'Exceptional',     range:'90+',      from:90, to:101, bg:'#1B2F4A' }
-];
 
 // Where "Send a free report" points: the free report page, credited to this report (?ref=)
 var INVITE_BASE = d.invite_url || 'https://askolly.io/google-reviews-report/';
 
 // Lines for the share message, built from this report's own findings
+var dayNames = { Mon:'Mondays', Tue:'Tuesdays', Wed:'Wednesdays', Thu:'Thursdays', Fri:'Fridays', Sat:'Saturdays', Sun:'Sundays' };
 var share = {
-  brand:    d.brand_name || '',
   total:    total,
-  replies:  total ? ('showed us we had only replied to ' + answered + ' of our last ' + total + ' reviews. Had no idea') : '',
-  weekly:   worstDay ? ('showed us our ' + worstDay.day + 's get more complaints than any other day') : '',
-  complaints: topCat ? ('showed us ' + String(topCat.label).toLowerCase() + ' is behind ' + topCat.pct + '% of our complaints') : '',
-  waiting:  d.negative_count ? ('showed us ' + d.negative_count + ' unhappy reviews we never replied to') : '',
-  generic:  'showed us things we had completely missed in our reviews',
+  platform: platform,
+  replies:  total ? (answered === 0 ? "we hadn't replied to a single one" : ("we'd only replied to " + answered + ' of them')) : '',
+  weekly:   worstDay ? ((dayNames[worstDay.day] || (worstDay.day + 's')) + ' get more complaints than any other day') : '',
+  complaints: topCat ? (String(topCat.label).toLowerCase() + ' is behind ' + topCat.pct + '% of our complaints') : '',
+  waiting:  d.negative_count ? (d.negative_count + ' unhappy customers never heard back from us') : '',
+  generic:  "there was a lot we'd been missing",
   invite:   INVITE_BASE
 };
 %><!DOCTYPE html>
@@ -163,41 +165,45 @@ var share = {
     .t-g{background:radial-gradient(90% 130% at 0% 100%,rgba(96,204,172,.15),transparent 60%),var(--surface)}
 
     /* score */
-    .score{display:grid;gap:28px;padding:30px;align-items:center}
-    @media (min-width:720px){.score{grid-template-columns:auto 1fr}}
-    .gauge{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
-    .gauge svg{width:200px;flex:none}
-    .g-track{fill:none;stroke:#26262B;stroke-width:14;stroke-linecap:round}
-    .g-val{fill:none;stroke-width:14;stroke-linecap:round;stroke-dasharray:282.74;stroke-dashoffset:282.74;transition:stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1)}
-    .g-num{font-size:64px;font-weight:500;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
-    .band{display:inline-block;font-size:13px;padding:5px 12px;border-radius:999px;margin-top:10px}
-    .score-r h3{font-size:21px;font-weight:400;letter-spacing:-.02em;line-height:1.4}
-    .scale{margin-top:26px}
-    .scale-bar{position:relative;display:grid;grid-template-columns:70fr 10fr 10fr 10fr;gap:4px;height:8px}
-    .scale-bar i{border-radius:4px}
-    .scale-mark{position:absolute;top:-6px;width:4px;height:20px;border-radius:2px;background:var(--ink);box-shadow:0 0 0 3px var(--surface);left:0;transition:left 1.4s cubic-bezier(.2,.8,.2,1)}
-    .scale-lbl{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px;font-size:12px;color:var(--muted);line-height:1.35}
-    .scale-lbl span{padding-left:10px;border-left:2px solid var(--line)}
-    .scale-lbl span.on{border-left-color:currentColor}
-    .scale-lbl b{display:block;color:var(--ink);font-weight:500;font-size:12px}
-    @media (max-width:520px){.scale-lbl{grid-template-columns:1fr 1fr}}
+    .score{display:grid;gap:28px;padding:30px 32px;align-items:center}
+    @media (min-width:720px){.score{grid-template-columns:300px 1fr}}
+    .gauge{position:relative;width:300px;max-width:100%;margin:0 auto}
+    .gauge svg{display:block;width:100%;height:auto;overflow:visible}
+    .gauge text{fill:var(--muted);font-size:11px;font-family:inherit}
+    .g-mark{filter:drop-shadow(0 0 6px rgba(0,0,0,.6))}
+    .gauge-c{position:absolute;left:0;right:0;bottom:6%;display:flex;flex-direction:column;align-items:center;gap:6px}
+    .gauge-c .g-num{font-size:64px;font-weight:500;letter-spacing:-.05em;line-height:1;font-variant-numeric:tabular-nums}
+    .band{display:inline-block;font-size:14px;font-weight:500;padding:5px 14px;border-radius:999px}
+    .score-txt p{font-size:22px;letter-spacing:-.02em;line-height:1.35}
+    .zones{list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:22px}
+    .zones li{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--muted)}
+    .zones li i{width:10px;height:10px;border-radius:50%;flex:none;opacity:.5}
+    .zones li b{font-weight:500;color:#B5B5BC;min-width:72px}
+    .zones li.on{color:var(--ink)}
+    .zones li.on i{opacity:1;box-shadow:0 0 0 4px rgba(255,255,255,.06)}
+    .zones li.on b{color:var(--ink)}
+    @media (max-width:560px){.score{padding:24px 20px}.gauge-c .g-num{font-size:54px}.score-txt p{font-size:19px}}
     .whys{display:grid;gap:12px;margin-top:12px;grid-template-columns:1fr}
     @media (min-width:600px){.whys{grid-template-columns:1fr 1fr}}
     @media (min-width:880px){.whys{grid-template-columns:repeat(3,1fr)}}
-    .why{padding:24px}
-    .why b{display:block;font-size:40px;font-weight:500;letter-spacing:-.035em;line-height:1.1;margin-bottom:14px}
-    .why h3{font-size:17px;font-weight:500;line-height:1.35;letter-spacing:-.01em}
-    .why p{color:var(--muted);font-size:14px;margin-top:8px}
+    .why{padding:22px 24px}
+    .why b{display:block;font-size:40px;font-weight:500;letter-spacing:-.035em;line-height:1.1;margin-bottom:10px}
+    .why h3{font-size:17px;font-weight:400;line-height:1.4;letter-spacing:-.01em;color:#D4D4D9}
 
-    /* reply dots */
-    .dots-card{padding:30px}
+    /* reply dots: two groups */
+    .replies{padding:30px;display:flex;flex-direction:column;gap:28px}
+    .rgroup + .rgroup{padding-top:26px;border-top:1px solid var(--line)}
+    .rg-head{display:flex;align-items:baseline;gap:10px;margin-bottom:14px}
+    .rg-head b{font-size:32px;font-weight:500;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+    .rg-head span{color:var(--muted);font-size:16px}
+    .yes .rg-head b{color:var(--blue-ink)}
+    .no .rg-head b{color:var(--pink)}
+    .rg-none{color:var(--muted);font-size:15px}
     .dots{display:grid;grid-template-columns:repeat(30,1fr);gap:5px}
     @media (max-width:640px){.dots{grid-template-columns:repeat(20,1fr)}}
-    .dot{aspect-ratio:1;border-radius:50%;background:#2A2A30;transition:background .25s,transform .25s}
-    .dot.on{background:var(--blue);transform:scale(1.12)}
-    .legend{display:flex;gap:22px;flex-wrap:wrap;margin-top:22px;font-size:14px;color:var(--muted)}
-    .legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px}
-    .legend b{color:var(--ink);font-weight:500;margin-right:4px}
+    .dot{aspect-ratio:1;border-radius:50%;background:#2A2A30;transform:scale(.4);opacity:0;transition:background .3s,transform .35s,opacity .35s}
+    .yes .dot.on{background:var(--blue);transform:none;opacity:1}
+    .no .dot.on{background:rgba(234,99,142,.55);transform:none;opacity:1}
 
     /* weekly */
     .days{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
@@ -293,7 +299,7 @@ var share = {
     #pass-on.open .po{transition-delay:.12s}
 
     /* share nudge (bottom left) */
-    .dock{position:fixed;left:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:26;width:min(272px,calc(100vw - 40px));height:0;transition:opacity .3s}
+    .dock{position:fixed;left:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:26;width:min(312px,calc(100vw - 40px));height:0;transition:opacity .3s}
     .dock.away{opacity:0;pointer-events:none}
     .dock.away *{pointer-events:none!important}
     .dock-card{position:absolute;left:0;bottom:0;width:100%;padding:16px;border-radius:20px;background:radial-gradient(110% 120% at 0% 0%,rgba(46,141,232,.24),transparent 60%),#15171C;border:1px solid #2F5180;box-shadow:0 24px 60px rgba(0,0,0,.65);transform-origin:bottom left;opacity:0;transform:translateY(14px) scale(.88);pointer-events:none;transition:opacity .35s,transform .6s cubic-bezier(.2,.9,.25,1.12)}
@@ -302,7 +308,7 @@ var share = {
     @keyframes glow{0%{box-shadow:0 24px 60px rgba(0,0,0,.65),0 0 0 0 rgba(46,141,232,.55)}100%{box-shadow:0 24px 60px rgba(0,0,0,.65),0 0 0 22px rgba(46,141,232,0)}}
     .dock-txt{transition:opacity .22s}
     .dock-q{font-size:16px;letter-spacing:-.015em;line-height:1.35;padding-right:28px}
-    .dock-share{width:100%;margin-top:12px;padding:10px 14px;font-size:14px}
+    .dock-share{width:100%;margin-top:12px;padding:10px 14px;font-size:14px;white-space:nowrap}
     .dock-x{position:absolute;top:12px;right:12px;width:24px;height:24px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--muted);display:grid;place-items:center;cursor:pointer}
     .dock-x svg{width:12px;height:12px}
     .dock-pill{position:absolute;left:0;bottom:0;display:inline-flex;align-items:center;gap:10px;padding:8px 18px 8px 8px;border-radius:999px;background:rgba(20,20,23,.94);border:1px solid #2F5180;color:var(--ink);font:inherit;font-size:14px;cursor:pointer;white-space:nowrap;box-shadow:0 14px 40px rgba(0,0,0,.6);transition:opacity .3s,transform .45s cubic-bezier(.2,.8,.2,1)}
@@ -383,37 +389,54 @@ var share = {
     </div>
     <div class="card score reveal" style="background:radial-gradient(90% 130% at 0% 100%,<%= verdictBg(d.olly_verdict) %>,transparent 60%),var(--surface)" data-anim="score" data-score="<%= score %>">
       <div class="gauge">
-        <svg viewBox="0 0 200 112" aria-hidden="true"><path class="g-track" d="M14 100 A86 86 0 0 1 186 100"/><path class="g-val" d="M14 100 A86 86 0 0 1 186 100" pathLength="282.74" style="stroke:<%= vc %>"/></svg>
-        <div><div class="g-num" data-count="<%= score %>"><%= score %></div><span class="band" style="color:<%= vc %>;background:<%= verdictBg(d.olly_verdict) %>"><%= d.olly_verdict %></span></div>
+        <svg viewBox="0 0 240 140" role="img" aria-label="Olly score <%= score %> out of 100, <%= d.olly_verdict %>. Critical below 50, Watch 50 to 74, Healthy 75 and above.">
+          <% ZONES.forEach(function(z){ var on = z.name === d.olly_verdict; %><path d="<%= gArc(z.from + (z.from ? 0.9 : 0), z.to - (z.to < 100 ? 0.9 : 0), 96) %>" fill="none" stroke="<%= z.color %>" stroke-opacity="<%= on ? 1 : 0.28 %>" stroke-width="14" stroke-linecap="<%= (z.from === 0 || z.to === 100) ? 'round' : 'butt' %>"/><% }); %>
+          <% var mk = gPoint(score, 96); %><circle class="g-mark" cx="<%= mk[0] %>" cy="<%= mk[1] %>" r="10" fill="#F5F5F6" stroke="#141417" stroke-width="4"/>
+          <% [0, 50, 75, 100].forEach(function(v){ var t = gPoint(v, 118); %><text x="<%= t[0] %>" y="<%= t[1] + 4 %>" text-anchor="middle"><%= v %></text><% }); %>
+        </svg>
+        <div class="gauge-c"><b class="g-num" style="color:<%= vc %>"><%= score %></b><span class="band" style="color:<%= vc %>;background:<%= verdictBg(d.olly_verdict) %>"><%= d.olly_verdict %></span></div>
       </div>
-      <div class="score-r">
-        <h3><%= scoreNote(score) %></h3>
-        <div class="scale" role="img" aria-label="Score <%= score %> out of 100. Bands: needs attention 0 to 69, solid 70 to 79, strong 80 to 89, exceptional 90 and above.">
-          <div class="scale-bar"><% bands.forEach(function(b){ %><i style="background:<%= b.bg %>"></i><% }); %><span class="scale-mark"></span></div>
-          <div class="scale-lbl"><% bands.forEach(function(b){ var on = score >= b.from && score < b.to; %><span class="<%= on ? 'on' : '' %>" style="<%= on ? 'color:' + vc : '' %>"><b style="<%= on ? 'color:' + vc : '' %>"><%= b.label %></b><span style="color:var(--muted);border:0;padding:0"><%= b.range %></span></span><% }); %></div>
-        </div>
+      <div class="score-txt">
+        <p><%= verdictLine(d.olly_verdict) %></p>
+        <ul class="zones">
+          <% ZONES.forEach(function(z){ var on = z.name === d.olly_verdict; %><li class="<%= on ? 'on' : '' %>"><i style="background:<%= z.color %>"></i><b><%= z.name %></b><span><%= z.to >= 100 ? (z.from + '+') : (z.from + ' to ' + (z.to - 1)) %></span></li><% }); %>
+        </ul>
       </div>
     </div>
     <% if (insights.length) { %>
     <div class="whys">
       <% insights.forEach(function(si){ %>
-      <div class="card why reveal"><b style="color:<%= statColor(si.stat_type) %>"><%= si.stat %></b><h3><%= si.headline %></h3><p><%= si.desc %></p></div>
+      <div class="card why reveal"><b style="color:<%= statColor(si.stat_type) %>"><%= si.stat %></b><h3><%= si.headline %></h3></div>
       <% }); %>
     </div>
     <% } %>
   </section>
 
   <!-- RESPONSE RATE -->
-  <% if (dotsN > 0) { %>
+  <% if (total > 0) { %>
   <section class="sec" data-peak="replies">
     <div class="sec-head reveal">
       <p class="eyebrow">Response rate</p>
-      <h2><%= answered %> replies in <%= total %> reviews. <span class="pk"><%= total - answered %> never heard back.</span></h2>
-      <p><%= perDot > 1 ? ('Each dot is about ' + perDot + ' of your latest ' + total + ' reviews.') : ('Each dot is one of your latest ' + total + ' reviews.') %> The blue ones got a reply from you.</p>
+      <% if (answered === 0) { %>
+      <h2>Not one of your last <%= total %> reviews <span class="pk">got a reply.</span></h2>
+      <% } else if (unanswered_n === 0) { %>
+      <h2>You replied to <span class="g">every one</span> of your last <%= total %> reviews.</h2>
+      <% } else { %>
+      <h2><%= answered %> of your last <%= total %> reviews got a reply. <span class="pk"><%= unanswered_n %> never heard back.</span></h2>
+      <% } %>
+      <p><%= perDot > 1 ? ('Each dot is about ' + perDot + ' reviews.') : 'Each dot is one review.' %></p>
     </div>
-    <div class="card dots-card reveal" data-anim="dots" data-on="<%= dotsOn %>">
-      <div class="dots"><% for (var i = 0; i < dotsN; i++) { %><span class="dot"></span><% } %></div>
-      <div class="legend"><span><i style="background:var(--blue)"></i><b><%= answered %></b>replied</span><span><i style="background:#3A3A40"></i><b><%= total - answered %></b>no reply</span></div>
+    <div class="card replies reveal" data-anim="dots">
+      <div class="rgroup yes">
+        <div class="rg-head"><b><%= answered %></b><span>got a reply</span></div>
+        <% if (dotsYes > 0) { %><div class="dots"><% for (var i = 0; i < dotsYes; i++) { %><span class="dot"></span><% } %></div>
+        <% } else { %><p class="rg-none">None yet</p><% } %>
+      </div>
+      <div class="rgroup no">
+        <div class="rg-head"><b><%= unanswered_n %></b><span>never heard back</span></div>
+        <% if (dotsNo > 0) { %><div class="dots"><% for (var i = 0; i < dotsNo; i++) { %><span class="dot"></span><% } %></div>
+        <% } else { %><p class="rg-none">None</p><% } %>
+      </div>
     </div>
   </section>
   <% } %>
@@ -553,9 +576,9 @@ var share = {
       <p>Every restaurant has a worst day, a top complaint and reviews nobody answered. Most owners have never seen theirs.</p>
     </div>
     <div class="card t-bl po">
-      <small>What they'll get from you</small>
+      <small>The message they'll get</small>
       <p id="po-msg"></p>
-      <button class="btn btn-primary" type="button" data-share><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>Send a free report</button>
+      <button class="btn btn-primary" type="button" data-share><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>Invite them to get their own</button>
     </div>
   </section>
 </main>
@@ -593,9 +616,9 @@ var share = {
   <div class="dock-card" id="dock-card">
     <button class="dock-x" type="button" aria-label="Minimise" data-dock-min><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <div class="dock-txt"><p class="dock-q"></p></div>
-    <button class="btn btn-primary dock-share" type="button" data-share><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>Send a free report</button>
+    <button class="btn btn-primary dock-share" type="button" data-share><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>Invite them to get their own</button>
   </div>
-  <button class="dock-pill" type="button" data-share><span class="dock-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg></span>Share Olly</button>
+  <button class="dock-pill" type="button" data-share><span class="dock-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg></span>Invite an owner</button>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -632,16 +655,17 @@ var share = {
     el.querySelectorAll("[data-w]").forEach(function(b, i){ b.style.transitionDelay = (i * 0.09) + "s"; b.style.width = b.dataset.w + "%"; });
     if (el.dataset.anim === "score"){
       var s = +el.dataset.score;
-      el.querySelector(".g-val").style.strokeDashoffset = 282.74 * (1 - s / 100);
-      el.querySelector(".scale-mark").style.left = "calc(" + s + "% - 2px)";
+      // the marker sweeps along the arc to the score
+      var mk = el.querySelector(".g-mark");
+      var place = function(v){ var a = Math.PI * (1 - v / 100); mk.setAttribute("cx", (120 + 96 * Math.cos(a)).toFixed(2)); mk.setAttribute("cy", (124 - 96 * Math.sin(a)).toFixed(2)); };
+      if (!reduce){ var m0 = performance.now(); place(0); (function sweep(now){ var q = Math.min(1, (now - m0) / 1400), e = 1 - Math.pow(1 - q, 3); place(s * e); if (q < 1) requestAnimationFrame(sweep); })(m0); }
       var n = el.querySelector(".g-num"), t0 = performance.now();
       if (!reduce) (function tick(now){ var p = Math.min(1, (now - t0) / 1400); n.textContent = Math.round(s * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(tick); })(t0);
     }
     if (el.dataset.anim === "dots"){
-      var dots = Array.prototype.slice.call(el.querySelectorAll(".dot")), on = +el.dataset.on;
-      var idx = dots.map(function(_, i){ return i; }).sort(function(){ return Math.random() - 0.5; }).slice(0, on);
-      var step = Math.max(10, Math.min(90, 2700 / Math.max(1, on)));
-      idx.forEach(function(k, i){ if (reduce) dots[k].classList.add("on"); else setTimeout(function(){ dots[k].classList.add("on"); }, 300 + i * step); });
+      var dots = Array.prototype.slice.call(el.querySelectorAll(".dot"));
+      var step = Math.max(3, Math.min(40, 2200 / Math.max(1, dots.length)));
+      dots.forEach(function(d, i){ if (reduce) d.classList.add("on"); else setTimeout(function(){ d.classList.add("on"); }, 200 + i * step); });
     }
   }
   if ("IntersectionObserver" in window){
@@ -653,7 +677,10 @@ var share = {
 
   /* sharing: one button, phone share sheet or copy */
   var hook = "generic";
-  function message(){ return "Thought of you. Olly read " + SHARE.total + " of our Google reviews and " + (SHARE[hook] || SHARE.generic) + ". It's free. Run it for your place:\n\n" + INVITE_URL; }
+  function message(){
+    return "Hey! I just tried this AI tool called Olly. It read our latest " + SHARE.total + " " + SHARE.platform + " reviews and turned them into a report. Turns out " +
+      (SHARE[hook] || SHARE.generic) + ". It's free and takes about 2 minutes, try it for your place:\n\n" + INVITE_URL;
+  }
   function share(){
     var text = message();
     if (navigator.share){ navigator.share({ title: "A free reputation report for your place", text: text }).catch(function(e){ if (!e || e.name !== "AbortError") copyFallback(); }); return; }
@@ -667,13 +694,13 @@ var share = {
 
   /* the nudge */
   var LINES = {
-    score: "Most owners don't know their reputation score.",
-    replies: "Most owners have never seen their reply rate.",
-    weekly: "Every owner has a worst day. Few know it.",
-    complaints: "Every owner has a top complaint.",
-    findings: "Most owners would be surprised by theirs.",
-    waiting: "Every owner has reviews nobody answered.",
-    app: "Most owners have never seen their reviews like this."
+    score: "Know an owner who'd want to know their score?",
+    replies: "Know an owner who's never checked their reply rate?",
+    weekly: "Know an owner who'd want to find their worst day?",
+    complaints: "Know an owner who'd want to know their top complaint?",
+    findings: "Know an owner who'd be surprised by their reviews?",
+    waiting: "Know an owner with reviews nobody's answering?",
+    app: "Know someone who'd like a report of their own?"
   };
   var dock = $("#dock"), state = "off", shown = null, minimized = false, swapT;
   function setDock(s){
