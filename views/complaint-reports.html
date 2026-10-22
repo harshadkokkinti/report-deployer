@@ -236,6 +236,23 @@
     .dock-ic svg{width:16px;height:16px}
     @media (max-width:560px){.dock{left:12px;width:calc(100vw - 24px)}.dock-card{padding:14px}.dock-q{font-size:15px}.dock-share{margin-top:10px;padding:9px 14px}}
 
+    .fbdock{position:fixed;left:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:27;width:min(312px,calc(100vw - 40px));opacity:0;transform:translateY(14px) scale(.92);transform-origin:bottom left;pointer-events:none;transition:opacity .35s,transform .5s cubic-bezier(.2,.9,.25,1.12),bottom .45s cubic-bezier(.2,.8,.2,1)}
+    .fbdock.show{opacity:1;transform:none;pointer-events:auto}
+    .fb-card{position:relative;padding:16px;border-radius:20px;background:radial-gradient(110% 120% at 0% 0%,rgba(155,135,245,.22),transparent 60%),#16161C;border:1px solid #3B3566;box-shadow:0 24px 60px rgba(0,0,0,.65)}
+    .fb-card .dock-q{padding-right:28px}
+    @media (max-width:560px){.fbdock{left:12px;width:calc(100vw - 24px)}.fb-card{padding:14px}}
+    .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+    .fb-btns{display:flex;gap:8px;margin-top:12px}
+    .fb-btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 12px;border-radius:999px;border:1px solid #2F5180;background:var(--panel);color:var(--ink);font:inherit;font-size:14px;cursor:pointer}
+    .fb-btn:hover{border-color:var(--blue)}
+    .dock-fb2 textarea{width:100%;margin-top:10px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:inherit;font-size:14px;resize:none}
+    .dock-fb2 textarea:focus{outline:none;border-color:var(--blue)}
+    .fb-acts{display:flex;align-items:center;gap:12px;margin-top:10px}
+    .fb-skip{background:none;border:0;color:var(--muted);font:inherit;font-size:14px;cursor:pointer;text-decoration:underline}
+    .another{display:grid;gap:22px;align-items:center;padding:34px}
+    @media (min-width:720px){.another{grid-template-columns:1fr auto}}
+    .another h2{font-size:clamp(26px,3.8vw,34px)}
+    .another p:not(.eyebrow){color:var(--muted);margin-top:10px;font-size:16px}
     .toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translate(-50%,16px);opacity:0;background:var(--surface-2);border:1px solid var(--line);padding:12px 20px;border-radius:999px;font-size:15px;z-index:40;transition:opacity .3s,transform .3s;pointer-events:none;max-width:calc(100% - 32px)}
     .toast.show{opacity:1;transform:translate(-50%,0)}
 
@@ -421,7 +438,7 @@
 
   <!-- MENU -->
   
-  <section class="sec" data-peak="complaints">
+  <section class="sec" data-peak="menu">
     <div class="sec-head reveal">
       <p class="eyebrow">Menu intelligence</p>
       <h2>The cruller is loved, and complained about.</h2>
@@ -579,7 +596,19 @@
     <div class="card t-bl po">
       <small>The message they'll get</small>
       <p id="po-msg"></p>
-      <button class="btn btn-primary" type="button" data-share><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>Invite them to get their own</button>
+      <button class="btn btn-primary" type="button" data-share><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span>Invite them to get their own</span></button>
+    </div>
+  </section>
+
+  <!-- ANOTHER BRAND -->
+  <section class="sec" id="another">
+    <div class="card another reveal">
+      <div>
+        <p class="eyebrow">One more?</p>
+        <h2>Running another location <span class="bl">or brand?</span></h2>
+        <p>Get a free report for it too. It takes about 2 minutes.</p>
+      </div>
+      <a class="btn btn-primary" id="another-btn" href="https://askolly.io/google-reviews-report/">Get another free report</a>
     </div>
   </section>
 </main>
@@ -616,17 +645,36 @@
 <div class="dock away" id="dock" role="region" aria-label="Share with another owner" hidden>
   <div class="dock-card" id="dock-card">
     <button class="dock-x" type="button" aria-label="Minimise" data-dock-min><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <div class="dock-invite">
     <div class="dock-txt"><p class="dock-q"></p></div>
-    <button class="btn btn-primary dock-share" type="button" data-share><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>Invite them to get their own</button>
+    <button class="btn btn-primary dock-share" type="button" data-share><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg><span>Invite them to get their own</span></button>
+    </div>
   </div>
   <button class="dock-pill" type="button" data-share><span class="dock-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg></span>Invite an owner</button>
+</div>
+<!-- Feedback: its own card, stacked above the invite card -->
+<div class="fbdock" id="fbdock" role="region" aria-label="Feedback on this report" hidden>
+  <div class="fb-card">
+    <button class="dock-x" type="button" aria-label="Dismiss" data-fb-close><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <div class="dock-fb" hidden>
+      <p class="dock-q">How useful was this report?</p>
+      <div class="fb-btns"><button type="button" class="fb-btn" data-fb="up"><span aria-hidden="true">&#128077;</span> Useful</button><button type="button" class="fb-btn" data-fb="down"><span aria-hidden="true">&#128078;</span> Not really</button></div>
+    </div>
+    <div class="dock-fb2" hidden>
+      <p class="dock-q fb-thanks"></p>
+      <label class="sr" for="fb-text">Your comment</label>
+      <textarea id="fb-text" rows="3" maxlength="1000"></textarea>
+      <div class="fb-acts"><button class="btn btn-primary btn-sm" type="button" data-fb-send>Send</button><button class="fb-skip" type="button" data-fb-skip>Skip</button></div>
+    </div>
+    <p class="dock-q fb-done" hidden>Thank you. That really helps.</p>
+  </div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 (function(){
   "use strict";
-  var SHARE = {"total":300,"platform":"Google","replies":"we'd only replied to 27 of them","weekly":"Saturdays get more complaints than any other day","complaints":"wait time is behind 34% of our complaints","waiting":"41 unhappy customers never heard back from us","generic":"there was a lot we'd been missing","invite":"https://askolly.io/google-reviews-report/"};
+  var SHARE = {"total":300,"platform":"Google","invite":"https://askolly.io/google-reviews-report/","feedback":"https://staging-23b3-newwebsitestagingaskolly.wpcomstaging.com/wp-json/olly/v1/feedback","brand":"Daily Provisions - Union Square"};
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var $ = function(s){ return document.querySelector(s); };
   var match = location.pathname.match(/complaint-report-([0-9a-fA-F-]+)/);
@@ -676,36 +724,91 @@
     document.querySelectorAll(".reveal").forEach(function(el){ el.classList.add("in"); if (el.dataset.anim) animate(el); });
   }
 
-  /* sharing: one button, phone share sheet or copy */
-  var hook = "generic";
+  /* sharing: phones open their share sheet, laptops copy the message */
   function message(){
-    return "Hey! I just tried this AI tool called Olly. It read our latest " + SHARE.total + " " + SHARE.platform + " reviews and turned them into a report. Turns out " +
-      (SHARE[hook] || SHARE.generic) + ". It's free and takes about 2 minutes, try it for your place:\n\n" + INVITE_URL;
+    return "Hey! I just tried this AI tool called Olly. It read our latest " + SHARE.total + " " + SHARE.platform + " reviews and turned them into a report on what customers love and what to fix. It's free and takes about 2 minutes, try it for your place:\n\n" + INVITE_URL;
   }
-  function share(){
+  var touch = window.matchMedia("(pointer: coarse)").matches;
+  function share(btn){
     var text = message();
-    if (navigator.share){ navigator.share({ title: "A free reputation report for your place", text: text }).catch(function(e){ if (!e || e.name !== "AbortError") copyFallback(); }); return; }
-    copyFallback();
-    function copyFallback(){ copyText(text).then(function(ok){ toast(ok ? "Copied. Paste it to a fellow owner." : "Share this link: " + INVITE_URL); }); }
+    if (touch && navigator.share){ navigator.share({ text: text }).catch(function(e){ if (!e || e.name !== "AbortError") copyMsg(); }); return; }
+    copyMsg();
+    function copyMsg(){
+      copyText(text).then(function(ok){
+        if (!ok){ toast("Share this link: " + INVITE_URL); return; }
+        toast("Copied. Paste it in WhatsApp, Slack or email.");
+        var label = btn && !btn.classList.contains("dock-pill") ? btn.querySelector("span:last-child") : null;
+        if (label){ var was = label.textContent; label.textContent = "Copied! Paste it anywhere"; setTimeout(function(){ label.textContent = was; }, 2200); }
+      });
+    }
   }
+  document.getElementById("another-btn").href = SHARE.invite + (SHARE.invite.indexOf("?") < 0 ? "?" : "&") + "ref=" + encodeURIComponent((uid || "report") + "-own");
+
+  /* feedback: asked once per report, sent to Slack through the Olly plugin */
+  var fbKey = "olly_fb_" + (uid || "report"), fbState = "ask", rating = "";
+  try { if (localStorage.getItem(fbKey)) fbState = "done"; } catch (e) {}
+  function sendFeedback(payload){
+    try {
+      fetch(SHARE.feedback, { method: "POST", headers: { "content-type": "text/plain" }, keepalive: true,
+        body: JSON.stringify(Object.assign({ brand: SHARE.brand, report_id: uid, report_url: REPORT_URL.split("?")[0] }, payload)) }).catch(function(){});
+    } catch (e) {}
+  }
+  var fbdock = $("#fbdock"), fbShown = false;
+  function fbView(v){
+    fbdock.querySelector(".dock-fb").hidden = v !== "ask";
+    fbdock.querySelector(".dock-fb2").hidden = v !== "comment";
+    fbdock.querySelector(".fb-done").hidden = v !== "thanks";
+    placeFb();
+  }
+  function finishFeedback(){
+    fbState = "thanks"; try { localStorage.setItem(fbKey, rating || "dismissed"); } catch (e) {}
+    fbView("thanks"); setTimeout(function(){ fbState = "done"; showFb(false); }, 2200);
+  }
+  function showFb(on){
+    if (on === fbShown) return; fbShown = on;
+    if (on){ fbdock.hidden = false; placeFb(); requestAnimationFrame(function(){ requestAnimationFrame(function(){ fbdock.classList.add("show"); }); }); }
+    else { fbdock.classList.remove("show"); setTimeout(function(){ if (!fbShown) fbdock.hidden = true; }, 400); }
+  }
+  // sit just above whatever the invite card is showing (full card, small pill, or nothing)
+  function placeFb(){
+    var base = 20, gap = 12, h = 0;
+    if (state === "open") h = $("#dock-card").offsetHeight;
+    else if (state === "pill") h = dock.querySelector(".dock-pill").offsetHeight;
+    fbdock.style.bottom = "calc(" + (base + (h ? h + gap : 0)) + "px + env(safe-area-inset-bottom, 0px))";
+  }
+
   document.addEventListener("click", function(e){
-    if (e.target.closest("[data-share]")) return share();
-    if (e.target.closest("[data-dock-min]")){ minimized = true; setDock("pill"); }
+    var sb = e.target.closest("[data-share]"); if (sb) return share(sb);
+    if (e.target.closest("[data-dock-min]")){ minimized = true; setDock("pill"); return; }
+    if (e.target.closest("[data-fb-close]")){ fbState = "done"; try { localStorage.setItem(fbKey, rating || "dismissed"); } catch (x) {} showFb(false); return; }
+    var fb = e.target.closest("[data-fb]");
+    if (fb){
+      rating = fb.dataset.fb; fbState = "comment";
+      sendFeedback({ rating: rating });
+      fbdock.querySelector(".fb-thanks").textContent = rating === "up" ? "Glad it helped. What was most useful?" : "Sorry about that. What should we fix?";
+      $("#fb-text").placeholder = "Optional";
+      fbView("comment"); setTimeout(function(){ $("#fb-text").focus({ preventScroll: true }); }, 50);
+      return;
+    }
+    if (e.target.closest("[data-fb-send]")){
+      var c = $("#fb-text").value.trim(); if (c) sendFeedback({ rating: rating, comment: c });
+      return finishFeedback();
+    }
+    if (e.target.closest("[data-fb-skip]")) return finishFeedback();
   });
 
-  /* the nudge */
+  /* the nudge: starts at the menu section (or the next section if there's no menu) */
   var LINES = {
-    score: "Know an owner who'd want to know their score?",
-    replies: "Know an owner who's never checked their reply rate?",
-    weekly: "Know an owner who'd want to find their worst day?",
-    complaints: "Know an owner who'd want to know their top complaint?",
+    menu: "Know an owner who'd want to see which dishes get complaints?",
     findings: "Know an owner who'd be surprised by their reviews?",
     waiting: "Know an owner with reviews nobody's answering?",
     app: "Know someone who'd like a report of their own?"
   };
+  var ORDER = ["score", "replies", "weekly", "complaints", "menu", "findings", "waiting", "app"];
+  var startAt = ["menu", "findings", "waiting", "app"].filter(function(k){ return document.querySelector('[data-peak="' + k + '"]'); })[0] || "app";
   var dock = $("#dock"), state = "off", shown = null, minimized = false, swapT;
   function setDock(s){
-    state = s;
+    state = s; setTimeout(placeFb, 0);
     if (s === "off"){ dock.classList.add("away"); dock.classList.remove("open"); return; }
     dock.hidden = false;
     requestAnimationFrame(function(){ requestAnimationFrame(function(){ dock.classList.remove("away"); dock.classList.toggle("open", s === "open"); }); });
@@ -713,22 +816,24 @@
   function glow(){ var c = $("#dock-card"); c.classList.remove("glow"); void c.offsetWidth; c.classList.add("glow"); }
   function showLine(key){
     var first = shown === null; shown = key;
-    if (SHARE[key]) hook = key;
-    var box = dock.querySelector(".dock-txt");
+    var box = dock.querySelector(".dock-txt"), q = dock.querySelector(".dock-invite .dock-q");
     clearTimeout(swapT);
-    if (first){ dock.querySelector(".dock-q").textContent = LINES[key]; return; }
+    if (first){ q.textContent = LINES[key]; return; }
     box.style.opacity = 0;
-    swapT = setTimeout(function(){ dock.querySelector(".dock-q").textContent = LINES[key]; box.style.opacity = 1; if (state === "open") glow(); }, 220);
+    swapT = setTimeout(function(){ q.textContent = LINES[key]; box.style.opacity = 1; if (state === "open") glow(); }, 220);
   }
   function update(){
     var passOn = $("#pass-on");
     var atEnd = passOn.getBoundingClientRect().top < innerHeight * 0.82;
     passOn.classList.toggle("open", atEnd);
-    if (atEnd){ $("#po-msg").textContent = message(); if (state !== "off") setDock("off"); return; }
     var cur = null;
     document.querySelectorAll("[data-peak]").forEach(function(sec){ if (sec.getBoundingClientRect().top < innerHeight * 0.45) cur = sec.dataset.peak; });
-    if (!cur){ if (state !== "off") setDock("off"); return; }
-    if (cur !== shown) showLine(cur);
+    // feedback card: once they reach the app section, stacked above the invite card, until answered or dismissed
+    var reachedApp = cur === "app" || atEnd;
+    if (reachedApp && fbState !== "done"){ if (fbState === "ask") fbView("ask"); showFb(true); }
+    // invite card: from the menu section on, hidden at the end where "Pass it on" takes over
+    if (atEnd || !cur || ORDER.indexOf(cur) < ORDER.indexOf(startAt)){ if (state !== "off") setDock("off"); return; }
+    if (LINES[cur] && cur !== shown) showLine(cur);
     if (state === "off"){ setDock(minimized ? "pill" : "open"); if (!minimized) setTimeout(glow, 120); }
   }
   addEventListener("scroll", update, { passive: true });
