@@ -6426,5 +6426,9 @@
   "93e18701-ec17-4676-a988-996501bb1d93": {
     "brand_name": "Burger King (Pune)",
     "deployed_at": "2026-11-20T10:05:01.969Z"
+  },
+  "3e1d0b9f-2f62-41f8-a9b3-0738a3f6aad0": {
+    "brand_name": "Burger King",
+    "deployed_at": "2026-11-20T10:10:24.066Z"
   }
 }
