@@ -6026,5 +6026,473 @@
   "b7fcce5e-8d68-454b-8049-1b81bd54faeb": {
     "brand_name": "Long Boat Brewing Co.",
     "deployed_at": "2026-10-21T11:59:04.581Z"
+  },
+  "1026f6c6-d863-4b46-a2e3-b95b9daf5daf": {
+    "brand_name": "The Commoner's Kitchen",
+    "deployed_at": "2026-10-22T11:57:02.945Z"
+  },
+  "dd1a8945-69aa-4a2e-8676-c16c0bf68fa3": {
+    "brand_name": "Hakimpet",
+    "deployed_at": "2026-10-22T12:57:54.218Z"
+  },
+  "3f9cd9a0-e690-43dc-9058-ebb4aacd1ec1": {
+    "brand_name": "Swargate",
+    "deployed_at": "2026-10-22T14:11:23.614Z"
+  },
+  "bed1e042-6a31-4792-b18c-7e269b34fc9b": {
+    "brand_name": "Lollo Rosso",
+    "deployed_at": "2026-10-22T15:06:02.072Z"
+  },
+  "d4adeb57-8cb5-4036-9d30-821ac6e1fb30": {
+    "brand_name": "Cacaote",
+    "deployed_at": "2026-10-23T07:31:04.245Z"
+  },
+  "4085227e-1fb2-4f42-a842-4c1ec5105a27": {
+    "brand_name": "Aurii",
+    "deployed_at": "2026-10-23T07:46:11.568Z"
+  },
+  "db1e286b-1f65-4ae7-9a70-e879f5147f28": {
+    "brand_name": "PizzaExpress - Crystal Paradise, Andheri West",
+    "deployed_at": "2026-10-23T10:23:21.823Z"
+  },
+  "a604c0cb-5033-4a3c-9722-036d733ec604": {
+    "brand_name": "Banana Leaf Restaurant versova",
+    "deployed_at": "2026-10-26T14:15:21.217Z"
+  },
+  "87deb4f3-1bec-4425-b93a-47c14be8f58a": {
+    "brand_name": "Fozzie's",
+    "deployed_at": "2026-10-27T09:50:32.574Z"
+  },
+  "57aeb50e-396f-4650-9195-5f7cc1411d07": {
+    "brand_name": "The Big Chill Cafe",
+    "deployed_at": "2026-10-27T11:39:39.165Z"
+  },
+  "e71e51ce-53ef-44dc-948f-b1f977725a6b": {
+    "brand_name": "Toit",
+    "deployed_at": "2026-10-28T07:49:32.191Z"
+  },
+  "0adb4b1d-c5e2-46ab-b0a2-a991255e4a3f": {
+    "brand_name": "Toit",
+    "deployed_at": "2026-10-28T13:12:58.264Z"
+  },
+  "79b4944d-0b4a-4abf-893b-dcb5158aa61e": {
+    "brand_name": "Salad Days | Sector 46 Noida",
+    "deployed_at": "2026-10-29T04:07:57.515Z"
+  },
+  "5cf48f0d-b49a-4a44-8877-5213a432cc9b": {
+    "brand_name": "Gordhan Thal",
+    "deployed_at": "2026-10-29T04:16:01.733Z"
+  },
+  "f453ba9c-3be8-4666-abf0-3e20cb1b5473": {
+    "brand_name": "Navtara Veg Restaurant",
+    "deployed_at": "2026-10-29T07:21:46.725Z"
+  },
+  "07c0de66-1be5-4b51-b6bb-0e760ca31acf": {
+    "brand_name": "K's Charcoal Ahmedabad",
+    "deployed_at": "2026-10-29T07:31:58.713Z"
+  },
+  "01d2d7c8-24db-4acc-95b0-8f281c53c1e7": {
+    "brand_name": "Benne - Heritage Bangalore Dosa",
+    "deployed_at": "2026-10-29T07:49:54.602Z"
+  },
+  "452c656c-57f4-47e8-bc73-e1337036e2d2": {
+    "brand_name": "Effingut Koregaon Park - Pune's most loved craft brew pub",
+    "deployed_at": "2026-10-30T07:21:12.682Z"
+  },
+  "24f7d55e-997f-4436-ae54-5c20c7e934e1": {
+    "brand_name": "WOW! Children's Museum",
+    "deployed_at": "2026-10-30T08:22:57.783Z"
+  },
+  "e86a4633-bdf6-4a31-be78-e1fc73354afe": {
+    "brand_name": "Wow! Momo",
+    "deployed_at": "2026-10-30T08:23:17.699Z"
+  },
+  "35d09196-1c67-4c12-9c3a-4038a7e95e02": {
+    "brand_name": "Zomato Corporate Office",
+    "deployed_at": "2026-10-30T08:32:34.833Z"
+  },
+  "b81ba734-5f61-41a6-ab3f-335566cda824": {
+    "brand_name": "micro cafe",
+    "deployed_at": "2026-10-30T14:03:12.298Z"
+  },
+  "943ec81b-bf0e-4821-995c-f4c2819fba27": {
+    "brand_name": "Effingut Brewpub NESCO",
+    "deployed_at": "2026-11-01T13:47:38.338Z"
+  },
+  "a392e763-08ab-40cb-a037-9efd46b23d14": {
+    "brand_name": "The Beer Caf",
+    "deployed_at": "2026-11-01T15:04:26.249Z"
+  },
+  "950b171d-cd10-4824-82e4-5eb7be1f82d2": {
+    "brand_name": "Asian Aroma- Pan Asian Cuisine",
+    "deployed_at": "2026-11-02T07:23:37.143Z"
+  },
+  "ee742c2d-c134-49c1-8439-85d889ba5587": {
+    "brand_name": "Flavours Of Punjab Restaurant",
+    "deployed_at": "2026-11-02T07:37:24.393Z"
+  },
+  "8dad6f0d-d98a-4de8-bba8-10ec5710e86b": {
+    "brand_name": "Sufra Restaurant by Miki's",
+    "deployed_at": "2026-11-02T07:39:17.781Z"
+  },
+  "8acbdf10-4f26-42a5-b062-6e988ea0896a": {
+    "brand_name": "Domino Printech India LLP",
+    "deployed_at": "2026-11-02T10:11:23.752Z"
+  },
+  "ea56eb0b-4acd-4025-90de-ab281e036932": {
+    "brand_name": "Long Boat Brewing Co.",
+    "deployed_at": "2026-11-02T10:17:25.284Z"
+  },
+  "cb2bccc8-7074-459e-878f-0234fd56297b": {
+    "brand_name": "Urban Chowk - Rajpath Club Road",
+    "deployed_at": "2026-11-02T10:35:02.836Z"
+  },
+  "ea734b44-fc3f-49ff-b3d3-25d649b8d835": {
+    "brand_name": "The House of Makeba - Veg. Restaurant & Banquet on CG Road",
+    "deployed_at": "2026-11-02T10:49:40.294Z"
+  },
+  "5f8e8c41-1187-49ed-8ef7-b91f0399736c": {
+    "brand_name": "Yanki Sizzlerr",
+    "deployed_at": "2026-11-02T10:53:48.722Z"
+  },
+  "979269fe-596b-4eaf-ab88-e15ddd256f69": {
+    "brand_name": "Trezzoro | Fine Dine Restaurant & Cafe",
+    "deployed_at": "2026-11-02T10:59:52.030Z"
+  },
+  "30ee2bb8-8350-45f6-8625-eb7abe6471a2": {
+    "brand_name": "Adige Dosa House",
+    "deployed_at": "2026-11-02T11:01:51.272Z"
+  },
+  "a8d1d962-1ee9-4cc0-8b3f-053eb10de77c": {
+    "brand_name": "Free fire",
+    "deployed_at": "2026-11-04T12:43:34.692Z"
+  },
+  "8d140cfc-a027-4091-a0fd-e282a48e8c95": {
+    "brand_name": "Sanjitai Town",
+    "deployed_at": "2026-11-04T15:22:53.516Z"
+  },
+  "6cb646cb-4617-4bf2-a432-dcf470e26dad": {
+    "brand_name": "Ganeshguri",
+    "deployed_at": "2026-11-04T17:08:56.577Z"
+  },
+  "80de8063-8936-4c4e-a4c5-60d830875167": {
+    "brand_name": "Vikarabad",
+    "deployed_at": "2026-11-05T04:29:53.269Z"
+  },
+  "8a8337fe-eabc-4470-8bad-0b91d6cb811f": {
+    "brand_name": "9876 E Carolina Pl",
+    "deployed_at": "2026-11-05T05:19:06.224Z"
+  },
+  "0d08c35d-5949-4146-b906-10d57995302e": {
+    "brand_name": "North Village Park 2b Amd",
+    "deployed_at": "2026-11-05T05:32:47.442Z"
+  },
+  "fcbdc6b6-eb95-428c-b6db-311cc3223c74": {
+    "brand_name": "Ghumar Mandi",
+    "deployed_at": "2026-11-05T06:26:39.644Z"
+  },
+  "eb090abc-94e0-4cb5-bffa-03961a670d96": {
+    "brand_name": "Paradise Movie",
+    "deployed_at": "2026-11-05T06:33:16.915Z"
+  },
+  "984119ff-5166-4a3a-9af6-4fc3f1eacda3": {
+    "brand_name": "Spice Nation",
+    "deployed_at": "2026-11-05T06:36:45.440Z"
+  },
+  "27ffb04e-6b6a-4d88-b3c3-ce48c4ba2371": {
+    "brand_name": "America the Beautiful Park Fantasy Playground",
+    "deployed_at": "2026-11-05T07:43:48.944Z"
+  },
+  "ead5eb39-52bb-4581-b0ab-8017e7b70200": {
+    "brand_name": "RDx Bittu Balte House",
+    "deployed_at": "2026-11-05T11:07:55.909Z"
+  },
+  "460cf805-4e45-4965-8f7a-94973f241354": {
+    "brand_name": "Hello Darling (Commons Park)",
+    "deployed_at": "2026-11-05T13:26:37.589Z"
+  },
+  "8544fa85-c717-4c93-a8e9-eb5e417b4b24": {
+    "brand_name": "gfdgfg",
+    "deployed_at": "2026-11-05T14:13:51.562Z"
+  },
+  "ce0a5070-e9bd-4929-962f-715ede958a09": {
+    "brand_name": "Bottom Of Nasquly Hill",
+    "deployed_at": "2026-11-06T13:29:05.562Z"
+  },
+  "017919db-05ac-4c2f-ae51-f16b492ff0ed": {
+    "brand_name": "Yucatan",
+    "deployed_at": "2026-11-06T13:32:48.435Z"
+  },
+  "ce96bc80-34b2-4f33-8b07-f2441dde0124": {
+    "brand_name": "Maharaja Agrasen Hospital 1 Emergency Block",
+    "deployed_at": "2026-11-06T14:09:56.806Z"
+  },
+  "13b372ec-8f74-4298-8b63-441d15501973": {
+    "brand_name": "Wealth Creation Group",
+    "deployed_at": "2026-11-07T07:19:58.211Z"
+  },
+  "a43ed571-a648-43f6-bcdf-84cce93e49a8": {
+    "brand_name": "Mahadev spa center",
+    "deployed_at": "2026-11-07T09:31:01.441Z"
+  },
+  "e5f24c33-e2b0-4362-b37c-b5c47e9f6445": {
+    "brand_name": "I want that gift ideas",
+    "deployed_at": "2026-11-07T10:35:05.181Z"
+  },
+  "18163ea9-32d9-4405-9740-002ce64f7f46": {
+    "brand_name": "Appa Idli-Dosa Center",
+    "deployed_at": "2026-11-07T11:26:43.917Z"
+  },
+  "3a005e25-fde3-4fdd-ae14-313420ba47f0": {
+    "brand_name": "Neelkanth Electronic",
+    "deployed_at": "2026-11-07T13:55:39.235Z"
+  },
+  "8ee97a49-65d6-4ed7-ae31-0867aa3b50d7": {
+    "brand_name": "Bhameshwari Counselling Centre, Dr. Devinder Dhalla",
+    "deployed_at": "2026-11-07T23:28:15.576Z"
+  },
+  "ae8bc362-503e-46b4-a6fe-53e195a89275": {
+    "brand_name": "sathish rubber stamps mfg trichy 10 minute rubber stamps",
+    "deployed_at": "2026-11-08T04:45:39.065Z"
+  },
+  "2b061206-a32e-408f-9f6f-03a49c80928f": {
+    "brand_name": "HI-Tech Hair Replacement",
+    "deployed_at": "2026-11-08T09:28:11.466Z"
+  },
+  "1bb2864a-1791-424b-b87a-0c65ff749b12": {
+    "brand_name": "Kataria Digitals I Best Digital Print Shop I Packaging Labels I Led Boards I Customize Gifts & Print",
+    "deployed_at": "2026-11-08T16:12:58.848Z"
+  },
+  "6a009831-1a80-49dd-b7d5-c1d19b15a934": {
+    "brand_name": "Decoruss",
+    "deployed_at": "2026-11-09T18:39:59.347Z"
+  },
+  "7b9b93fb-6d31-41a2-89d3-a9d2e3279681": {
+    "brand_name": "JIRAFE FUEL STATION",
+    "deployed_at": "2026-11-10T16:32:48.489Z"
+  },
+  "07e23da3-1e33-4195-a84d-c29866e08f88": {
+    "brand_name": "Colorific Kennels",
+    "deployed_at": "2026-11-11T01:45:45.710Z"
+  },
+  "5ddd6470-9e7a-477d-b16c-aa76ee892007": {
+    "brand_name": "Yard Bakery",
+    "deployed_at": "2026-11-12T02:30:23.324Z"
+  },
+  "1a176908-b626-4c11-84f3-ce647aacd049": {
+    "brand_name": "XYZ Private spa and Seaside Resort",
+    "deployed_at": "2026-11-12T08:22:37.790Z"
+  },
+  "e886814a-67a0-45fe-9b23-5e23221c3f36": {
+    "brand_name": "Muskan Hospital",
+    "deployed_at": "2026-11-13T05:28:55.921Z"
+  },
+  "4aac9d6e-504d-4788-afaa-4865b12472c0": {
+    "brand_name": "Sakshi Park Way",
+    "deployed_at": "2026-11-13T07:24:12.030Z"
+  },
+  "8b849ed2-4178-453b-81dd-3731ca3136e2": {
+    "brand_name": "Mumbai Pav Co. - JP Nagar - MPC",
+    "deployed_at": "2026-11-13T17:58:53.264Z"
+  },
+  "d0ed1d4f-516b-4098-9182-f600ce732724": {
+    "brand_name": "The Beer Caf",
+    "deployed_at": "2026-11-13T18:21:27.658Z"
+  },
+  "83695ce1-8c37-4b3a-afc8-ea2e6016ab7d": {
+    "brand_name": "BIGGUYS : Wings & Burgers (Nagarbhavi)",
+    "deployed_at": "2026-11-13T19:39:24.904Z"
+  },
+  "777bb09b-4fa8-40ce-8b9f-138adcee068a": {
+    "brand_name": "BurgerMan Kottivakkam",
+    "deployed_at": "2026-11-13T19:55:04.378Z"
+  },
+  "653ed9d3-19db-4d6d-a1f9-e99d96ca7f88": {
+    "brand_name": "BurgerMan KNK",
+    "deployed_at": "2026-11-13T20:04:57.196Z"
+  },
+  "04937aaf-ccf8-4d97-9c90-61e926a17893": {
+    "brand_name": "BurgerMan Porur",
+    "deployed_at": "2026-11-14T04:59:25.066Z"
+  },
+  "2e2c6faa-989c-4e79-b7d1-76e6ae7e101b": {
+    "brand_name": "Moab",
+    "deployed_at": "2026-11-14T09:03:29.131Z"
+  },
+  "081c05f2-f269-4a6e-a366-35a57ebbc45a": {
+    "brand_name": "Lollo Rosso",
+    "deployed_at": "2026-11-16T14:31:15.894Z"
+  },
+  "d38125ae-05d5-49f8-994a-7cf3eddb0b9d": {
+    "brand_name": "Kiki's Restobar, Alibaug",
+    "deployed_at": "2026-11-17T05:39:56.835Z"
+  },
+  "fff69977-03ab-41fd-876e-879feda64bbd": {
+    "brand_name": "Izumi Bandra",
+    "deployed_at": "2026-11-17T05:57:07.003Z"
+  },
+  "b6266150-1930-482f-91df-c27c79294876": {
+    "brand_name": "Naad Coffee",
+    "deployed_at": "2026-11-17T05:57:50.632Z"
+  },
+  "90fcf5f8-f130-4429-8e17-bc5ff0558cfd": {
+    "brand_name": "Sankalp Square 3B",
+    "deployed_at": "2026-11-17T06:12:56.221Z"
+  },
+  "a5cf104f-9dbe-4923-8fe7-0764530468ea": {
+    "brand_name": "Creekyard-Vadodara",
+    "deployed_at": "2026-11-17T06:48:33.531Z"
+  },
+  "6711fb32-3dc4-46d2-8cc7-6d98fd12e60e": {
+    "brand_name": "Pili Pili BBQ House Restaurant",
+    "deployed_at": "2026-11-17T06:56:17.656Z"
+  },
+  "1123045d-88f6-4da4-8238-06b6d27e8a3b": {
+    "brand_name": "Old Mill Brewing Co.",
+    "deployed_at": "2026-11-17T07:05:05.477Z"
+  },
+  "df04c13f-c9d7-41c6-ac38-43e8ed51b305": {
+    "brand_name": "Urban Tadka Restaurant, Bakery & Sweets -Al Nahda 1",
+    "deployed_at": "2026-11-17T10:10:49.753Z"
+  },
+  "30830565-3963-4714-a9c8-a0c4e4795721": {
+    "brand_name": "Nagpal restaurant",
+    "deployed_at": "2026-11-17T10:17:24.795Z"
+  },
+  "7fa46660-716a-4cab-8e97-c23e76169b72": {
+    "brand_name": "IdlyGo Xpress, Sec V",
+    "deployed_at": "2026-11-17T12:48:28.703Z"
+  },
+  "9bc60584-e94c-405c-8f01-2256214d5ae9": {
+    "brand_name": "Aladdin Shawarma - Kammanahalli",
+    "deployed_at": "2026-11-18T07:49:32.542Z"
+  },
+  "61abdbf3-41f8-40b4-8938-8d76ca2c68b7": {
+    "brand_name": "Ravi Restaurant Satwa",
+    "deployed_at": "2026-11-18T08:55:03.533Z"
+  },
+  "52f3d8f2-d68d-47cf-83e4-470cc50c108f": {
+    "brand_name": "Tom&Serg.",
+    "deployed_at": "2026-11-18T09:10:26.248Z"
+  },
+  "a7e57faf-5133-4e19-91bf-5e97f391b966": {
+    "brand_name": "The Churchill Arms, Kensington",
+    "deployed_at": "2026-11-18T09:11:20.531Z"
+  },
+  "37f1aeca-04f4-4547-8c10-daeddab56e24": {
+    "brand_name": "Tom&Serg.",
+    "deployed_at": "2026-11-18T09:11:43.696Z"
+  },
+  "b3500a72-2308-44df-9828-5d8f6d0639de": {
+    "brand_name": "Joe's Pizza",
+    "deployed_at": "2026-11-18T09:11:46.422Z"
+  },
+  "887458c7-4eb4-423a-9730-cd954d97195d": {
+    "brand_name": "The Breakfast Club Soho",
+    "deployed_at": "2026-11-18T09:13:16.009Z"
+  },
+  "a8ed24e1-07fa-46b6-bd7e-5be03815858f": {
+    "brand_name": "Parkmate Services Bahrain",
+    "deployed_at": "2026-11-19T20:35:15.609Z"
+  },
+  "4b996d25-211d-445e-95c0-b14fc71952cc": {
+    "brand_name": "720 Fossil View Rd",
+    "deployed_at": "2026-11-20T01:49:02.389Z"
+  },
+  "5b4d3bea-ec59-4fc6-a7cf-de7909bc313f": {
+    "brand_name": "Download Bridge",
+    "deployed_at": "2026-11-20T01:52:43.596Z"
+  },
+  "aa8ff8fb-c1f8-4810-a5d9-6a7540d3cbf8": {
+    "brand_name": "L Beercafe & Bottleshop",
+    "deployed_at": "2026-11-20T07:00:28.963Z"
+  },
+  "13b6bd2f-58e0-40f4-ac5f-ea318dacb5f3": {
+    "brand_name": "Abbeyville",
+    "deployed_at": "2026-11-20T07:11:01.104Z"
+  },
+  "2d4f7e31-3369-4402-950f-f8c73816cc8d": {
+    "brand_name": "BEER CAFE +",
+    "deployed_at": "2026-11-20T08:10:30.955Z"
+  },
+  "505c528a-2cae-4f58-8037-5156548900b6": {
+    "brand_name": "Burger King (Pune)",
+    "deployed_at": "2026-11-20T08:24:47.494Z"
+  },
+  "71001ff9-6fbe-4992-8279-dfea4adb3b78": {
+    "brand_name": "Burger King (KP)",
+    "deployed_at": "2026-11-20T10:03:08.177Z"
+  },
+  "93e18701-ec17-4676-a988-996501bb1d93": {
+    "brand_name": "Burger King (Pune)",
+    "deployed_at": "2026-11-20T10:05:01.969Z"
+  },
+  "3e1d0b9f-2f62-41f8-a9b3-0738a3f6aad0": {
+    "brand_name": "Burger King",
+    "deployed_at": "2026-11-20T10:10:24.066Z"
+  },
+  "fc4d7e38-7f59-4920-ba2a-800350f8b7c5": {
+    "brand_name": "Abbeyville",
+    "deployed_at": "2026-11-20T10:13:02.138Z"
+  },
+  "2135f043-b222-4900-bf12-3d5e5196420f": {
+    "brand_name": "Abbeyville",
+    "deployed_at": "2026-11-20T10:13:23.372Z"
+  },
+  "70e2881b-c4e5-425c-8e2f-421f45ac1127": {
+    "brand_name": "BEER CAFE +",
+    "deployed_at": "2026-11-20T10:36:08.891Z"
+  },
+  "fc9325de-0529-4cd4-a332-504542fb63e1": {
+    "brand_name": "INAYAT KHAN GENERAL TRADING L.L.C",
+    "deployed_at": "2026-11-20T20:02:55.750Z"
+  },
+  "49f9f6f1-f01a-4670-b092-f69ea116321c": {
+    "brand_name": "Waheed Robert B DDS",
+    "deployed_at": "2026-11-20T21:32:18.970Z"
+  },
+  "016e8a0a-6439-485e-bdfc-7bbe24fc56c8": {
+    "brand_name": "West Virginia",
+    "deployed_at": "2026-11-20T21:40:51.221Z"
+  },
+  "d075bce0-84fe-44c6-9836-c1d1865c3a8c": {
+    "brand_name": "https://www.google.com/search?q=overseas+realestate+consult&stick=H4sIAAAAAN",
+    "deployed_at": "2026-11-23T05:03:04.306Z"
+  },
+  "30fc7041-4577-49c0-89ef-c073d90fa82a": {
+    "brand_name": "Chaibasa",
+    "deployed_at": "2026-11-23T07:40:51.518Z"
+  },
+  "f4d3af4d-1664-435d-ba36-a6b1eae8282e": {
+    "brand_name": "Ahmed Raza Khan Road",
+    "deployed_at": "2026-11-23T17:06:42.910Z"
+  },
+  "ac523666-3c7b-4e75-a934-f701a13f4302": {
+    "brand_name": "Forest Service Road 725",
+    "deployed_at": "2026-11-24T01:12:06.693Z"
+  },
+  "2a60876d-1b5d-4d75-8181-de623ec82a61": {
+    "brand_name": "Beer Cafe Barley",
+    "deployed_at": "2026-11-24T05:58:23.224Z"
+  },
+  "e138a4b5-b662-492a-9ed4-2a8d15754a11": {
+    "brand_name": "Burger King",
+    "deployed_at": "2026-11-24T07:31:16.910Z"
+  },
+  "58c8669f-b898-42b4-8c6c-a0a750b2ab1e": {
+    "brand_name": "MD Liton Rana",
+    "deployed_at": "2026-11-24T10:26:17.576Z"
+  },
+  "c088c1bf-63fe-4064-9bfe-d1e33cb1350b": {
+    "brand_name": "Beer Cafe Barley",
+    "deployed_at": "2026-11-24T13:46:49.090Z"
+  },
+  "123e5520-81de-4ca9-bd9f-4aa8d186a574": {
+    "brand_name": "beer cafe ",
+    "deployed_at": "2026-11-24T13:49:17.637Z"
+  },
+  "d40cbef0-1124-487c-af42-c3e823fe2555": {
+    "brand_name": "Only",
+    "deployed_at": "2026-11-24T16:40:49.509Z"
   }
 }
