@@ -899,13 +899,21 @@ if (d.report_url) ld.url = d.report_url;
     var body = { name: name, email: email, phone: "+" + $("#gm-cc").value + digits, brand: SHARE.brand, place_id: SHARE.place, report_url: location.origin + location.pathname,
       job: FROM.job || "", ref: FROM.ref || (qref ? decodeURIComponent(qref) : ""), website: $("#gm-hp").value };
     function reset(){ btn.disabled = false; btn.textContent = "Unlock the full report"; }
-    fetch(SHARE.lead, { method: "POST", headers: { "content-type": "text/plain" }, body: JSON.stringify(body) }).then(function(r){
+    var payload = JSON.stringify(body);
+    // Backup route: a beacon gets through where a normal request is blocked (ad blockers, a page being left)
+    function beacon(){ try { return !!(navigator.sendBeacon && navigator.sendBeacon(SHARE.lead, new Blob([payload], { type: "text/plain" }))); } catch (x) { return false; } }
+    fetch(SHARE.lead, { method: "POST", headers: { "content-type": "text/plain" }, body: payload }).then(function(r){
       reset();
       if (r.ok || r.status === 429) return unlock();                       // saved (429: they've sent it many times already)
       if (r.status === 400){ err.textContent = "Please check your details and try again."; err.hidden = false; return; }
-      if (++gateTries >= 2) return unlock();                                // the server is having a moment: don't hold the reader back
-      err.textContent = "Something went wrong. Please try again."; err.hidden = false;
-    }, function(){ reset(); unlock(); });                                   // blocked by the browser or offline: the server most likely got it
+      if (r.status === 404) console.error("[olly] The details form could not reach " + SHARE.lead + " (404). Is the Olly plugin 0.3.30 or later installed on that site, and is lead_url right?");
+      else console.error("[olly] The details form got HTTP " + r.status + " from " + SHARE.lead);
+      if (++gateTries >= 2){ beacon(); return unlock(); }                   // don't hold the reader back
+      err.textContent = "Something went wrong saving your details. Please try once more."; err.hidden = false;
+    }, function(e){
+      console.error("[olly] The details form could not reach " + SHARE.lead + ":", e);
+      reset(); beacon(); unlock();                                          // the beacon usually still gets it there
+    });
   });
 
   /* reveal + charts when they scroll into view */
